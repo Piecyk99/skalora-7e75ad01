@@ -1,16 +1,43 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "../components/Navbar";
+import HeroSection from "../components/HeroSection";
+import TrustSection from "../components/TrustSection";
+import ProblemsSection from "../components/ProblemsSection";
+import SolutionsSection from "../components/SolutionsSection";
+import WhySKALORASection from "../components/WhySKALORASection";
+import AIAvatarSection from "../components/AIAvatarSection";
+import ProcessSection from "../components/ProcessSection";
+import WhatYouGetSection from "../components/WhatYouGetSection";
+import ResultsSection from "../components/ResultsSection";
+import TransformationSection from "../components/TransformationSection";
+import CaseStudySection from "../components/CaseStudySection";
+import ForWhomSection from "../components/ForWhomSection";
+import FAQSection from "../components/FAQSection";
+import ContactSection from "../components/ContactSection";
+import Footer from "../components/Footer";
+import ChatWidget from "../components/ChatWidget";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="bg-skalora-bg min-h-screen">
+      <Navbar />
+      <HeroSection />
+      <TrustSection />
+      <ProblemsSection />
+      <SolutionsSection />
+      <WhySKALORASection />
+      <AIAvatarSection />
+      <ProcessSection />
+      <WhatYouGetSection />
+      <ResultsSection />
+      <TransformationSection />
+      <CaseStudySection />
+      <ForWhomSection />
+      <FAQSection />
+      <ContactSection />
+      <Footer />
+      <ChatWidget />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
