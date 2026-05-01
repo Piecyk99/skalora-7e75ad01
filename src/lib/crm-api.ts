@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_CRM_API_URL ?? "https://skalora-crm-api.workers.dev";
+const API_URL = import.meta.env.VITE_CRM_API_URL ?? "https://skalora-crm-api.dpsolutionsbusiness.workers.dev";
 const SECRET_KEY = "crm_secret";
 
 export function getToken(): string {

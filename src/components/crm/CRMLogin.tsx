@@ -16,7 +16,7 @@ export default function CRMLogin({ onLogin }: Props) {
     setError("");
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_CRM_API_URL ?? "https://skalora-crm-api.workers.dev"}/api/stats`,
+        `${import.meta.env.VITE_CRM_API_URL ?? "https://skalora-crm-api.dpsolutionsbusiness.workers.dev"}/api/stats`,
         { headers: { Authorization: `Bearer ${password}`, "Content-Type": "application/json" } }
       );
       if (res.status === 401) {
