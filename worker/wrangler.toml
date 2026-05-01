@@ -10,3 +10,4 @@ database_id = "866b28ed-f201-46f7-8312-b1aae9d40380"
 
 [vars]
 CRM_SECRET = "skalora2024"
+
