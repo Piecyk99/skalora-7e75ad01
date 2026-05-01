@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { setToken } from "@/lib/crm-api";
+import { login } from "@/lib/crm-api";
 
 interface Props {
   onLogin: () => void;
@@ -8,27 +8,13 @@ interface Props {
 export default function CRMLogin({ onLogin }: Props) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_CRM_API_URL ?? "https://skalora-crm-api.dpsolutionsbusiness.workers.dev"}/api/stats`,
-        { headers: { Authorization: `Bearer ${password}`, "Content-Type": "application/json" } }
-      );
-      if (res.status === 401) {
-        setError("Nieprawidłowe hasło.");
-        return;
-      }
-      setToken(password);
+    if (login(password)) {
       onLogin();
-    } catch {
-      setError("Błąd połączenia z serwerem.");
-    } finally {
-      setLoading(false);
+    } else {
+      setError("Nieprawidłowe hasło.");
     }
   }
 
@@ -54,15 +40,15 @@ export default function CRMLogin({ onLogin }: Props) {
               className="w-full bg-[#030305] border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#00F0FF] transition-colors"
               placeholder="••••••••"
               required
+              autoFocus
             />
           </div>
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-[#00F0FF] to-[#8A2BE2] text-black font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-[#00F0FF] to-[#8A2BE2] text-black font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity"
           >
-            {loading ? "Logowanie..." : "Zaloguj"}
+            Zaloguj
           </button>
         </form>
       </div>
