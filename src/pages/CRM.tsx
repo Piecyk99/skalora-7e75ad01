@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getToken, clearToken } from "@/lib/crm-api";
+import { isAuthed, clearToken } from "@/lib/crm-api";
 import CRMLogin from "@/components/crm/CRMLogin";
 import CRMDashboard from "@/components/crm/CRMDashboard";
 import LeadsList from "@/components/crm/LeadsList";
@@ -12,7 +12,7 @@ export default function CRM() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    setAuthed(!!getToken());
+    setAuthed(isAuthed());
     setChecking(false);
   }, []);
 
