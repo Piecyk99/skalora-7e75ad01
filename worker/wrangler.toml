@@ -1,0 +1,12 @@
+name = "skalora-crm-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "skalora-crm"
+database_id = "866b28ed-f201-46f7-8312-b1aae9d40380"
+
+[vars]
+CRM_SECRET = "skalora2024"
