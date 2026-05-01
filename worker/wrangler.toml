@@ -1,7 +1,6 @@
 name = "skalora-crm-api"
-main = "src/index.ts"
+main = "src/index.js"
 compatibility_date = "2024-12-01"
-compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
 binding = "DB"
