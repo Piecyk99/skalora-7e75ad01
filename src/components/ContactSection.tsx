@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { ArrowRight, CheckCircle, AlertCircle, Loader, ChevronRight } from "lucide-react";
 import useScrollReveal from "../hooks/useScrollReveal";
+import { submitLead } from "@/lib/crm-api";
 
 const STAGE_OPTIONS = [
   "Dopiero zaczynam (0-1 rok)",
@@ -36,10 +37,18 @@ export default function ContactSection() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus("loading");
-    // Simulate form submission (no backend in Lovable)
-    setTimeout(() => {
+    try {
+      await submitLead({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        company_stage: form.company_stage || undefined,
+        growth_blocker: form.growth_blocker || undefined,
+      });
       setStatus("success");
-    }, 1500);
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
