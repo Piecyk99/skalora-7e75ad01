@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const NAV_LINKS: [string, string][] = [
   ["Rozwiązania", "solutions"],
@@ -43,6 +44,18 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
+            {/* Product switcher */}
+            <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+              <span className="px-3 py-1.5 text-sm text-white bg-white/10 rounded-md font-medium font-manrope">
+                Agencja
+              </span>
+              <Link
+                to="/skalora-crm"
+                className="px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-md transition-colors font-manrope"
+              >
+                CRM
+              </Link>
+            </div>
             {NAV_LINKS.map(([label, id]) => (
               <button
                 key={id}
