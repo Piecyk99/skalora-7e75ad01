@@ -1,0 +1,6 @@
+# Skalora — cockpit operacyjny DP DYNEX
+# FRESH, SEPARATE Supabase project. Replace project_id with the ref of a NEW
+# project created exclusively for this cockpit. Do NOT point this at the Skalora
+# landing project (wcjcbnm...), EkoTechnika (jsmowta.../faawufgd...) or any
+# existing project.
+project_id = "skalora-cockpit"
