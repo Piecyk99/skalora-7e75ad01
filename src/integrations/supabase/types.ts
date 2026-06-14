@@ -14,7 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: number
+          lead_id: number
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          lead_id: number
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          lead_id?: number
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          company_stage: string | null
+          created_at: string | null
+          email: string
+          growth_blocker: string | null
+          id: number
+          name: string
+          notes_count: number | null
+          phone: string
+          source: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          company_stage?: string | null
+          created_at?: string | null
+          email: string
+          growth_blocker?: string | null
+          id?: never
+          name: string
+          notes_count?: number | null
+          phone: string
+          source?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          company_stage?: string | null
+          created_at?: string | null
+          email?: string
+          growth_blocker?: string | null
+          id?: never
+          name?: string
+          notes_count?: number | null
+          phone?: string
+          source?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          author: string | null
+          content: string
+          created_at: string | null
+          id: number
+          lead_id: number
+        }
+        Insert: {
+          author?: string | null
+          content: string
+          created_at?: string | null
+          id?: never
+          lead_id: number
+        }
+        Update: {
+          author?: string | null
+          content?: string
+          created_at?: string | null
+          id?: never
+          lead_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
