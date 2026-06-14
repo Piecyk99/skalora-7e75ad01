@@ -32,6 +32,27 @@ shadcn/ui + Supabase. **Samodzielna aplikacja** — własny, OSOBNY projekt Supa
   Brak pola „udział w prowizji kredytowej”.
 - **ALTER TYPE … ADD VALUE** zawsze w osobnej migracji (enumy tworzone w `20260614120000_enums.sql`).
 
+## Testy
+
+```bash
+npm test          # vitest run
+```
+
+- **Jednostkowe** (`src/lib/__tests__/partnerStatus.test.ts`) — graf dozwolonych/niedozwolonych
+  przejść statusów (lustro `partner_status_can_transition` z DB). Uruchamiają się zawsze.
+- **Integracyjne** (`src/test/integration/*`) — rzeczywisty `rpc_partner_lifecycle` (walidacja
+  przejść + autoryzacja) oraz odmowa RLS przy odczycie/edycji cudzego `partner_lead` przez
+  innego handlowca. Wymagają żywego projektu Supabase z zaaplikowanymi migracjami; **pomijane**
+  (`skipIf`) dopóki nie ustawisz:
+
+  ```bash
+  COCKPIT_TEST_SUPABASE_URL=...        # url świeżego projektu testowego
+  COCKPIT_TEST_ANON_KEY=...            # klucz anon
+  COCKPIT_TEST_SERVICE_ROLE_KEY=...    # service role (seed/cleanup userów i leadów)
+  ```
+
+  Używaj OSOBNEGO projektu testowego — testy tworzą i usuwają userów oraz leady.
+
 ## Jakość
 
-`npm run build` ✓ · `tsc --noEmit` ✓ · `npm run lint` ✓
+`npm run build` ✓ · `tsc --noEmit` ✓ · `npm run lint` ✓ · `npm test` (21 unit ✓, 11 integ. skipIf)
