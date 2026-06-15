@@ -56,3 +56,5 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+# re-run: repo public, Pages enablement should now succeed
