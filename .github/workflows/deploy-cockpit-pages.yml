@@ -58,3 +58,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
 # re-run: repo public, Pages enablement should now succeed
+
+# deploy attempt: Pages source set to GitHub Actions
