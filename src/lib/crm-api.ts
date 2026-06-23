@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-const CRM_PASSWORD = "skalora2024";
+const CRM_PASSWORD = "sk_dpx_ed1b5c9149eaec8fad9e3091d74b1c7c";
 const TOKEN_KEY = "crm_authed";
 
 export function getToken(): string {
