@@ -1,14 +1,35 @@
 import { useAuth } from "@/hooks/useAuth";
-import { useMyTasksToday } from "@/hooks/usePartnerLeads";
+import { useMyTasksToday, usePartnerLeads } from "@/hooks/usePartnerLeads";
 import { useExternalTasks } from "@/hooks/useReadModels";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AddCompanyDialog } from "@/components/AddCompanyDialog";
 
+const TERMINAL = new Set(["wygrany", "odrzucony"]);
+
+function Kpi({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <div className="text-xs text-muted-foreground">{label}</div>
+        <div className="text-2xl font-bold">{value}</div>
+        {hint && <div className="text-xs text-muted-foreground">{hint}</div>}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function Cockpit() {
   const { user, hasPermission } = useAuth();
   const tasks = useMyTasksToday(user?.id);
+  const leads = usePartnerLeads();
   const external = useExternalTasks();
+
+  // KPI liczone z zakresu widocznego wg RLS (admin/viewer = wszystko, handlowiec = swoje).
+  const all = leads.data ?? [];
+  const active = all.filter((l) => !TERMINAL.has(l.status));
+  const won = all.filter((l) => l.status === "wygrany").length;
+  const pipelineValue = active.reduce((s, l) => s + (l.kontrakt_wartosc ?? 0), 0);
 
   return (
     <div className="space-y-6">
@@ -18,6 +39,17 @@ export default function Cockpit() {
           <p className="text-sm text-muted-foreground">Twój dzień operacyjny — pozysk firm na wdrożenie CRM.</p>
         </div>
         {hasPermission("partner_leads.create") && <AddCompanyDialog />}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Kpi label="Zadania na dziś" value={tasks.data?.length ?? 0} />
+        <Kpi label="Aktywne leady" value={active.length} hint={`${all.length} łącznie`} />
+        <Kpi
+          label="Wartość pipeline"
+          value={`${pipelineValue.toLocaleString("pl-PL")} zł`}
+          hint="Method B (aktywne)"
+        />
+        <Kpi label="Wygrane" value={won} />
       </div>
 
       <Card>

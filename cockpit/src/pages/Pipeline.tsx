@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { toast } from "sonner";
 import { usePartnerLeads, usePartnerLifecycle } from "@/hooks/usePartnerLeads";
 import { useAuth } from "@/hooks/useAuth";
 import { AddCompanyDialog } from "@/components/AddCompanyDialog";
+import { EditCompanyDialog } from "@/components/EditCompanyDialog";
+import { LeadDetailDialog } from "@/components/LeadDetailDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +20,10 @@ export default function Pipeline() {
   const lifecycle = usePartnerLifecycle();
   const { hasPermission } = useAuth();
   const canTransition = hasPermission("partner_leads.transition");
+  const canEdit = hasPermission("partner_leads.edit");
+
+  const [detail, setDetail] = useState<PartnerLead | null>(null);
+  const [edit, setEdit] = useState<PartnerLead | null>(null);
 
   const move = async (lead: PartnerLead, to: PartnerStatus) => {
     try {
@@ -60,7 +67,12 @@ export default function Pipeline() {
                     const next = allowedNextStatuses(lead.status);
                     return (
                       <div key={lead.id} className="rounded-md border bg-card p-3 text-sm shadow-sm">
-                        <div className="font-medium">{lead.firma_nazwa}</div>
+                        <button
+                          className="text-left font-medium hover:underline"
+                          onClick={() => setDetail(lead)}
+                        >
+                          {lead.firma_nazwa}
+                        </button>
                         {lead.osoba_kontakt && (
                           <div className="text-xs text-muted-foreground">{lead.osoba_kontakt}</div>
                         )}
@@ -70,8 +82,18 @@ export default function Pipeline() {
                             {lead.prowizja_pct != null && ` · ${lead.prowizja_pct}%`}
                           </div>
                         )}
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setDetail(lead)}>
+                            Szczegóły
+                          </Button>
+                          {canEdit && (
+                            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setEdit(lead)}>
+                              Edytuj
+                            </Button>
+                          )}
+                        </div>
                         {canTransition && next.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-1">
+                          <div className="mt-1 flex flex-wrap gap-1">
                             {next.map((to) => (
                               <Button
                                 key={to}
@@ -94,6 +116,13 @@ export default function Pipeline() {
             );
           })}
         </div>
+      )}
+
+      {detail && (
+        <LeadDetailDialog lead={detail} open={!!detail} onOpenChange={(v) => !v && setDetail(null)} />
+      )}
+      {edit && (
+        <EditCompanyDialog lead={edit} open={!!edit} onOpenChange={(v) => !v && setEdit(null)} />
       )}
     </div>
   );

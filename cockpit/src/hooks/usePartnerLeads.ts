@@ -93,3 +93,40 @@ export function useCreatePartnerLead() {
     onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
   });
 }
+
+// Edycja dozwolonych pól leada. Status NIE jest tu zmieniany (brak grantu kolumnowego
+// + SSOT przez RPC). assigned_to też pomijamy (reassign = osobna ścieżka admina).
+// RLS: admin dowolny, handlowiec tylko swój.
+export type PartnerLeadEditable = Partial<
+  Pick<
+    PartnerLead,
+    | "firma_nazwa"
+    | "nip"
+    | "osoba_kontakt"
+    | "email"
+    | "telefon"
+    | "next_action_date"
+    | "next_action_type"
+    | "kontrakt_wartosc"
+    | "prowizja_pct"
+  >
+>;
+
+export function useUpdatePartnerLead() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { id: string; patch: PartnerLeadEditable }) => {
+      const { data, error } = await supabase
+        .from("partner_leads")
+        // cast: supabase-js zawęża argument update do `never` dla ręcznych typów; quirk
+        // izolowany tu, publiczne API (PartnerLeadEditable) pozostaje typowane.
+        .update(vars.patch as never)
+        .eq("id", vars.id)
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data as PartnerLead;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+  });
+}
