@@ -150,6 +150,18 @@ export interface Database {
       rpc_promote_prospect: { Args: { p_id: string }; Returns: PartnerLead };
       rpc_update_outreach: { Args: { p_id: string; p_temat: string; p_tresc: string }; Returns: Outreach };
       rpc_approve_outreach: { Args: { p_id: string }; Returns: Outreach };
+      rpc_list_staff: {
+        Args: Record<string, never>;
+        Returns: { id: string; email: string | null; full_name: string | null; roles: string[] }[];
+      };
+      rpc_grant_role: { Args: { p_email: string; p_role: AppRole }; Returns: undefined };
+      rpc_revoke_role: { Args: { p_email: string; p_role: AppRole }; Returns: undefined };
+      rpc_reassign_lead: { Args: { p_lead_id: string; p_assignee: string }; Returns: PartnerLead };
+      rpc_record_consent: {
+        Args: { p_email: string; p_wdrozenie?: boolean; p_finansowanie?: boolean; p_tresc?: string | null; p_wersja?: string };
+        Returns: number;
+      };
+      rpc_lead_consents: { Args: { p_email: string }; Returns: { wdrozenie: boolean; finansowanie: boolean }[] };
     };
     Enums: {
       app_role: AppRole;
