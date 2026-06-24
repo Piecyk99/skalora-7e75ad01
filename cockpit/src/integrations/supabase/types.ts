@@ -133,6 +133,15 @@ export interface Database {
         Returns: PartnerLead;
       };
       bootstrap_first_admin: { Args: Record<string, never>; Returns: undefined };
+      rpc_add_prospect: {
+        Args: { p_firma_nazwa: string; p_nip?: string | null; p_zrodlo?: string; p_raw_data?: Record<string, unknown> };
+        Returns: Prospect;
+      };
+      rpc_set_prospect_status: {
+        Args: { p_id: string; p_status: ProspectStatus; p_score?: number | null };
+        Returns: Prospect;
+      };
+      rpc_promote_prospect: { Args: { p_id: string }; Returns: PartnerLead };
     };
     Enums: {
       app_role: AppRole;

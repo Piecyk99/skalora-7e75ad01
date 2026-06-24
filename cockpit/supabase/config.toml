@@ -4,3 +4,7 @@
 # landing project (wcjcbnm...), EkoTechnika (jsmowta.../faawufgd...) or any
 # existing project.
 project_id = "skalora-cockpit"
+
+# Agent-prospektor (Faza 3). verify_jwt=true — tylko zalogowany pracownik wywoła.
+[functions.prospector]
+verify_jwt = true
