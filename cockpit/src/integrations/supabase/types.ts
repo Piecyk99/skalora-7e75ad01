@@ -162,6 +162,11 @@ export interface Database {
         Returns: number;
       };
       rpc_lead_consents: { Args: { p_email: string }; Returns: { wdrozenie: boolean; finansowanie: boolean }[] };
+      rpc_run_agent: { Args: { p_fn: string; p_limit?: number }; Returns: number };
+      rpc_agent_runs: {
+        Args: Record<string, never>;
+        Returns: { jobname: string; status: string; return_message: string | null; start_time: string; end_time: string | null }[];
+      };
     };
     Enums: {
       app_role: AppRole;

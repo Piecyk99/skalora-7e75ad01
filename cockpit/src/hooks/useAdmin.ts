@@ -51,6 +51,23 @@ export function useRecordConsent() {
   });
 }
 
+// Automatyzacja agentów (cron). Ręczne „uruchom teraz" — tylko admin (RPC pilnuje).
+export function useRunAgent() {
+  return useMutation({
+    mutationFn: (vars: { fn: "prospector" | "copywriter"; limit?: number }) =>
+      callRpc("rpc_run_agent", { p_fn: vars.fn, p_limit: vars.limit ?? 25 }),
+  });
+}
+
+// Historia uruchomień cron dla agentów (panel admina).
+export function useAgentRuns(enabled = true) {
+  return useQuery({
+    queryKey: ["agent_runs"],
+    enabled,
+    queryFn: () => callRpc("rpc_agent_runs", {}),
+  });
+}
+
 // Status zgód dla adresu (karta leada). Admin/handlowiec.
 export function useLeadConsents(email: string | null | undefined) {
   return useQuery({

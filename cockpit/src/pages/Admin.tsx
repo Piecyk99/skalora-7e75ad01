@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useGrantRole, useRevokeRole, useStaff } from "@/hooks/useAdmin";
+import { useAgentRuns, useGrantRole, useRevokeRole, useRunAgent, useStaff } from "@/hooks/useAdmin";
 import type { AppRole } from "@/integrations/supabase/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,18 @@ export default function Admin() {
   const staff = useStaff();
   const grant = useGrantRole();
   const revoke = useRevokeRole();
+  const runAgent = useRunAgent();
+  const agentRuns = useAgentRuns();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<AppRole>("handlowiec_pozysk");
+
+  const doRunAgent = async (fn: "prospector" | "copywriter") => {
+    try {
+      await runAgent.mutateAsync({ fn, limit: 25 });
+      toast.success(`Uruchomiono agenta „${fn}". Wyniki za chwilę (sprawdź Prospects/Outreach).`);
+      setTimeout(() => agentRuns.refetch(), 4000);
+    } catch (e) { toast.error((e as Error).message); }
+  };
 
   const doGrant = async () => {
     if (!email.trim()) return toast.error("Podaj e-mail.");
@@ -61,6 +71,63 @@ export default function Admin() {
             </div>
             <Button disabled={grant.isPending} onClick={doGrant}>Nadaj</Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Automatyzacja agentów</CardTitle>
+          <CardDescription>
+            Cron uruchamia agentów co noc: prospector 02:00 UTC, copywriter 02:20 UTC.
+            Możesz też uruchomić ręcznie teraz.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" disabled={runAgent.isPending} onClick={() => doRunAgent("prospector")}>
+              Uruchom prospector
+            </Button>
+            <Button variant="outline" disabled={runAgent.isPending} onClick={() => doRunAgent("copywriter")}>
+              Uruchom copywriter
+            </Button>
+            <Button variant="ghost" disabled={agentRuns.isFetching} onClick={() => agentRuns.refetch()}>
+              Odśwież historię
+            </Button>
+          </div>
+          {agentRuns.isLoading ? (
+            <p className="text-sm text-muted-foreground">Ładowanie historii…</p>
+          ) : (agentRuns.data?.length ?? 0) === 0 ? (
+            <p className="text-sm text-muted-foreground">Brak zarejestrowanych uruchomień cron jeszcze.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Agent</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Start</TableHead>
+                  <TableHead>Komunikat</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(agentRuns.data ?? []).map((r, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium">{r.jobname.replace("agent-", "").replace("-nightly", "")}</TableCell>
+                    <TableCell>
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${r.status === "succeeded" ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"}`}>
+                        {r.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {new Date(r.start_time).toLocaleString("pl-PL")}
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate text-xs text-muted-foreground" title={r.return_message ?? ""}>
+                      {r.return_message ?? "—"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
