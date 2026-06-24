@@ -8,3 +8,7 @@ project_id = "skalora-cockpit"
 # Agent-prospektor (Faza 3). verify_jwt=true — tylko zalogowany pracownik wywoła.
 [functions.prospector]
 verify_jwt = true
+
+# Agent-copywriter (Faza 3b). verify_jwt=true. Generuje drafty, NIE wysyła.
+[functions.copywriter]
+verify_jwt = true
