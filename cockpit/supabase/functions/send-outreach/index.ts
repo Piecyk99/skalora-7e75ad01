@@ -65,12 +65,25 @@ Deno.serve(async (req) => {
     return json({ error: "Brak zgody RODO (wdrozenie_crm) dla tego adresu — nie wysłano." }, 403);
   }
 
-  // treść HTML + pixel + opcjonalne CTA
+  // treść HTML + pixel + opcjonalne CTA, opakowane w branded szablon Skalora
   const pixel = `<img src="${FN}/track-open?o=${id}" width="1" height="1" alt="" style="display:none">`;
+  const bodyHtml = esc(o.tresc ?? "").replace(/\n/g, "<br>");
   const cta = BOOKING_URL
-    ? `<p><a href="${FN}/track-click?o=${id}&u=${encodeURIComponent(BOOKING_URL)}">Umów krótką rozmowę</a></p>`
+    ? `<p style="margin:24px 0 0;"><a href="${FN}/track-click?o=${id}&u=${encodeURIComponent(BOOKING_URL)}" `
+      + `style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-weight:600;font-size:14px;">Umów krótką rozmowę</a></p>`
     : "";
-  const html = `<div>${esc(o.tresc ?? "").replace(/\n/g, "<br>")}${cta}${pixel}</div>`;
+  const html = `<!doctype html><html lang="pl"><body style="margin:0;background:#f4f4f7;padding:24px 0;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">`
+    + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">`
+    + `<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e6e6ec;">`
+    + `<tr><td style="background:#0f172a;padding:20px 28px;">`
+    + `<span style="font-size:22px;font-weight:800;letter-spacing:0.5px;color:#ffffff;">Skalora</span>`
+    + `<span style="font-size:12px;color:#94a3b8;display:block;margin-top:2px;">Wdrożenia CRM dla firm</span>`
+    + `</td></tr>`
+    + `<tr><td style="padding:28px;font-size:15px;line-height:1.6;color:#1a1a1a;">${bodyHtml}${cta}</td></tr>`
+    + `<tr><td style="padding:18px 28px;background:#f8fafc;border-top:1px solid #eef0f4;font-size:12px;color:#8a8f98;line-height:1.5;">`
+    + `Skalora · <a href="mailto:kontakt@skalora.pl" style="color:#4f46e5;text-decoration:none;">kontakt@skalora.pl</a><br>`
+    + `Otrzymujesz tę wiadomość, ponieważ wyraziłeś zgodę na kontakt w sprawie wdrożenia CRM.`
+    + `</td></tr></table></td></tr></table>${pixel}</body></html>`;
 
   // wysyłka
   let providerId: string | null = null;
