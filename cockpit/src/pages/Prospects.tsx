@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   useAddProspect,
   usePromoteProspect,
+  useRunFinder,
   useRunProspector,
   useSetProspectStatus,
 } from "@/hooks/useProspectActions";
@@ -27,6 +28,7 @@ export default function Prospects() {
   const setStatus = useSetProspectStatus();
   const promote = usePromoteProspect();
   const run = useRunProspector();
+  const find = useRunFinder();
 
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ firma_nazwa: "", nip: "", zatrudnienie: "", branza: "" });
@@ -59,6 +61,13 @@ export default function Prospects() {
     } catch (e) { toast.error((e as Error).message); }
   };
 
+  const runFinder = async () => {
+    try {
+      const r = await find.mutateAsync({ limit: 10 });
+      toast.success(`Szukacz: znalazł ${r.found}, dodał ${r.inserted} nowych prospektów.`);
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -70,6 +79,9 @@ export default function Prospects() {
         </div>
         {canManage && (
           <div className="flex gap-2">
+            <Button disabled={find.isPending} onClick={runFinder}>
+              {find.isPending ? "Szukam…" : "Szukaj firm (AI)"}
+            </Button>
             <Button variant="outline" disabled={run.isPending} onClick={runAgent}>
               {run.isPending ? "Ocenianie…" : "Uruchom prospektora"}
             </Button>

@@ -51,3 +51,18 @@ export function useRunProspector() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["prospects"] }),
   });
 }
+
+// Uruchomienie agenta-szukacza (Edge Function, web search). Dograje nowe prospekty.
+export function useRunFinder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars?: { nisza?: string; limit?: number }) => {
+      const { data, error } = await supabase.functions.invoke("lead-finder", {
+        body: { nisza: vars?.nisza, limit: vars?.limit ?? 10 },
+      });
+      if (error) throw error;
+      return data as { engine: string; model: string | null; found: number; inserted: number };
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["prospects"] }),
+  });
+}

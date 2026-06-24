@@ -9,6 +9,10 @@ project_id = "skalora-cockpit"
 [functions.prospector]
 verify_jwt = true
 
+# Agent-szukacz: web search Claude -> prospects. verify_jwt=true (staff/cron w funkcji).
+[functions.lead-finder]
+verify_jwt = true
+
 # Agent-copywriter (Faza 3b). verify_jwt=true. Generuje drafty, NIE wysyła.
 [functions.copywriter]
 verify_jwt = true
