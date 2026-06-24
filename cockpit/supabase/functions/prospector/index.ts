@@ -17,6 +17,14 @@ const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-opus-4-8";
 const QUALIFY_THRESHOLD = Number(Deno.env.get("ICP_THRESHOLD") ?? "60");
 
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const json = (data: unknown, status = 200) =>
+  new Response(JSON.stringify(data), { status, headers: { ...cors, "content-type": "application/json" } });
+
 const ICP = `Profil idealnego klienta DP DYNEX (pozysk firm na wdrożenie CRM + partnerstwo):
 - mała/średnia firma w Polsce (ok. 5–200 osób), usługowa lub handlowa,
 - prowadzi aktywną sprzedaż B2B/B2C i pozyskuje leady,
@@ -87,7 +95,8 @@ function scoreHeuristic(p: Record<string, unknown>): Scored {
 }
 
 Deno.serve(async (req) => {
-  if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: cors });
   const db = createClient(SUPABASE_URL, SERVICE_ROLE);
 
   let body: { companies?: Array<Record<string, unknown>>; limit?: number } = {};
@@ -104,14 +113,14 @@ Deno.serve(async (req) => {
       }));
     if (rows.length) {
       const { error } = await db.from("prospects").insert(rows);
-      if (error) return Response.json({ error: error.message }, { status: 400 });
+      if (error) return json({ error: error.message }, 400);
     }
   }
 
   // 2) pobierz prospekty do oceny
   const { data: pending, error: selErr } = await db
     .from("prospects").select("*").eq("status", "nowy").limit(limit);
-  if (selErr) return Response.json({ error: selErr.message }, { status: 400 });
+  if (selErr) return json({ error: selErr.message }, 400);
 
   // 3) oceń i zaktualizuj
   const engine = ANTHROPIC_API_KEY ? "claude" : "heuristic";
@@ -128,6 +137,6 @@ Deno.serve(async (req) => {
     results.push({ id: p.id, firma_nazwa: p.firma_nazwa, score: s.score, status });
   }
 
-  return Response.json({ engine, model: engine === "claude" ? ANTHROPIC_MODEL : null,
+  return json({ engine, model: engine === "claude" ? ANTHROPIC_MODEL : null,
     evaluated: results.length, results });
 });

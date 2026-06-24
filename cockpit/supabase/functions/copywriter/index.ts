@@ -13,6 +13,14 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-opus-4-8";
 
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const json = (data: unknown, status = 200) =>
+  new Response(JSON.stringify(data), { status, headers: { ...cors, "content-type": "application/json" } });
+
 interface Draft { temat: string; tresc: string }
 
 async function draftWithClaude(lead: Record<string, unknown>): Promise<Draft> {
@@ -73,7 +81,8 @@ function draftTemplate(lead: Record<string, unknown>): Draft {
 }
 
 Deno.serve(async (req) => {
-  if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: cors });
   const db = createClient(SUPABASE_URL, SERVICE_ROLE);
 
   let body: { limit?: number } = {};
@@ -85,7 +94,7 @@ Deno.serve(async (req) => {
   const withDraft = new Set((existing ?? []).map((r) => r.partner_lead_id as string));
   const { data: leads, error } = await db
     .from("partner_leads").select("*").in("status", ["nowy", "kontakt"]).limit(200);
-  if (error) return Response.json({ error: error.message }, { status: 400 });
+  if (error) return json({ error: error.message }, 400);
 
   const targets = (leads ?? []).filter((l) => !withDraft.has(l.id as string)).slice(0, limit);
 
@@ -102,6 +111,6 @@ Deno.serve(async (req) => {
     results.push({ outreach_id: ins?.id, lead: lead.firma_nazwa, temat: d.temat });
   }
 
-  return Response.json({ engine, model: engine === "claude" ? ANTHROPIC_MODEL : null,
+  return json({ engine, model: engine === "claude" ? ANTHROPIC_MODEL : null,
     drafted: results.length, results });
 });
