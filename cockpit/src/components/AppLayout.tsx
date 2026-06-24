@@ -20,7 +20,7 @@ export function AppLayout() {
     <div className="flex min-h-screen bg-muted/30">
       <aside className="flex w-60 flex-col border-r bg-card">
         <div className="px-5 py-4">
-          <div className="text-sm font-bold">Skalora</div>
+          <div className="text-xl font-extrabold tracking-widest text-gradient-skalora">SKALORA</div>
           <div className="text-xs text-muted-foreground">Cockpit operacyjny</div>
         </div>
         <nav className="flex-1 space-y-1 px-3">
@@ -32,7 +32,9 @@ export function AppLayout() {
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted",
+                  isActive
+                    ? "bg-gradient-skalora font-semibold text-slate-950"
+                    : "text-foreground hover:bg-muted",
                 )
               }
             >
