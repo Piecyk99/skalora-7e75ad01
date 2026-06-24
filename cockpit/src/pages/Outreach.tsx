@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useOutreach } from "@/hooks/useReadModels";
 import { useAuth } from "@/hooks/useAuth";
-import { useApproveOutreach, useRunCopywriter, useUpdateOutreach } from "@/hooks/useOutreachActions";
+import { useApproveOutreach, useRunCopywriter, useSendOutreach, useUpdateOutreach } from "@/hooks/useOutreachActions";
 import type { Outreach as OutreachRow } from "@/integrations/supabase/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ export default function Outreach() {
   const run = useRunCopywriter();
   const approve = useApproveOutreach();
   const update = useUpdateOutreach();
+  const send = useSendOutreach();
 
   const [edit, setEdit] = useState<OutreachRow | null>(null);
   const [temat, setTemat] = useState("");
@@ -42,6 +43,13 @@ export default function Outreach() {
   const doApprove = async (o: OutreachRow) => {
     try { await approve.mutateAsync({ id: o.id }); toast.success("Draft zaakceptowany."); }
     catch (e) { toast.error((e as Error).message); }
+  };
+
+  const doSend = async (o: OutreachRow) => {
+    try {
+      const r = await send.mutateAsync({ id: o.id });
+      toast.success(r.mode === "dry_run" ? `Tryb dry-run — oznaczono jako wysłane (${r.to}).` : `Wysłano do ${r.to}.`);
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   return (
@@ -80,9 +88,16 @@ export default function Outreach() {
                     <div className="min-w-0">
                       <div className="font-medium">{o.temat ?? "(bez tematu)"}</div>
                       <div className="mt-1 whitespace-pre-line text-xs text-muted-foreground line-clamp-3">{o.tresc}</div>
-                      <div className="mt-1 text-xs">
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
                         <span className="rounded-full bg-muted px-2 py-0.5">{o.status}</span>
-                        <span className="ml-2 text-muted-foreground">{o.kierunek}</span>
+                        <span className="text-muted-foreground">{o.kierunek}</span>
+                        {o.status === "sent" && (
+                          <span className="text-muted-foreground">
+                            {o.sent_at ? `wysłany ${new Date(o.sent_at).toLocaleString("pl-PL")}` : "wysłany"}
+                            {` · otwarcia: ${o.open_count ?? 0} · kliknięcia: ${o.click_count ?? 0}`}
+                          </span>
+                        )}
+                        {o.last_error && <span className="text-red-600" title={o.last_error}>błąd wysyłki</span>}
                       </div>
                     </div>
                     {canManage && o.status === "draft" && (
@@ -91,7 +106,12 @@ export default function Outreach() {
                         <Button size="sm" variant="outline" className="h-7 px-2" onClick={() => doApprove(o)}>Akceptuj</Button>
                       </div>
                     )}
-                    {o.status === "approved" && <span className="shrink-0 text-xs text-green-700">zaakceptowany</span>}
+                    {canManage && o.status === "approved" && (
+                      <Button size="sm" className="h-7 shrink-0 px-2" disabled={send.isPending} onClick={() => doSend(o)}>
+                        Wyślij
+                      </Button>
+                    )}
+                    {o.status === "sent" && <span className="shrink-0 text-xs text-green-700">wysłany</span>}
                   </div>
                 </li>
               ))}

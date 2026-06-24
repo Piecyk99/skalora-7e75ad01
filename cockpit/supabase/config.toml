@@ -12,3 +12,14 @@ verify_jwt = true
 # Agent-copywriter (Faza 3b). verify_jwt=true. Generuje drafty, NIE wysyła.
 [functions.copywriter]
 verify_jwt = true
+
+# Wysyłka outreach (approve -> sent). verify_jwt=true.
+[functions.send-outreach]
+verify_jwt = true
+
+# Tracking otwarć/kliknięć — wołane przez klienty pocztowe, BEZ JWT.
+[functions.track-open]
+verify_jwt = false
+
+[functions.track-click]
+verify_jwt = false

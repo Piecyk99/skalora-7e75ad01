@@ -33,3 +33,22 @@ export function useRunCopywriter() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["outreach"] }),
   });
 }
+
+// Wysyłka zaakceptowanego outreachu (Edge Function send-outreach). approve -> sent.
+export function useSendOutreach() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { id: string }) => {
+      const { data, error } = await supabase.functions.invoke("send-outreach", { body: { id: vars.id } });
+      if (error) {
+        // wyciągnij komunikat z odpowiedzi funkcji (np. brak zgody RODO / brak e-maila)
+        let msg = error.message;
+        try { const ctx = await (error as { context?: Response }).context?.json(); if (ctx?.error) msg = ctx.error; } catch { /* */ }
+        throw new Error(msg);
+      }
+      return data as { ok: boolean; mode: string; to: string };
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["outreach"] }),
+  });
+}
+

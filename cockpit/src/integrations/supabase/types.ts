@@ -68,6 +68,12 @@ export interface Outreach {
   approved_by: string | null;
   sent_at: string | null;
   created_at: string;
+  recipient_email?: string | null;
+  opened_at?: string | null;
+  clicked_at?: string | null;
+  open_count?: number;
+  click_count?: number;
+  last_error?: string | null;
 }
 
 export interface ActivityLog {
