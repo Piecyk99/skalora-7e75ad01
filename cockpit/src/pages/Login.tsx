@@ -75,7 +75,7 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Skalora — Cockpit DP DYNEX</CardTitle>
+          <CardTitle>Skalora — Cockpit operacyjny</CardTitle>
           <CardDescription>Zaloguj się do panelu pozysku.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

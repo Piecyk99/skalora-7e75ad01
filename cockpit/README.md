@@ -1,4 +1,4 @@
-# Skalora — cockpit operacyjny DP DYNEX
+# Skalora — cockpit operacyjny
 
 Panel pozysku firm na wdrożenie CRM + partnerstwo. React 18 + TS + Vite + Tailwind +
 shadcn/ui + Supabase. **Samodzielna aplikacja** — własny, OSOBNY projekt Supabase

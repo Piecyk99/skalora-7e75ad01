@@ -53,7 +53,7 @@ const cors = {
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { ...cors, "content-type": "application/json" } });
 
-const ICP = `Profil idealnego klienta DP DYNEX (pozysk firm na wdrożenie CRM + partnerstwo):
+const ICP = `Profil idealnego klienta Skalora (pozysk firm na wdrożenie CRM + partnerstwo):
 - mała/średnia firma w Polsce (ok. 5–200 osób), usługowa lub handlowa,
 - prowadzi aktywną sprzedaż B2B/B2C i pozyskuje leady,
 - ma potrzebę uporządkowania sprzedaży/leadów/ofertowania,

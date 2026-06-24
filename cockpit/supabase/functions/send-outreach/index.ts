@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
   // konfiguracja Resend z env -> Vault
   const RESEND_API_KEY = await secret(db, "RESEND_API_KEY", ENV_RESEND_API_KEY);
-  const RESEND_FROM = (await secret(db, "RESEND_FROM", ENV_RESEND_FROM)) ?? "DP DYNEX <onboarding@resend.dev>";
+  const RESEND_FROM = (await secret(db, "RESEND_FROM", ENV_RESEND_FROM)) ?? "Skalora <onboarding@resend.dev>";
   const BOOKING_URL = await secret(db, "BOOKING_URL", ENV_BOOKING_URL);
 
   let id = "";

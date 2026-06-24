@@ -21,7 +21,7 @@ export function AppLayout() {
       <aside className="flex w-60 flex-col border-r bg-card">
         <div className="px-5 py-4">
           <div className="text-sm font-bold">Skalora</div>
-          <div className="text-xs text-muted-foreground">Cockpit DP DYNEX</div>
+          <div className="text-xs text-muted-foreground">Cockpit operacyjny</div>
         </div>
         <nav className="flex-1 space-y-1 px-3">
           {NAV.filter((i) => hasPermission(i.perm)).map((item) => (

@@ -61,7 +61,7 @@ async function draftWithClaude(lead: Record<string, unknown>, apiKey: string): P
       model: ANTHROPIC_MODEL,
       max_tokens: 700,
       system:
-        "Jesteś copywriterem B2B DP DYNEX. Piszesz krótki, konkretny, spersonalizowany pierwszy mail " +
+        "Jesteś copywriterem B2B Skalora. Piszesz krótki, konkretny, spersonalizowany pierwszy mail " +
         "z propozycją wdrożenia CRM. Ton rzeczowy, po polsku. Bez nachalnej sprzedaży, z jasnym CTA na krótką rozmowę. " +
         "Bez zmyślania faktów o firmie.",
       output_config: {
@@ -99,10 +99,10 @@ function draftTemplate(lead: Record<string, unknown>): Draft {
   return {
     temat: `Uporządkowanie sprzedaży w ${firma} — wdrożenie CRM`,
     tresc:
-      `${osoba}\n\nW DP DYNEX pomagamy firmom takim jak ${firma} poukładać proces sprzedaży i pozysk leadów we wdrożonym CRM — ` +
+      `${osoba}\n\nW Skalorze pomagamy firmom takim jak ${firma} poukładać proces sprzedaży i pozysk leadów we wdrożonym CRM — ` +
       `od pierwszego kontaktu po podpisanie umowy. Zwykle skraca to czas reakcji na zapytania i porządkuje ofertowanie.\n\n` +
       `Czy znajdą Państwo 15 minut na krótką rozmowę w przyszłym tygodniu? Chętnie pokażę demo dopasowane do Państwa procesu.\n\n` +
-      `Pozdrawiam,\nZespół DP DYNEX`,
+      `Pozdrawiam,\nZespół Skalora`,
   };
 }
 
