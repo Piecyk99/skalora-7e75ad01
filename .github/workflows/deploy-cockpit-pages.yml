@@ -36,8 +36,8 @@ jobs:
           cache: npm
           cache-dependency-path: cockpit/package-lock.json
       - run: npm ci
-      # base = /<repo>/ bo to projekt GitHub Pages (nie domena root)
-      - run: npm run build -- --base=/skalora-7e75ad01/
+      # base = / bo serwujemy z własnej domeny (crm.skalora.pl), nie z /<repo>/
+      - run: npm run build -- --base=/
       # SPA fallback: każde nieznane wejście serwuje aplikację
       - run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v5
