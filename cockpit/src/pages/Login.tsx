@@ -75,7 +75,10 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl font-extrabold tracking-widest text-gradient-skalora">SKALORA</CardTitle>
+          <div className="mb-2 flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-skalora text-xl font-extrabold text-slate-950">S</span>
+            <CardTitle className="text-2xl font-extrabold tracking-widest text-gradient-skalora">SKALORA</CardTitle>
+          </div>
           <CardDescription>Cockpit operacyjny — zaloguj się do panelu pozysku.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

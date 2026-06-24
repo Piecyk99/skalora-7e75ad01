@@ -19,9 +19,12 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen bg-muted/30">
       <aside className="flex w-60 flex-col border-r bg-card">
-        <div className="px-5 py-4">
-          <div className="text-xl font-extrabold tracking-widest text-gradient-skalora">SKALORA</div>
-          <div className="text-xs text-muted-foreground">Cockpit operacyjny</div>
+        <div className="flex items-center gap-2.5 px-5 py-4">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-skalora text-lg font-extrabold text-slate-950">S</span>
+          <div>
+            <div className="text-lg font-extrabold leading-none tracking-widest text-gradient-skalora">SKALORA</div>
+            <div className="mt-1 text-[11px] text-muted-foreground">Cockpit operacyjny</div>
+          </div>
         </div>
         <nav className="flex-1 space-y-1 px-3">
           {NAV.filter((i) => hasPermission(i.perm)).map((item) => (

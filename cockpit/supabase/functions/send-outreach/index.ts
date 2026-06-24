@@ -78,8 +78,14 @@ Deno.serve(async (req) => {
     + `<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#0A0A10;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">`
     + `<tr><td style="height:4px;line-height:4px;font-size:0;background:#00F0FF;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);">&nbsp;</td></tr>`
     + `<tr><td style="padding:30px 32px 4px;">`
-    + `<div style="font-size:26px;font-weight:800;letter-spacing:3px;color:#ffffff;">SKALORA</div>`
-    + `<div style="font-size:12px;color:#A1A1AA;margin-top:6px;letter-spacing:0.3px;">System pozyskiwania klientów online</div>`
+    + `<table role="presentation" cellpadding="0" cellspacing="0"><tr>`
+    + `<td style="width:44px;vertical-align:middle;">`
+    + `<div style="width:40px;height:40px;border-radius:11px;background:#00F0FF;background:linear-gradient(135deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);text-align:center;line-height:40px;font-size:22px;font-weight:800;color:#030305;">S</div>`
+    + `</td>`
+    + `<td style="padding-left:14px;vertical-align:middle;">`
+    + `<div style="font-size:24px;font-weight:800;letter-spacing:3px;color:#ffffff;">SKALORA</div>`
+    + `<div style="font-size:12px;color:#A1A1AA;margin-top:3px;letter-spacing:0.3px;">System pozyskiwania klientów online</div>`
+    + `</td></tr></table>`
     + `</td></tr>`
     + `<tr><td style="padding:18px 32px 4px;font-size:15px;line-height:1.7;color:#E7E7EA;">${bodyHtml}${cta}</td></tr>`
     + `<tr><td style="padding:0 32px;"><div style="height:1px;background:rgba(255,255,255,0.08);margin:22px 0 0;"></div></td></tr>`
