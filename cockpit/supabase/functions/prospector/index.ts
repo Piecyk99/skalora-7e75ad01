@@ -13,8 +13,36 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+const ENV_ANTHROPIC_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-opus-4-8";
+
+// Klucz: najpierw env (sekret Edge Function), w razie braku — Vault przez RPC (service_role).
+async function resolveAnthropicKey(db: ReturnType<typeof createClient>): Promise<string | undefined> {
+  if (ENV_ANTHROPIC_KEY) return ENV_ANTHROPIC_KEY;
+  try {
+    const { data, error } = await db.rpc("get_anthropic_key");
+    if (error) return undefined;
+    return (data as string) || undefined;
+  } catch { return undefined; }
+}
+
+// Bramka autoryzacji: dozwolone albo wywołanie crona (nagłówek x-cron-secret == sekret z Vault),
+// albo zalogowany PRACOWNIK (token użytkownika z rolą w user_roles). Chroni płatne API przed
+// nadużyciem przez sam publiczny klucz anon.
+async function authorize(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+  const cronSecret = req.headers.get("x-cron-secret");
+  if (cronSecret) {
+    const { data: expected } = await db.rpc("get_cron_secret");
+    if (expected && cronSecret === expected) return true;
+  }
+  const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+  if (!token) return false;
+  const { data: u } = await db.auth.getUser(token);
+  const uid = u?.user?.id;
+  if (!uid) return false;
+  const { data: roles } = await db.from("user_roles").select("role").eq("user_id", uid).limit(1);
+  return (roles ?? []).length > 0;
+}
 const QUALIFY_THRESHOLD = Number(Deno.env.get("ICP_THRESHOLD") ?? "60");
 
 const cors = {
@@ -33,12 +61,12 @@ const ICP = `Profil idealnego klienta DP DYNEX (pozysk firm na wdrożenie CRM + 
 
 interface Scored { score: number; qualified: boolean; rationale: string }
 
-async function scoreWithClaude(p: Record<string, unknown>): Promise<Scored> {
+async function scoreWithClaude(p: Record<string, unknown>, apiKey: string): Promise<Scored> {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-api-key": ANTHROPIC_API_KEY!,
+      "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
@@ -98,6 +126,8 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: cors });
   const db = createClient(SUPABASE_URL, SERVICE_ROLE);
+  if (!(await authorize(req, db))) return json({ error: "Brak uprawnień" }, 401);
+  const ANTHROPIC_API_KEY = await resolveAnthropicKey(db);
 
   let body: { companies?: Array<Record<string, unknown>>; limit?: number } = {};
   try { body = await req.json(); } catch { /* puste body OK */ }
@@ -127,7 +157,7 @@ Deno.serve(async (req) => {
   const results: Array<Record<string, unknown>> = [];
   for (const p of pending ?? []) {
     let s: Scored;
-    try { s = ANTHROPIC_API_KEY ? await scoreWithClaude(p) : scoreHeuristic(p); }
+    try { s = ANTHROPIC_API_KEY ? await scoreWithClaude(p, ANTHROPIC_API_KEY) : scoreHeuristic(p); }
     catch (e) { s = { ...scoreHeuristic(p), rationale: `LLM błąd, użyto heurystyki: ${(e as Error).message}` }; }
     const status = s.qualified ? "zakwalifikowany" : "odrzucony";
     await db.from("prospects").update({

@@ -10,8 +10,34 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+const ENV_ANTHROPIC_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-opus-4-8";
+
+// Klucz: najpierw env (sekret Edge Function), w razie braku — Vault przez RPC (service_role).
+async function resolveAnthropicKey(db: ReturnType<typeof createClient>): Promise<string | undefined> {
+  if (ENV_ANTHROPIC_KEY) return ENV_ANTHROPIC_KEY;
+  try {
+    const { data, error } = await db.rpc("get_anthropic_key");
+    if (error) return undefined;
+    return (data as string) || undefined;
+  } catch { return undefined; }
+}
+
+// Bramka autoryzacji: cron (x-cron-secret == sekret z Vault) albo zalogowany pracownik.
+async function authorize(req: Request, db: ReturnType<typeof createClient>): Promise<boolean> {
+  const cronSecret = req.headers.get("x-cron-secret");
+  if (cronSecret) {
+    const { data: expected } = await db.rpc("get_cron_secret");
+    if (expected && cronSecret === expected) return true;
+  }
+  const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+  if (!token) return false;
+  const { data: u } = await db.auth.getUser(token);
+  const uid = u?.user?.id;
+  if (!uid) return false;
+  const { data: roles } = await db.from("user_roles").select("role").eq("user_id", uid).limit(1);
+  return (roles ?? []).length > 0;
+}
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -23,12 +49,12 @@ const json = (data: unknown, status = 200) =>
 
 interface Draft { temat: string; tresc: string }
 
-async function draftWithClaude(lead: Record<string, unknown>): Promise<Draft> {
+async function draftWithClaude(lead: Record<string, unknown>, apiKey: string): Promise<Draft> {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-api-key": ANTHROPIC_API_KEY!,
+      "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
@@ -84,6 +110,8 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: cors });
   const db = createClient(SUPABASE_URL, SERVICE_ROLE);
+  if (!(await authorize(req, db))) return json({ error: "Brak uprawnień" }, 401);
+  const ANTHROPIC_API_KEY = await resolveAnthropicKey(db);
 
   let body: { limit?: number } = {};
   try { body = await req.json(); } catch { /* puste body OK */ }
@@ -102,7 +130,7 @@ Deno.serve(async (req) => {
   const results: Array<Record<string, unknown>> = [];
   for (const lead of targets) {
     let d: Draft;
-    try { d = ANTHROPIC_API_KEY ? await draftWithClaude(lead) : draftTemplate(lead); }
+    try { d = ANTHROPIC_API_KEY ? await draftWithClaude(lead, ANTHROPIC_API_KEY) : draftTemplate(lead); }
     catch (e) { d = { ...draftTemplate(lead), temat: draftTemplate(lead).temat + ` (LLM błąd: ${(e as Error).message})` }; }
     const { data: ins, error: insErr } = await db.from("outreach").insert({
       partner_lead_id: lead.id, kierunek: "wychodzacy", status: "draft", temat: d.temat, tresc: d.tresc,
