@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useOutreach } from "@/hooks/useReadModels";
 import { useAuth } from "@/hooks/useAuth";
-import { useApproveOutreach, useRunCopywriter, useSendOutreach, useUpdateOutreach } from "@/hooks/useOutreachActions";
+import { useApproveOutreach, useMarkReplied, useRunCopywriter, useSendOutreach, useUpdateOutreach } from "@/hooks/useOutreachActions";
 import type { Outreach as OutreachRow } from "@/integrations/supabase/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ export default function Outreach() {
   const approve = useApproveOutreach();
   const update = useUpdateOutreach();
   const send = useSendOutreach();
+  const reply = useMarkReplied();
 
   const [edit, setEdit] = useState<OutreachRow | null>(null);
   const [temat, setTemat] = useState("");
@@ -52,13 +53,24 @@ export default function Outreach() {
     } catch (e) { toast.error((e as Error).message); }
   };
 
+  const doReply = async (o: OutreachRow) => {
+    try { await reply.mutateAsync({ id: o.id }); toast.success("Oznaczono jako odpowiedź."); }
+    catch (e) { toast.error((e as Error).message); }
+  };
+
+  const statusChip = (s: string) =>
+    s === "bounced" ? "bg-red-100 text-red-800"
+    : s === "replied" ? "bg-green-100 text-green-800"
+    : s === "sent" ? "bg-blue-100 text-blue-800"
+    : "bg-muted";
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Outreach</h1>
           <p className="text-sm text-muted-foreground">
-            Drafty maili (agent-copywriter). W tej fazie BEZ wysyłki — tylko edycja i akceptacja.
+            Drafty maili (agent-copywriter) → akceptacja → wysyłka (Resend) → tracking (otwarcia/kliknięcia, bounce, odpowiedź).
           </p>
         </div>
         {canManage && (
@@ -89,15 +101,15 @@ export default function Outreach() {
                       <div className="font-medium">{o.temat ?? "(bez tematu)"}</div>
                       <div className="mt-1 whitespace-pre-line text-xs text-muted-foreground line-clamp-3">{o.tresc}</div>
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
-                        <span className="rounded-full bg-muted px-2 py-0.5">{o.status}</span>
+                        <span className={`rounded-full px-2 py-0.5 ${statusChip(o.status)}`}>{o.status}</span>
                         <span className="text-muted-foreground">{o.kierunek}</span>
-                        {o.status === "sent" && (
+                        {(o.status === "sent" || o.status === "bounced" || o.status === "replied") && (
                           <span className="text-muted-foreground">
                             {o.sent_at ? `wysłany ${new Date(o.sent_at).toLocaleString("pl-PL")}` : "wysłany"}
                             {` · otwarcia: ${o.open_count ?? 0} · kliknięcia: ${o.click_count ?? 0}`}
                           </span>
                         )}
-                        {o.last_error && <span className="text-red-600" title={o.last_error}>błąd wysyłki</span>}
+                        {o.last_error && <span className="text-red-600" title={o.last_error}>błąd: {o.last_error.slice(0, 60)}</span>}
                       </div>
                     </div>
                     {canManage && o.status === "draft" && (
@@ -111,7 +123,12 @@ export default function Outreach() {
                         Wyślij
                       </Button>
                     )}
-                    {o.status === "sent" && <span className="shrink-0 text-xs text-green-700">wysłany</span>}
+                    {canManage && (o.status === "sent" || o.status === "bounced") && (
+                      <Button size="sm" variant="outline" className="h-7 shrink-0 px-2" disabled={reply.isPending} onClick={() => doReply(o)}>
+                        Oznacz odpowiedź
+                      </Button>
+                    )}
+                    {o.status === "replied" && <span className="shrink-0 text-xs text-green-700">odpowiedział ✓</span>}
                   </div>
                 </li>
               ))}

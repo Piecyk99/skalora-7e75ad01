@@ -58,6 +58,7 @@ Deno.serve(async (req) => {
   const html = `<div>${esc(o.tresc ?? "").replace(/\n/g, "<br>")}${cta}${pixel}</div>`;
 
   // wysyłka
+  let providerId: string | null = null;
   if (RESEND_API_KEY) {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -70,10 +71,12 @@ Deno.serve(async (req) => {
       await db.from("outreach_events").insert({ outreach_id: id, event_type: "error", meta: { status: r.status } });
       return json({ error: `Resend ${r.status}: ${errTxt}` }, 502);
     }
+    try { providerId = (await r.json())?.id ?? null; } catch { /* brak id w body — OK */ }
   }
 
   await db.from("outreach").update({
-    status: "sent", sent_at: new Date().toISOString(), recipient_email: email, last_error: null,
+    status: "sent", sent_at: new Date().toISOString(), recipient_email: email,
+    provider_message_id: providerId, last_error: null,
   }).eq("id", id);
   await db.from("outreach_events").insert({
     outreach_id: id, event_type: "sent", meta: { mode: RESEND_API_KEY ? "resend" : "dry_run", to: email },

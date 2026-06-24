@@ -74,6 +74,7 @@ export interface Outreach {
   open_count?: number;
   click_count?: number;
   last_error?: string | null;
+  provider_message_id?: string | null;
 }
 
 export interface ActivityLog {
@@ -162,6 +163,7 @@ export interface Database {
         Returns: number;
       };
       rpc_lead_consents: { Args: { p_email: string }; Returns: { wdrozenie: boolean; finansowanie: boolean }[] };
+      rpc_mark_outreach_replied: { Args: { p_id: string }; Returns: Outreach };
       rpc_run_agent: { Args: { p_fn: string; p_limit?: number }; Returns: number };
       rpc_agent_runs: {
         Args: Record<string, never>;

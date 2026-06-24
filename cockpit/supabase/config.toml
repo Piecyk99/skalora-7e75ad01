@@ -23,3 +23,8 @@ verify_jwt = false
 
 [functions.track-click]
 verify_jwt = false
+
+# Webhook Resend (bounced/complained/delivered...). verify_jwt=false — uwierzytelnia
+# się podpisem Svix wewnątrz funkcji (sekret RESEND_WEBHOOK_SECRET w Vault).
+[functions.resend-webhook]
+verify_jwt = false

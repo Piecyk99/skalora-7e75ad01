@@ -52,3 +52,12 @@ export function useSendOutreach() {
   });
 }
 
+// Ręczne oznaczenie odpowiedzi (Resend nie dostarcza 'replied' webhookiem). sent/bounced -> replied.
+export function useMarkReplied() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id: string }) => callRpc("rpc_mark_outreach_replied", { p_id: vars.id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["outreach"] }),
+  });
+}
+
