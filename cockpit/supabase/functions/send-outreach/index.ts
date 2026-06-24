@@ -7,10 +7,20 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const RESEND_FROM = Deno.env.get("RESEND_FROM") ?? "DP DYNEX <onboarding@resend.dev>";
-const BOOKING_URL = Deno.env.get("BOOKING_URL");
+const ENV_RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const ENV_RESEND_FROM = Deno.env.get("RESEND_FROM");
+const ENV_BOOKING_URL = Deno.env.get("BOOKING_URL");
 const FN = `${SUPABASE_URL}/functions/v1`;
+
+// Sekrety: najpierw env, w razie braku — Vault przez RPC (service_role). Pozwala
+// skonfigurować wysyłkę bez ustawiania env w panelu.
+async function secret(db: ReturnType<typeof createClient>, name: string, envVal?: string): Promise<string | null> {
+  if (envVal) return envVal;
+  try {
+    const { data } = await db.rpc("get_app_secret", { p_name: name });
+    return (data as string) || null;
+  } catch { return null; }
+}
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -26,6 +36,11 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: cors });
   const db = createClient(SUPABASE_URL, SERVICE_ROLE);
+
+  // konfiguracja Resend z env -> Vault
+  const RESEND_API_KEY = await secret(db, "RESEND_API_KEY", ENV_RESEND_API_KEY);
+  const RESEND_FROM = (await secret(db, "RESEND_FROM", ENV_RESEND_FROM)) ?? "DP DYNEX <onboarding@resend.dev>";
+  const BOOKING_URL = await secret(db, "BOOKING_URL", ENV_BOOKING_URL);
 
   let id = "";
   try { id = (await req.json()).id; } catch { /* */ }
