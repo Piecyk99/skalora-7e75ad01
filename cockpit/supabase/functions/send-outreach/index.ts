@@ -65,24 +65,28 @@ Deno.serve(async (req) => {
     return json({ error: "Brak zgody RODO (wdrozenie_crm) dla tego adresu — nie wysłano." }, 403);
   }
 
-  // treść HTML + pixel + opcjonalne CTA, opakowane w branded szablon Skalora
+  // treść HTML + pixel + opcjonalne CTA — szablon w identyfikacji wizualnej Skalora
+  // (paleta z landing skalora.pl: tło #030305, gradient cyan #00F0FF -> fiolet #8A2BE2).
   const pixel = `<img src="${FN}/track-open?o=${id}" width="1" height="1" alt="" style="display:none">`;
   const bodyHtml = esc(o.tresc ?? "").replace(/\n/g, "<br>");
   const cta = BOOKING_URL
-    ? `<p style="margin:24px 0 0;"><a href="${FN}/track-click?o=${id}&u=${encodeURIComponent(BOOKING_URL)}" `
-      + `style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-weight:600;font-size:14px;">Umów krótką rozmowę</a></p>`
+    ? `<p style="margin:26px 0 4px;"><a href="${FN}/track-click?o=${id}&u=${encodeURIComponent(BOOKING_URL)}" `
+      + `style="display:inline-block;background:#00F0FF;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);color:#030305;text-decoration:none;padding:13px 26px;border-radius:10px;font-weight:700;font-size:14px;">Umów krótką rozmowę</a></p>`
     : "";
-  const html = `<!doctype html><html lang="pl"><body style="margin:0;background:#f4f4f7;padding:24px 0;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">`
+  const html = `<!doctype html><html lang="pl"><body style="margin:0;background:#030305;padding:24px 12px;font-family:'Outfit','Manrope',Arial,Helvetica,sans-serif;color:#ffffff;">`
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">`
-    + `<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e6e6ec;">`
-    + `<tr><td style="background:#0f172a;padding:20px 28px;">`
-    + `<span style="font-size:22px;font-weight:800;letter-spacing:0.5px;color:#ffffff;">Skalora</span>`
-    + `<span style="font-size:12px;color:#94a3b8;display:block;margin-top:2px;">Wdrożenia CRM dla firm</span>`
+    + `<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#0A0A10;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">`
+    + `<tr><td style="height:4px;line-height:4px;font-size:0;background:#00F0FF;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);">&nbsp;</td></tr>`
+    + `<tr><td style="padding:30px 32px 4px;">`
+    + `<div style="font-size:26px;font-weight:800;letter-spacing:3px;color:#ffffff;">SKALORA</div>`
+    + `<div style="font-size:12px;color:#A1A1AA;margin-top:6px;letter-spacing:0.3px;">System pozyskiwania klientów online</div>`
     + `</td></tr>`
-    + `<tr><td style="padding:28px;font-size:15px;line-height:1.6;color:#1a1a1a;">${bodyHtml}${cta}</td></tr>`
-    + `<tr><td style="padding:18px 28px;background:#f8fafc;border-top:1px solid #eef0f4;font-size:12px;color:#8a8f98;line-height:1.5;">`
-    + `Skalora · <a href="mailto:kontakt@skalora.pl" style="color:#4f46e5;text-decoration:none;">kontakt@skalora.pl</a><br>`
-    + `Otrzymujesz tę wiadomość, ponieważ wyraziłeś zgodę na kontakt w sprawie wdrożenia CRM.`
+    + `<tr><td style="padding:18px 32px 4px;font-size:15px;line-height:1.7;color:#E7E7EA;">${bodyHtml}${cta}</td></tr>`
+    + `<tr><td style="padding:0 32px;"><div style="height:1px;background:rgba(255,255,255,0.08);margin:22px 0 0;"></div></td></tr>`
+    + `<tr><td style="padding:18px 32px 30px;font-size:12px;color:#71717A;line-height:1.6;">`
+    + `<div style="color:#A1A1AA;">Łączymy content, landing page, CRM i automatyzację w jeden system, który zamienia uwagę w leady, konsultacje i sprzedaż.</div>`
+    + `<div style="margin-top:12px;">Skalora · <a href="mailto:kontakt@skalora.pl" style="color:#00F0FF;text-decoration:none;">kontakt@skalora.pl</a> · <a href="https://skalora.pl" style="color:#00F0FF;text-decoration:none;">skalora.pl</a></div>`
+    + `<div style="margin-top:6px;color:#52525B;">Otrzymujesz tę wiadomość, ponieważ wyraziłeś zgodę na kontakt w sprawie wdrożenia CRM.</div>`
     + `</td></tr></table></td></tr></table>${pixel}</body></html>`;
 
   // wysyłka
