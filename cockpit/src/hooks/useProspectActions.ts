@@ -37,6 +37,19 @@ export function usePromoteProspect() {
   });
 }
 
+// Usunięcie prospektu (admin / handlowiec). Promowanego nie da się usunąć (blokada w RPC).
+export function useDeleteProspect() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id: string }) => callRpc("rpc_delete_prospect", { p_id: vars.id }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["prospects"] });
+      qc.invalidateQueries({ queryKey: ["outreach"] });
+      qc.invalidateQueries({ queryKey: ["activity_log"] });
+    },
+  });
+}
+
 // Uruchomienie agenta-prospektora (Edge Function). Ocenia prospekty 'nowy'.
 export function useRunProspector() {
   const qc = useQueryClient();
@@ -64,5 +77,44 @@ export function useRunFinder() {
       return data as { engine: string; model: string | null; found: number; inserted: number };
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["prospects"] }),
+  });
+}
+
+// Szukacz OGŁOSZEŃ (Edge Function, web search po publicznych sygnałach popytu).
+// Tworzy prospekty zrodlo='ad_search' i opcjonalnie drafty outreach.
+export function useRunAdFinder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars?: { nisza?: string; limit?: number; create_drafts?: boolean }) => {
+      const { data, error } = await supabase.functions.invoke("ad-finder", {
+        body: { nisza: vars?.nisza, limit: vars?.limit ?? 10, create_drafts: vars?.create_drafts ?? true },
+      });
+      if (error) throw error;
+      return data as { engine: string; found: number; inserted: number; drafted: number };
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["prospects"] });
+      qc.invalidateQueries({ queryKey: ["outreach"] });
+    },
+  });
+}
+
+// „Wklej ogłoszenie" (Edge Function). Z wklejonej treści tworzy prospekt + draft outreach.
+export function useAdIntake() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { text: string; url?: string }) => {
+      const { data, error } = await supabase.functions.invoke("ad-intake", {
+        body: { text: vars.text, url: vars.url },
+      });
+      if (error) throw error;
+      const res = data as { error?: string; prospect?: { firma_nazwa: string }; draft?: { temat: string } };
+      if (res.error) throw new Error(res.error);
+      return res as { prospect: { firma_nazwa: string }; draft: { temat: string } };
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["prospects"] });
+      qc.invalidateQueries({ queryKey: ["outreach"] });
+    },
   });
 }

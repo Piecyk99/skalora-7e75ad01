@@ -149,6 +149,8 @@ export interface Database {
         Returns: Prospect;
       };
       rpc_promote_prospect: { Args: { p_id: string }; Returns: PartnerLead };
+      rpc_delete_prospect: { Args: { p_id: string }; Returns: string };
+      rpc_delete_partner_lead: { Args: { p_id: string }; Returns: string };
       rpc_update_outreach: { Args: { p_id: string; p_temat: string; p_tresc: string }; Returns: Outreach };
       rpc_approve_outreach: { Args: { p_id: string }; Returns: Outreach };
       rpc_list_staff: {

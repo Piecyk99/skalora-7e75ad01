@@ -94,6 +94,21 @@ export function useCreatePartnerLead() {
   });
 }
 
+// Usunięcie firmy z pipeline (admin / handlowiec-właściciel). Cofa promocję źródłowego
+// prospektu (wraca na listę jako 'zakwalifikowany'). Egzekucja uprawnień w RPC.
+export function useDeletePartnerLead() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { id: string }) => callRpc("rpc_delete_partner_lead", { p_id: vars.id }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      qc.invalidateQueries({ queryKey: ["prospects"] });
+      qc.invalidateQueries({ queryKey: ["outreach"] });
+      qc.invalidateQueries({ queryKey: ["activity_log"] });
+    },
+  });
+}
+
 // Edycja dozwolonych pól leada. Status NIE jest tu zmieniany (brak grantu kolumnowego
 // + SSOT przez RPC). assigned_to też pomijamy (reassign = osobna ścieżka admina).
 // RLS: admin dowolny, handlowiec tylko swój.

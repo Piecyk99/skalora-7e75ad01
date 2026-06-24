@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { usePartnerLeads, usePartnerLifecycle } from "@/hooks/usePartnerLeads";
+import { usePartnerLeads, usePartnerLifecycle, useDeletePartnerLead } from "@/hooks/usePartnerLeads";
 import { useAuth } from "@/hooks/useAuth";
 import { AddCompanyDialog } from "@/components/AddCompanyDialog";
 import { EditCompanyDialog } from "@/components/EditCompanyDialog";
 import { LeadDetailDialog } from "@/components/LeadDetailDialog";
+import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,17 +19,33 @@ import type { PartnerLead, PartnerStatus } from "@/integrations/supabase/types";
 export default function Pipeline() {
   const leads = usePartnerLeads();
   const lifecycle = usePartnerLifecycle();
-  const { hasPermission } = useAuth();
+  const del = useDeletePartnerLead();
+  const { hasPermission, hasRole, user } = useAuth();
   const canTransition = hasPermission("partner_leads.transition");
   const canEdit = hasPermission("partner_leads.edit");
+  // Usuwa: admin (dowolną) lub handlowiec (tylko swoją). Egzekucja również w RPC.
+  const canDelete = (lead: PartnerLead) =>
+    hasRole("admin") || (hasRole("handlowiec_pozysk") && lead.assigned_to === user?.id);
 
   const [detail, setDetail] = useState<PartnerLead | null>(null);
   const [edit, setEdit] = useState<PartnerLead | null>(null);
+  const [delTarget, setDelTarget] = useState<PartnerLead | null>(null);
 
   const move = async (lead: PartnerLead, to: PartnerStatus) => {
     try {
       await lifecycle.mutateAsync({ leadId: lead.id, newStatus: to });
       toast.success(`„${lead.firma_nazwa}” → ${PARTNER_STATUS_LABEL[to]}`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!delTarget) return;
+    try {
+      await del.mutateAsync({ id: delTarget.id });
+      toast.success(`Usunięto „${delTarget.firma_nazwa}".`);
+      setDelTarget(null);
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -91,6 +108,13 @@ export default function Pipeline() {
                               Edytuj
                             </Button>
                           )}
+                          {canDelete(lead) && (
+                            <Button size="sm" variant="ghost"
+                              className="h-7 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setDelTarget(lead)}>
+                              Usuń
+                            </Button>
+                          )}
                         </div>
                         {canTransition && next.length > 0 && (
                           <div className="mt-1 flex flex-wrap gap-1">
@@ -124,6 +148,14 @@ export default function Pipeline() {
       {edit && (
         <EditCompanyDialog lead={edit} open={!!edit} onOpenChange={(v) => !v && setEdit(null)} />
       )}
+
+      <ConfirmDeleteDialog
+        open={!!delTarget}
+        onOpenChange={(v) => !v && setDelTarget(null)}
+        description={`Usunięcie firmy „${delTarget?.firma_nazwa ?? ""}" z pipeline jest nieodwracalne. Powiązane drafty zostaną usunięte, a źródłowy prospekt wróci na listę.`}
+        pending={del.isPending}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

@@ -13,6 +13,15 @@ verify_jwt = true
 [functions.lead-finder]
 verify_jwt = true
 
+# Agent-szukacz OGŁOSZEŃ: web search po sygnałach popytu -> prospects (zrodlo='ad_search').
+# verify_jwt=true (staff/cron w funkcji). Tylko publiczne źródła.
+[functions.ad-finder]
+verify_jwt = true
+
+# „Wklej ogłoszenie": ekstrakcja + draft z wklejonej treści -> prospect + outreach. verify_jwt=true.
+[functions.ad-intake]
+verify_jwt = true
+
 # Agent-copywriter (Faza 3b). verify_jwt=true. Generuje drafty, NIE wysyła.
 [functions.copywriter]
 verify_jwt = true

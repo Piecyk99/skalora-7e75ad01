@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { useProspects } from "@/hooks/useReadModels";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useAddProspect,
+  useAdIntake,
+  useDeleteProspect,
   usePromoteProspect,
+  useRunAdFinder,
   useRunFinder,
   useRunProspector,
   useSetProspectStatus,
@@ -14,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -31,14 +37,24 @@ export default function Prospects() {
   const prospects = useProspects();
   const { hasPermission } = useAuth();
   const canManage = hasPermission("partner_leads.create"); // admin + handlowiec
+  const canDelete = hasPermission("prospects.delete");      // admin + handlowiec
   const add = useAddProspect();
   const setStatus = useSetProspectStatus();
   const promote = usePromoteProspect();
+  const del = useDeleteProspect();
   const run = useRunProspector();
   const find = useRunFinder();
+  const adFind = useRunAdFinder();
+  const adIntake = useAdIntake();
 
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ firma_nazwa: "", nip: "", zatrudnienie: "", branza: "" });
+
+  const [delTarget, setDelTarget] = useState<{ id: string; firma: string } | null>(null);
+
+  const [intakeOpen, setIntakeOpen] = useState(false);
+  const [intakeText, setIntakeText] = useState("");
+  const [intakeUrl, setIntakeUrl] = useState("");
 
   const submitAdd = async () => {
     if (!f.firma_nazwa.trim()) return toast.error("Nazwa firmy wymagana.");
@@ -75,12 +91,37 @@ export default function Prospects() {
     } catch (e) { toast.error((e as Error).message); }
   };
 
+  const runAdFinder = async () => {
+    try {
+      const r = await adFind.mutateAsync({ limit: 10, create_drafts: true });
+      toast.success(`Ogłoszenia: znaleziono ${r.found}, dodano ${r.inserted} prospektów, ${r.drafted} draftów.`);
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
+  const submitIntake = async () => {
+    if (intakeText.trim().length < 20) return toast.error("Wklej treść ogłoszenia (min. 20 znaków).");
+    try {
+      const r = await adIntake.mutateAsync({ text: intakeText.trim(), url: intakeUrl.trim() || undefined });
+      toast.success(`Dodano prospekt „${r.prospect.firma_nazwa}" + draft: ${r.draft.temat}`);
+      setIntakeText(""); setIntakeUrl(""); setIntakeOpen(false);
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
+  const confirmDelete = async () => {
+    if (!delTarget) return;
+    try {
+      await del.mutateAsync({ id: delTarget.id });
+      toast.success("Prospekt usunięty.");
+      setDelTarget(null);
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
   // Akcje na prospekcie — wspólne dla tabeli (desktop) i kart (telefon).
-  const Actions = ({ id, status, full }: { id: string; status: string; full?: boolean }) => {
+  const Actions = ({ id, status, firma, full }: { id: string; status: string; firma: string; full?: boolean }) => {
     if (status === "promowany") return <span className="text-xs text-muted-foreground">w pipeline</span>;
-    const btn = full ? "h-9 flex-1" : "h-7 px-2";
+    const btn = full ? "h-9 w-full" : "h-7 px-2";
     return (
-      <div className={full ? "flex gap-2" : "flex justify-end gap-1"}>
+      <div className={full ? "grid grid-cols-2 gap-2" : "flex justify-end gap-1"}>
         <Button size="sm" variant="ghost" className={btn}
           onClick={() => act(setStatus.mutateAsync({ id, status: "zakwalifikowany" }), "Zakwalifikowano")}>
           Kwalifikuj
@@ -93,13 +134,20 @@ export default function Prospects() {
           onClick={() => act(promote.mutateAsync({ id }), "Promowano do pipeline'u")}>
           Promuj
         </Button>
+        {canDelete && (
+          <Button size="sm" variant="ghost"
+            className={cn(btn, "text-destructive hover:bg-destructive/10 hover:text-destructive")}
+            onClick={() => setDelTarget({ id, firma })}>
+            Usuń
+          </Button>
+        )}
       </div>
     );
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Prospects</h1>
           <p className="text-sm text-muted-foreground">
@@ -107,9 +155,15 @@ export default function Prospects() {
           </p>
         </div>
         {canManage && (
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
             <Button className="w-full sm:w-auto" disabled={find.isPending} onClick={runFinder}>
               {find.isPending ? "Szukam…" : "Szukaj firm (AI)"}
+            </Button>
+            <Button className="w-full sm:w-auto" disabled={adFind.isPending} onClick={runAdFinder}>
+              {adFind.isPending ? "Szukam…" : "Szukaj ogłoszeń (AI)"}
+            </Button>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setIntakeOpen(true)}>
+              Wklej ogłoszenie
             </Button>
             <Button variant="outline" className="w-full sm:w-auto" disabled={run.isPending} onClick={runAgent}>
               {run.isPending ? "Ocenianie…" : "Uruchom prospektora"}
@@ -157,13 +211,16 @@ export default function Prospects() {
               {/* Karty — telefon */}
               <div className="space-y-3 md:hidden">
                 {prospects.data!.map((p) => {
-                  const rationale = (p.raw_data as Record<string, unknown>)?.icp_rationale as string | undefined;
+                  const rd = (p.raw_data as Record<string, unknown>) ?? {};
+                  const rationale = (rd.icp_rationale as string) ?? (rd.finder_rationale as string) ?? undefined;
+                  const postUrl = rd.post_url as string | undefined;
                   return (
                     <div key={p.id} className="rounded-lg border bg-card p-4 shadow-sm">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="font-medium">{p.firma_nazwa}</div>
                           {p.nip && <div className="text-xs text-muted-foreground">NIP {p.nip}</div>}
+                          {p.zrodlo && <div className="text-xs text-muted-foreground">źródło: {p.zrodlo}</div>}
                         </div>
                         <Badge variant={statusVariant(p.status)} className="shrink-0">{p.status}</Badge>
                       </div>
@@ -174,9 +231,13 @@ export default function Prospects() {
                       {rationale && (
                         <p className="mt-2 text-xs text-muted-foreground line-clamp-3">{rationale}</p>
                       )}
+                      {postUrl && (
+                        <a href={postUrl} target="_blank" rel="noreferrer"
+                          className="mt-1 block truncate text-xs text-primary underline">{postUrl}</a>
+                      )}
                       {canManage && (
                         <div className="mt-3">
-                          <Actions id={p.id} status={p.status} full />
+                          <Actions id={p.id} status={p.status} firma={p.firma_nazwa} full />
                         </div>
                       )}
                     </div>
@@ -190,6 +251,7 @@ export default function Prospects() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Firma</TableHead>
+                      <TableHead>Źródło</TableHead>
                       <TableHead>ICP</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Uzasadnienie</TableHead>
@@ -198,16 +260,18 @@ export default function Prospects() {
                   </TableHeader>
                   <TableBody>
                     {prospects.data!.map((p) => {
-                      const rationale = (p.raw_data as Record<string, unknown>)?.icp_rationale as string | undefined;
+                      const rd = (p.raw_data as Record<string, unknown>) ?? {};
+                      const rationale = (rd.icp_rationale as string) ?? (rd.finder_rationale as string) ?? undefined;
                       return (
                         <TableRow key={p.id}>
                           <TableCell className="font-medium">{p.firma_nazwa}{p.nip ? ` · ${p.nip}` : ""}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">{p.zrodlo ?? "—"}</TableCell>
                           <TableCell>{p.icp_score ?? "—"}</TableCell>
                           <TableCell><Badge variant={statusVariant(p.status)}>{p.status}</Badge></TableCell>
                           <TableCell className="max-w-xs truncate text-xs text-muted-foreground" title={rationale}>{rationale ?? "—"}</TableCell>
                           {canManage && (
                             <TableCell className="text-right">
-                              <Actions id={p.id} status={p.status} />
+                              <Actions id={p.id} status={p.status} firma={p.firma_nazwa} />
                             </TableCell>
                           )}
                         </TableRow>
@@ -220,6 +284,51 @@ export default function Prospects() {
           )}
         </CardContent>
       </Card>
+
+      {/* Wklej ogłoszenie -> AI draft */}
+      <Dialog open={intakeOpen} onOpenChange={setIntakeOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Wklej ogłoszenie</DialogTitle>
+            <DialogDescription>
+              Wklej treść posta/ogłoszenia (np. z grupy FB, OLX, forum). AI rozpozna ogłoszeniodawcę
+              i utworzy prospekt + gotowy draft maila.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label>Treść ogłoszenia *</Label>
+              <Textarea
+                className="min-h-[160px]"
+                placeholder="Wklej tutaj treść posta/ogłoszenia…"
+                value={intakeText}
+                onChange={(e) => setIntakeText(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label>Link do źródła (opcjonalnie)</Label>
+              <Input
+                placeholder="https://…"
+                value={intakeUrl}
+                onChange={(e) => setIntakeUrl(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button className="w-full sm:w-auto" disabled={adIntake.isPending} onClick={submitIntake}>
+              {adIntake.isPending ? "Przetwarzanie…" : "Utwórz prospekt + draft"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDeleteDialog
+        open={!!delTarget}
+        onOpenChange={(v) => !v && setDelTarget(null)}
+        description={`Usunięcie prospektu „${delTarget?.firma ?? ""}" jest nieodwracalne. Powiązane drafty zostaną usunięte.`}
+        pending={del.isPending}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }
