@@ -2,9 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Motyw Skalora — dark, zaciągnięty z landingu skalora.pl (zmienne --skalora-*). */
+/* Motyw Skalora. :root = jasny (domyślny), .dark = ciemny (z landingu skalora.pl). */
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 240 18% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 18% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 18% 12%;
+
+    --primary: 187 92% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 18% 12%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 44%;
+
+    --accent: 240 5% 93%;
+    --accent-foreground: 240 18% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 88%;
+    --input: 240 6% 88%;
+    --ring: 187 92% 40%;
+
+    --radius: 0.75rem;
+
+    /* surowe kolory marki (gradient cyan -> niebieski -> fiolet) */
+    --skalora-bg: #030305;
+    --skalora-surface: #0a0a10;
+    --skalora-cyan: #00f0ff;
+    --skalora-blue: #6b8aff;
+    --skalora-purple: #8a2be2;
+  }
+
+  .dark {
     --background: 240 20% 1%;
     --foreground: 0 0% 98%;
 
@@ -32,15 +71,6 @@
     --border: 240 5% 12%;
     --input: 240 5% 14%;
     --ring: 186 100% 50%;
-
-    --radius: 0.75rem;
-
-    /* surowe kolory marki (do gradientów/akcentów) */
-    --skalora-bg: #030305;
-    --skalora-surface: #0a0a10;
-    --skalora-cyan: #00f0ff;
-    --skalora-blue: #6b8aff;
-    --skalora-purple: #8a2be2;
   }
 }
 
@@ -54,14 +84,17 @@
 }
 
 @layer utilities {
-  /* gradient marki: cyan -> niebieski -> fiolet */
   .bg-gradient-skalora {
     background-image: linear-gradient(90deg, #00f0ff 0%, #6b8aff 50%, #8a2be2 100%);
   }
+  /* tekst-logo: w jasnym trybie ciemniejszy cyan (czytelny na bieli) */
   .text-gradient-skalora {
-    background-image: linear-gradient(90deg, #00f0ff 0%, #6b8aff 50%, #8a2be2 100%);
+    background-image: linear-gradient(90deg, #0891b2 0%, #4f63d2 50%, #8a2be2 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .dark .text-gradient-skalora {
+    background-image: linear-gradient(90deg, #00f0ff 0%, #6b8aff 50%, #8a2be2 100%);
   }
 }

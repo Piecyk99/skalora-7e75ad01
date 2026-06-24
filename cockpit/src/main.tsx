@@ -5,7 +5,11 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
 import App from "./App";
+import { applyTheme, getStoredTheme } from "@/hooks/useTheme";
 import "./index.css";
+
+// Ustaw motyw przed renderem (bez mignięcia). Domyślnie jasny.
+applyTheme(getStoredTheme());
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },

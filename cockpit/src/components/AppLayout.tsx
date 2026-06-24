@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, KanbanSquare, Radar, Mail, ShieldCheck, LogOut } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Radar, Mail, ShieldCheck, LogOut, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ const NAV = [
 
 export function AppLayout() {
   const { user, roles, hasPermission, signOut } = useAuth();
+  const { theme, toggle } = useTheme();
   const navigate = useNavigate();
 
   return (
@@ -49,17 +51,28 @@ export function AppLayout() {
         <div className="border-t p-3 text-xs">
           <div className="truncate font-medium">{user?.email}</div>
           <div className="mb-2 text-muted-foreground">{roles.join(", ") || "brak roli"}</div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={async () => {
-              await signOut();
-              navigate("/login");
-            }}
-          >
-            <LogOut className="mr-2 h-4 w-4" /> Wyloguj
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={async () => {
+                await signOut();
+                navigate("/login");
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" /> Wyloguj
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0 px-2"
+              title={theme === "dark" ? "Tryb jasny" : "Tryb ciemny"}
+              onClick={toggle}
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
       </aside>
       <main className="flex-1 overflow-auto p-6">
