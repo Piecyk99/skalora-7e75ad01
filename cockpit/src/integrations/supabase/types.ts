@@ -33,6 +33,7 @@ export interface PartnerLead {
   osoba_kontakt: string | null;
   email: string | null;
   telefon: string | null;
+  www: string | null;
   status: PartnerStatus;
   assigned_to: string | null;
   next_action_date: string | null;

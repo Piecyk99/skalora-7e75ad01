@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
+import { useEnrichContact } from "@/hooks/useEnrich";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -46,6 +47,7 @@ export default function Prospects() {
   const find = useRunFinder();
   const adFind = useRunAdFinder();
   const adIntake = useAdIntake();
+  const enrich = useEnrichContact();
 
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ firma_nazwa: "", nip: "", zatrudnienie: "", branza: "" });
@@ -95,6 +97,13 @@ export default function Prospects() {
     try {
       const r = await adFind.mutateAsync({ limit: 10, create_drafts: true });
       toast.success(`Ogłoszenia: znaleziono ${r.found}, dodano ${r.inserted} prospektów, ${r.drafted} draftów.`);
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
+  const bulkEnrich = async () => {
+    try {
+      const r = await enrich.mutateAsync({ target: "prospect", limit: 8 });
+      toast.success(`Kontakty: sprawdzono ${r.processed} prospektów, uzupełniono ${r.updated}.`);
     } catch (e) { toast.error((e as Error).message); }
   };
 
@@ -165,6 +174,9 @@ export default function Prospects() {
             <Button variant="outline" className="w-full sm:w-auto" onClick={() => setIntakeOpen(true)}>
               Wklej ogłoszenie
             </Button>
+            <Button variant="outline" className="w-full sm:w-auto" disabled={enrich.isPending} onClick={bulkEnrich}>
+              {enrich.isPending ? "Szukam kontaktów…" : "Uzupełnij kontakty (AI)"}
+            </Button>
             <Button variant="outline" className="w-full sm:w-auto" disabled={run.isPending} onClick={runAgent}>
               {run.isPending ? "Ocenianie…" : "Uruchom prospektora"}
             </Button>
@@ -214,6 +226,9 @@ export default function Prospects() {
                   const rd = (p.raw_data as Record<string, unknown>) ?? {};
                   const rationale = (rd.icp_rationale as string) ?? (rd.finder_rationale as string) ?? undefined;
                   const postUrl = rd.post_url as string | undefined;
+                  const email = rd.email as string | undefined;
+                  const telefon = rd.telefon as string | undefined;
+                  const www = rd.www as string | undefined;
                   return (
                     <div key={p.id} className="rounded-lg border bg-card p-4 shadow-sm">
                       <div className="flex items-start justify-between gap-3">
@@ -228,6 +243,13 @@ export default function Prospects() {
                         <span className="text-muted-foreground">ICP</span>
                         <span className="font-semibold">{p.icp_score ?? "—"}</span>
                       </div>
+                      {(email || telefon || www) && (
+                        <div className="mt-2 space-y-0.5 text-xs">
+                          {email && <div><span className="text-muted-foreground">e-mail: </span>{email}</div>}
+                          {telefon && <div><span className="text-muted-foreground">tel: </span>{telefon}</div>}
+                          {www && <div className="truncate"><span className="text-muted-foreground">www: </span>{www}</div>}
+                        </div>
+                      )}
                       {rationale && (
                         <p className="mt-2 text-xs text-muted-foreground line-clamp-3">{rationale}</p>
                       )}
