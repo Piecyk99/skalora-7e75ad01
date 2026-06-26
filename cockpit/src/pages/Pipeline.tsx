@@ -7,6 +7,7 @@ import { EditCompanyDialog } from "@/components/EditCompanyDialog";
 import { LeadDetailDialog } from "@/components/LeadDetailDialog";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { StatusBadge } from "@/components/StatusBadge";
+import { useEnrichContact } from "@/hooks/useEnrich";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,7 @@ export default function Pipeline() {
   const leads = usePartnerLeads();
   const lifecycle = usePartnerLifecycle();
   const del = useDeletePartnerLead();
+  const enrich = useEnrichContact();
   const { hasPermission, hasRole, user } = useAuth();
   const canTransition = hasPermission("partner_leads.transition");
   const canEdit = hasPermission("partner_leads.edit");
@@ -51,18 +53,34 @@ export default function Pipeline() {
     }
   };
 
+  const bulkEnrich = async () => {
+    try {
+      const r = await enrich.mutateAsync({ target: "lead", limit: 8 });
+      toast.success(`Kontakty: sprawdzono ${r.processed} firm, uzupełniono ${r.updated}.`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
   const byStatus = (s: PartnerStatus) => (leads.data ?? []).filter((l) => l.status === s);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Pipeline pozysku</h1>
           <p className="text-sm text-muted-foreground">
             Zmiana statusu przechodzi wyłącznie przez rpc_partner_lifecycle (SSOT).
           </p>
         </div>
-        {hasPermission("partner_leads.create") && <AddCompanyDialog />}
+        {hasPermission("partner_leads.create") && (
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
+            <Button variant="outline" className="w-full sm:w-auto" disabled={enrich.isPending} onClick={bulkEnrich}>
+              {enrich.isPending ? "Szukam kontaktów…" : "Uzupełnij kontakty (AI)"}
+            </Button>
+            <AddCompanyDialog />
+          </div>
+        )}
       </div>
 
       {leads.isLoading ? (

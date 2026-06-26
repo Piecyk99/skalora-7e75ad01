@@ -22,6 +22,10 @@ verify_jwt = true
 [functions.ad-intake]
 verify_jwt = true
 
+# Enrichment kontaktów: web search po e-mail/telefon/www firmy -> uzupełnienie pól. verify_jwt=true.
+[functions.enrich-contact]
+verify_jwt = true
+
 # Agent-copywriter (Faza 3b). verify_jwt=true. Generuje drafty, NIE wysyła.
 [functions.copywriter]
 verify_jwt = true

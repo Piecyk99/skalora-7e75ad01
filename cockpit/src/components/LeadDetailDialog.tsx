@@ -7,6 +7,7 @@ import {
   useRecordConsent,
   useStaff,
 } from "@/hooks/useAdmin";
+import { useEnrichContact } from "@/hooks/useEnrich";
 import type { PartnerLead } from "@/integrations/supabase/types";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,17 @@ export function LeadDetailDialog({
   const consents = useLeadConsents(open && canManageConsent ? lead.email : undefined);
   const reassign = useReassignLead();
   const recordConsent = useRecordConsent();
+  const enrich = useEnrichContact();
+
+  const doEnrich = async () => {
+    try {
+      const r = await enrich.mutateAsync({ target: "lead", id: lead.id });
+      const f = r.results?.[0];
+      const found = f ? [f.email, f.telefon, f.www].filter(Boolean).join(" · ") : "";
+      if (r.updated && found) toast.success(`Uzupełniono: ${found}. Otwórz firmę ponownie, by zobaczyć.`);
+      else toast.info("Nie znaleziono nowych publicznych danych kontaktowych.");
+    } catch (e) { toast.error((e as Error).message); }
+  };
 
   const row = (label: string, value: React.ReactNode) =>
     value ? (
@@ -84,11 +96,21 @@ export function LeadDetailDialog({
           {row("Osoba", lead.osoba_kontakt)}
           {row("E-mail", lead.email)}
           {row("Telefon", lead.telefon)}
+          {row("WWW", lead.www && (
+            <a href={lead.www.startsWith("http") ? lead.www : `https://${lead.www}`}
+              target="_blank" rel="noreferrer" className="text-primary underline">{lead.www}</a>
+          ))}
           {row("Następna akcja", lead.next_action_date && `${lead.next_action_type || "akcja"} · ${lead.next_action_date}`)}
           {row("Kontrakt", lead.kontrakt_wartosc != null && `${lead.kontrakt_wartosc.toLocaleString("pl-PL")} zł`)}
           {row("Prowizja", lead.prowizja_pct != null && `${lead.prowizja_pct}%`)}
           {row("Źródło", lead.source)}
         </div>
+
+        {canManageConsent && (
+          <Button variant="outline" size="sm" className="w-full" disabled={enrich.isPending} onClick={doEnrich}>
+            {enrich.isPending ? "Szukam kontaktu…" : "Znajdź kontakt (AI)"}
+          </Button>
+        )}
 
         {isAdmin && (
           <div className="space-y-1">
