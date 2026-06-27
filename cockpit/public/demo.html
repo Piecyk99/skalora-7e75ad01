@@ -355,7 +355,7 @@ var camps=[
 function el(id){return document.getElementById(id)}
 function money(v){return v.toLocaleString("pl-PL")+" zł"}
 function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
-function kpi(label,val,cls){return '<div class="kpi '+cls+'"><div class="kh"><span class="kl">'+label+'</span></div><div class="kv">'+val+'</div></div>';}
+function kpi(label,val,cls,icon){return '<div class="kpi '+cls+'"><div class="kh">'+(icon?svg(icon):'')+'<span class="kl">'+label+'</span></div><div class="kv">'+val+'</div></div>';}
 function badge(st,lab){return '<span class="st '+st+'">'+lab+'</span>';}
 function rowKV(k,v){return '<div class="row"><span class="muted">'+k+'</span><b>'+v+'</b></div>';}
 
@@ -370,8 +370,15 @@ function viewDashboard(){
     h+='<tr class="click'+(inact?" inactive":"")+'" onclick="openMember('+i+')"><td class="l"><span class="uname">'+t.name+'</span></td><td class="l role">'+t.role+'</td><td>'+t.zad+'</td><td>'+t.sp+'</td><td>'+t.prob+'</td><td>'+t.not+'</td><td>'+t.stat+'</td><td>'+t.of+'</td><td><span class="score">'+t.score+'</span></td><td>'+bd+'</td></tr>';}
   h+='</tbody></table></div>';
   h+='<div class="sec">'+svg('<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>')+'Lejek sprzedaży — aktualny stan</div><div class="grid g4">';
-  h+=kpi("Nieprzypisane","1","red")+kpi("Bez next stepu","65","amber")+kpi("Po terminie","107","red")+kpi("Blisko sprzedaży","1","green");
-  h+=kpi("Po terminie (zadania)","94","red")+kpi("Dziś","7","blue")+kpi("W ryzyku","7","amber")+kpi("Zadania aktywne","207","neutral")+'</div>';
+  h+=kpi("Nowe leady","28","green",'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/>');
+  h+=kpi("Następny krok zaplanowany","156","green",'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="m9 16 2 2 4-4"/>');
+  h+=kpi("Analiza działki","12","blue",'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>');
+  h+=kpi("Oferty wysłane","19","violet",'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>');
+  h+=kpi("Blisko sprzedaży","9","green",'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>');
+  h+=kpi("Wygrane (mies.)","14","green",'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>');
+  h+=kpi("Do newslettera","41","blue",'<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 5L2 7"/>');
+  h+=kpi("Zadania na dziś","7","blue",'<path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>');
+  h+='</div>';
   return h;
 }
 /* ---------- LEADY / PIPELINE ---------- */
