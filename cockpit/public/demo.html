@@ -127,6 +127,14 @@
   .scrim.show{display:block}
   .drawer{position:fixed;top:0;right:0;height:100vh;width:470px;max-width:94vw;background:var(--card);border-left:1px solid var(--line);z-index:50;transform:translateX(100%);transition:.22s;overflow:auto}
   .drawer.show{transform:none}
+  .sidemenu{position:fixed;top:0;left:-300px;width:264px;height:100vh;background:var(--card);border-right:1px solid var(--line);z-index:60;transition:.22s;padding:16px 12px;overflow:auto}
+  .sidemenu.show{left:0}
+  .sidemenu .smhead{display:flex;align-items:center;gap:10px;padding:6px 8px 16px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  #smnav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;color:var(--mut);padding:11px 12px;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:600}
+  #smnav button svg{width:18px;height:18px}
+  #smnav button:hover{background:var(--muted);color:var(--txt)}
+  #smnav button.on{background:rgba(16,185,129,.12);color:#d6f7ea}
+  #smnav button.on svg{color:var(--green)}
   .dh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
   .dh b{font-family:'Space Grotesk';font-size:16px}
   .db{padding:18px 20px}
@@ -145,7 +153,7 @@
 </head>
 <body>
 <div class="topbar">
-  <button class="menu">☰</button>
+  <button class="menu" id="burger">☰</button>
   <div class="brand"><div class="blogo">S</div><div><b>Skalora</b><small>CRM · ERP</small></div></div>
   <div class="badges">
     <span class="bdg red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>163 <span>Zadania</span></span>
@@ -184,6 +192,7 @@
 </div>
 
 <div class="scrim" id="scrim"></div>
+<aside class="sidemenu" id="sidemenu"><div class="smhead"><div class="blogo">S</div><div><b style="font-family:Space Grotesk">Skalora</b><div style="font-size:9px;color:var(--mut);letter-spacing:.2em">CRM · ERP</div></div></div><div id="smnav"></div></aside>
 <aside class="drawer" id="drawer"><div class="dh"><b id="dTitle">Szczegóły</b><button class="x" id="dClose">✕</button></div><div class="db" id="dBody"></div></aside>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 
@@ -203,6 +212,17 @@ var ICON={
   folder:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>'
 };
 function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ICON[n]||'')+'</svg>';}
+// ilustracja domu (podgląd oferty)
+function houseSVG(){return '<svg viewBox="0 0 240 140" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">'+
+ '<circle cx="198" cy="34" r="11" fill="rgba(245,158,11,.22)" stroke="#fbbf24" stroke-width="1.5"/>'+
+ '<line x1="22" y1="116" x2="218" y2="116" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>'+
+ '<polygon points="58,64 120,28 182,64" fill="rgba(16,185,129,.20)" stroke="#7fe3bf" stroke-width="2" stroke-linejoin="round"/>'+
+ '<rect x="72" y="64" width="96" height="52" fill="rgba(255,255,255,.07)" stroke="#7fe3bf" stroke-width="2"/>'+
+ '<rect x="112" y="88" width="17" height="28" fill="rgba(255,255,255,.10)" stroke="#7fe3bf" stroke-width="1.5"/>'+
+ '<rect x="83" y="74" width="17" height="15" fill="rgba(34,211,238,.18)" stroke="#7fe3bf" stroke-width="1.3"/>'+
+ '<rect x="140" y="74" width="17" height="15" fill="rgba(34,211,238,.18)" stroke="#7fe3bf" stroke-width="1.3"/>'+
+ '<rect x="176" y="92" width="26" height="24" fill="rgba(16,185,129,.10)" stroke="#7fe3bf" stroke-width="1.3"/>'+
+ '</svg>';}
 
 var team=[
   {name:"Handlowiec A.",role:"HANDLOWIEC",zad:14,sp:1,prob:197,not:22,stat:31,of:5,score:81,st:"act",zalN:0,przydz:24,zal:0,tel:197,skut:168,dalsze:81},
@@ -216,22 +236,22 @@ var team=[
 ];
 var STAGES=["Nowy","Kontakt","Oferta","Negocjacje","Wygrane"];
 var leads=[
-  {id:1,n:"Klient #1041",s:0,city:"Kraków",val:420000,model:"Verona 120"},
-  {id:2,n:"Klient #1042",s:0,city:"Wrocław",val:510000,model:"Wenecja 145"},
-  {id:3,n:"Klient #1039",s:1,city:"Poznań",val:389000,model:"Mediolan 96"},
-  {id:4,n:"Klient #1036",s:1,city:"Gdańsk",val:435000,model:"Verona 120"},
-  {id:5,n:"Klient #1028",s:2,city:"Łódź",val:560000,model:"Wenecja 145"},
-  {id:6,n:"Klient #1031",s:2,city:"Katowice",val:402000,model:"Mediolan 96"},
-  {id:7,n:"Klient #1019",s:3,city:"Lublin",val:447000,model:"Verona 120"},
-  {id:8,n:"Klient #1007",s:4,city:"Rzeszów",val:528000,model:"Wenecja 145"}
+  {id:1,n:"Klient #1041",s:0,city:"Kraków",val:420000,model:"Aurora 120"},
+  {id:2,n:"Klient #1042",s:0,city:"Wrocław",val:510000,model:"Solaris 145"},
+  {id:3,n:"Klient #1039",s:1,city:"Poznań",val:389000,model:"Nordica 96"},
+  {id:4,n:"Klient #1036",s:1,city:"Gdańsk",val:435000,model:"Aurora 120"},
+  {id:5,n:"Klient #1028",s:2,city:"Łódź",val:560000,model:"Solaris 145"},
+  {id:6,n:"Klient #1031",s:2,city:"Katowice",val:402000,model:"Nordica 96"},
+  {id:7,n:"Klient #1019",s:3,city:"Lublin",val:447000,model:"Aurora 120"},
+  {id:8,n:"Klient #1007",s:4,city:"Rzeszów",val:528000,model:"Solaris 145"}
 ];
 var klienci=[
-  {n:"Klient #1007",city:"Rzeszów",model:"Wenecja 145",etap:"Realizacja",val:528000,st:"act",lab:"Aktywny"},
-  {n:"Klient #1019",city:"Lublin",model:"Verona 120",etap:"Negocjacje",val:447000,st:"blue",lab:"Negocjacje"},
-  {n:"Klient #1028",city:"Łódź",model:"Wenecja 145",etap:"Oferta",val:560000,st:"blue",lab:"Oferta"},
-  {n:"Klient #1031",city:"Katowice",model:"Mediolan 96",etap:"Oferta",val:402000,st:"blue",lab:"Oferta"},
-  {n:"Klient #0996",city:"Warszawa",model:"Verona 120",etap:"Realizacja",val:430000,st:"act",lab:"Aktywny"},
-  {n:"Klient #0984",city:"Szczecin",model:"Mediolan 96",etap:"Odebrane",val:395000,st:"no",lab:"Zakończony"}
+  {n:"Klient #1007",city:"Rzeszów",model:"Solaris 145",etap:"Realizacja",val:528000,st:"act",lab:"Aktywny"},
+  {n:"Klient #1019",city:"Lublin",model:"Aurora 120",etap:"Negocjacje",val:447000,st:"blue",lab:"Negocjacje"},
+  {n:"Klient #1028",city:"Łódź",model:"Solaris 145",etap:"Oferta",val:560000,st:"blue",lab:"Oferta"},
+  {n:"Klient #1031",city:"Katowice",model:"Nordica 96",etap:"Oferta",val:402000,st:"blue",lab:"Oferta"},
+  {n:"Klient #0996",city:"Warszawa",model:"Aurora 120",etap:"Realizacja",val:430000,st:"act",lab:"Aktywny"},
+  {n:"Klient #0984",city:"Szczecin",model:"Nordica 96",etap:"Odebrane",val:395000,st:"no",lab:"Zakończony"}
 ];
 var rStages=[
   {t:"Umowa podpisana",d:"Podpis 12.03 · zaliczka rozliczona",p:100,e:"Biuro"},
@@ -243,9 +263,9 @@ var rStages=[
   {t:"Odbiór końcowy",d:"Oczekuje",p:0,e:"Biuro + Klient"}
 ];
 var offers=[
-  {id:1,n:"Verona 120",pr:"od 420 000 zł",area:"120 m²",rooms:"4 pokoje",tech:"Szkielet drewniany",desc:"Nowoczesny parterowy dom z antresolą, energooszczędny standard."},
-  {id:2,n:"Wenecja 145",pr:"od 510 000 zł",area:"145 m²",rooms:"5 pokoi",tech:"Prefabrykat",desc:"Piętrowy dom dla większej rodziny, duży salon z kuchnią."},
-  {id:3,n:"Mediolan 96",pr:"od 389 000 zł",area:"96 m²",rooms:"3 pokoje",tech:"Szkielet stalowy",desc:"Kompaktowy, szybki w montażu, idealny pod klucz."}
+  {id:1,n:"Aurora 120",pr:"od 420 000 zł",area:"120 m²",rooms:"4 pokoje",tech:"Szkielet drewniany",desc:"Nowoczesny parterowy dom z antresolą, energooszczędny standard."},
+  {id:2,n:"Solaris 145",pr:"od 510 000 zł",area:"145 m²",rooms:"5 pokoi",tech:"Prefabrykat",desc:"Piętrowy dom dla większej rodziny, duży salon z kuchnią."},
+  {id:3,n:"Nordica 96",pr:"od 389 000 zł",area:"96 m²",rooms:"3 pokoje",tech:"Szkielet stalowy",desc:"Kompaktowy, szybki w montażu, idealny pod klucz."}
 ];
 var fin=[
   {n:"Klient #1007",bank:"Bank A",amount:480000,lab:"Uruchomienie",st:"act"},
@@ -257,7 +277,7 @@ var fin=[
 var docs=[
   {n:"Umowa o budowę domu",typ:"Umowa",kl:"Klient #1007",date:"12.03.2026",lab:"Podpisany",st:"act"},
   {n:"Protokół odbioru fundamentów",typ:"Protokół",kl:"Klient #1007",date:"28.04.2026",lab:"Podpisany",st:"act"},
-  {n:"Oferta Wenecja 145",typ:"Oferta PDF",kl:"Klient #1028",date:"02.06.2026",lab:"Wysłany",st:"blue"},
+  {n:"Oferta Solaris 145",typ:"Oferta PDF",kl:"Klient #1028",date:"02.06.2026",lab:"Wysłany",st:"blue"},
   {n:"Zgoda RODO",typ:"Zgoda",kl:"Klient #1031",date:"15.05.2026",lab:"Aktywna",st:"act"},
   {n:"Projekt budowlany v3",typ:"Projekt",kl:"Klient #1007",date:"20.03.2026",lab:"Zatwierdzony",st:"act"},
   {n:"Harmonogram montażu",typ:"Harmonogram",kl:"Klient #1007",date:"30.06.2026",lab:"Roboczy",st:"blue"}
@@ -310,7 +330,7 @@ function viewKlienci(){
 function viewRealizacja(){
   var done=rStages.filter(function(s){return s.p===100}).length;
   var ov=Math.round(rStages.reduce(function(a,s){return a+s.p},0)/rStages.length);
-  var h='<div class="sec">'+svg("check")+'Realizacja — Klient #1007 · dom Verona 120 · Rzeszów</div>';
+  var h='<div class="sec">'+svg("check")+'Realizacja — Klient #1007 · dom Aurora 120 · Rzeszów</div>';
   h+='<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between"><b style="font-family:Space Grotesk">Postęp inwestycji</b><span class="muted">'+done+'/'+rStages.length+' etapów · '+ov+'%</span></div><div class="progress"><i style="width:'+ov+'%"></i></div></div>';
   for(var i=0;i<rStages.length;i++){var s=rStages[i];var cls=s.p===100?"done":(s.p>0?"active":"");var ic=s.p===100?"✓":(i+1);var last=i===rStages.length-1;
     h+='<div class="stage '+cls+'" onclick="openStage('+i+')"><div class="rail"><div class="node">'+ic+'</div>'+(last?"":'<div class="line"></div>')+'</div><div class="body"><div class="ttl">'+s.t+'</div><div class="sub">'+s.d+' · '+s.e+'</div></div></div>';}
@@ -318,7 +338,7 @@ function viewRealizacja(){
 }
 function viewOferty(){
   var h='<div class="sec">'+svg("file")+'Katalog domów — kliknij, by otworzyć ofertę</div><div class="grid offers">';
-  for(var i=0;i<offers.length;i++){var o=offers[i];h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+o.n+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+'</div><div class="pr">'+o.pr+'</div></div></div>';}
+  for(var i=0;i<offers.length;i++){var o=offers[i];h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+houseSVG()+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+'</div><div class="pr">'+o.pr+'</div></div></div>';}
   return h+'</div>';
 }
 function viewFinansowanie(){
@@ -349,7 +369,8 @@ var titles={dashboard:"Dashboard",pipeline:"Pipeline pozysku",klienci:"Klienci",
 function go(tab){el("content").innerHTML=views[tab]();el("title").textContent=titles[tab];var b=el("nav").getElementsByTagName("button");for(var i=0;i<b.length;i++)b[i].className=(b[i].getAttribute("data-tab")===tab?"on":"");window.scrollTo(0,0);closeAll();}
 
 function drawer(t,b){el("dTitle").textContent=t;el("dBody").innerHTML=b;el("drawer").classList.add("show");el("scrim").classList.add("show");}
-function closeAll(){el("drawer").classList.remove("show");el("scrim").classList.remove("show");el("modal").classList.remove("show");}
+function closeAll(){el("drawer").classList.remove("show");el("scrim").classList.remove("show");el("modal").classList.remove("show");el("sidemenu").classList.remove("show");}
+function openMenu(){el("smnav").innerHTML=el("nav").innerHTML;el("sidemenu").classList.add("show");el("scrim").classList.add("show");}
 function mcard(l,v){return '<div class="m"><div class="l">'+l+'</div><div class="v">'+v+'</div></div>';}
 function openMember(i){var t=team[i];
   if(t.st==="no"){drawer(t.name,'<div class="muted" style="font-size:13px">'+t.role+'</div><div class="card" style="margin-top:14px;text-align:center;color:var(--mut)">Brak zarejestrowanej aktywności w dzisiejszym oknie.</div><button class="btn ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="closeAll()">Zamknij</button>');return;}
@@ -366,10 +387,12 @@ function openLead(id){var l=null;for(var i=0;i<leads.length;i++)if(leads[i].id==
 function advance(id){for(var i=0;i<leads.length;i++)if(leads[i].id===id&&leads[i].s<STAGES.length-1)leads[i].s++;go("pipeline");openLead(id);}
 function openStage(i){var s=rStages[i];drawer(s.t,'<div class="card"><div class="row"><span class="muted">Status</span><b>'+(s.p===100?"Zakończony":(s.p>0?"W toku":"Oczekuje"))+'</b></div><div class="row"><span class="muted">Odpowiedzialny</span><b>'+s.e+'</b></div><div class="row" style="border:0"><span class="muted">Postęp</span><b>'+s.p+'%</b></div><div class="progress"><i style="width:'+s.p+'%"></i></div></div><p class="muted">'+s.d+'</p><button class="btn ghost" style="width:100%;justify-content:center" onclick="closeAll()">Zamknij</button>');}
 function openOffer(id){var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];if(!o)return;
-  el("sheet").innerHTML='<div style="height:8px;background:linear-gradient(90deg,#22d3ee,#10b981,#059669)"></div><div style="padding:26px 30px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="letter-spacing:.2em;font-size:11px;color:#11a37a;font-weight:700">OFERTA · KATALOG DOMÓW</div><h2 style="margin:6px 0 0;font-family:Space Grotesk">'+o.n+'</h2></div><button class="x" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">✕</button></div><div style="height:160px;border-radius:12px;margin:16px 0;background:linear-gradient(135deg,#0c2a22,#1a5b6b);display:flex;align-items:center;justify-content:center;color:#bff3df;font-weight:700">Wizualizacja: '+o.n+'</div><div class="lrow"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div><div class="lrow"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div><div class="lrow"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div><div class="lrow"><span style="color:#5b6675">Cena</span><b style="color:#0b8a5e">'+o.pr+'</b></div><p style="color:#41505f;font-size:14px;line-height:1.6;margin-top:14px">'+o.desc+'</p><div style="display:flex;gap:10px;margin-top:18px"><button class="btn green" onclick="alert(\'Demo: tu generuje się PDF oferty i wysyła do klienta.\')">Pobierz PDF</button><button class="btn ghost" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">Zamknij</button></div></div>';
+  el("sheet").innerHTML='<div style="height:8px;background:linear-gradient(90deg,#22d3ee,#10b981,#059669)"></div><div style="padding:26px 30px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="letter-spacing:.2em;font-size:11px;color:#11a37a;font-weight:700">OFERTA · KATALOG DOMÓW</div><h2 style="margin:6px 0 0;font-family:Space Grotesk">'+o.n+'</h2></div><button class="x" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">✕</button></div><div style="height:190px;border-radius:12px;margin:16px 0;background:linear-gradient(135deg,#0c2a22,#1a5b6b);padding:10px">'+houseSVG()+'</div><div class="lrow"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div><div class="lrow"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div><div class="lrow"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div><div class="lrow"><span style="color:#5b6675">Cena</span><b style="color:#0b8a5e">'+o.pr+'</b></div><p style="color:#41505f;font-size:14px;line-height:1.6;margin-top:14px">'+o.desc+'</p><div style="display:flex;gap:10px;margin-top:18px"><button class="btn green" onclick="alert(\'Demo: tu generuje się PDF oferty i wysyła do klienta.\')">Pobierz PDF</button><button class="btn ghost" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">Zamknij</button></div></div>';
   el("modal").classList.add("show");el("scrim").classList.add("show");}
 
 el("nav").addEventListener("click",function(e){var b=e.target.closest("button");if(b)go(b.getAttribute("data-tab"));});
+el("smnav").addEventListener("click",function(e){var b=e.target.closest("button");if(b)go(b.getAttribute("data-tab"));});
+el("burger").addEventListener("click",function(){el("sidemenu").classList.contains("show")?closeAll():openMenu();});
 el("scrim").addEventListener("click",closeAll);
 el("dClose").addEventListener("click",closeAll);
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeAll()});
