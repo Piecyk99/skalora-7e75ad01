@@ -208,7 +208,7 @@ function houseSVGlight(){return '<svg viewBox="0 0 240 150" width="100%" height=
  '<rect x="176" y="96" width="28" height="26" fill="#e6f6ef" stroke="#10b981" stroke-width="1.3"/></svg>';}
 // realistyczna, nowoczesna wizualizacja domu (3 warianty) — render architektoniczny
 function houseArt(model){
-  var k=model&&model.indexOf("Solaris")>=0?"s":(model&&model.indexOf("Nordica")>=0?"n":"a");
+  var k=model&&model.indexOf("Boreal")>=0?"s":(model&&model.indexOf("Lumos")>=0?"n":"a");
   function rep(n,fn){var s="";for(var i=0;i<n;i++)s+=fn(i);return s;}
   function glass(x,y,w,h,cols){var s='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="url(#gls'+k+')"/>';var st=w/cols;for(var i=1;i<cols;i++)s+='<line x1="'+(x+st*i)+'" y1="'+y+'" x2="'+(x+st*i)+'" y2="'+(y+h)+'" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.4"/>';s+='<polygon points="'+x+','+y+' '+(x+w*0.5)+','+y+' '+(x+w*0.2)+','+(y+h)+' '+x+','+(y+h)+'" fill="#ffffff" opacity="0.10"/>';s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="none" stroke="#394654" stroke-opacity="0.45" stroke-width="1.5"/>';return s;}
   function wood(x,y,w,h){var s='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="url(#wd'+k+')"/>';for(var i=1;i*6<w;i++)s+='<line x1="'+(x+i*6)+'" y1="'+y+'" x2="'+(x+i*6)+'" y2="'+(y+h)+'" stroke="#8a5824" stroke-opacity="0.45" stroke-width="1"/>';return s;}
@@ -235,20 +235,22 @@ function houseArt(model){
   // domy MODUŁOWE z płyty warstwowej; rozmiar bryły rośnie z metrażem (96<120<145)
   var WH="#eef3f7", AN="#3a414b"; // panel jasny / antracyt
   var house;
-  if(k==="s"){ // Solaris 145 — największy, 2 kondygnacje (moduły piętrowe)
+  if(k==="s"){ // Boreal 188 — największy, 2 kondygnacje (moduły piętrowe)
     house=panel(118,104,156,64,WH)+vseam(170,104,64)+vseam(222,104,64) // parter, 3 moduły
       +glass(132,116,84,44,4)+door(244,120,18,48)
       +slab(114,100,164,7) // strop/parapet międzykondygnacyjny
       +panel(118,56,156,48,AN)+vseam(170,56,48)+vseam(222,56,48) // piętro antracyt
       +win(132,68,40,22)+win(184,68,40,22)+win(236,68,28,22)
       +slab(112,50,168,8);
-  }else if(k==="n"){ // Nordica 96 — najmniejszy, 1 moduł parterowy
-    house=panel(150,112,116,56,WH) // bryła
-      +panel(150,112,34,56,AN) // moduł wejściowy antracyt
-      +vseam(208,112,56)
-      +glass(196,122,52,34,3)+door(154,128,18,40)
-      +slab(144,104,128,8);
-  }else{ // Aurora 120 — średni, parterowy, 2 moduły (jasny + antracyt) w jednej bryle
+  }else if(k==="n"){ // Lumos 136 — z poddaszem, dach dwuspadowy
+    house=panel(118,112,164,56,WH) // parter
+      +panel(118,112,34,56,AN)+vseam(206,112,56)
+      +glass(160,122,80,40,4)+door(122,126,18,42)
+      +'<polygon points="106,112 200,62 294,112" fill="#3a414b"/>' // dach dwuspadowy
+      +'<polygon points="106,112 200,62 294,112" fill="none" stroke="#2b333d" stroke-width="2"/>'
+      +'<rect x="186" y="86" width="28" height="16" fill="url(#gls'+k+')" stroke="#222d38" stroke-width="2"/>' // okno połaciowe / lukarna
+      +'<rect x="106" y="110" width="188" height="4" fill="#0b1018" opacity="0.15"/>';
+  }else{ // Aurora 142 — średni, parterowy, 2 moduły (jasny + antracyt) w jednej bryle
     house=panel(100,108,206,60,WH) // cała bryła
       +panel(210,108,96,60,AN) // moduł antracyt (prawy)
       +vseam(156,108,60)+vseam(210,108,60)+vseam(258,108,60)
@@ -273,22 +275,22 @@ var team=[
 ];
 var STAGES=["Nowy","Kontakt","Oferta","Negocjacje","Wygrane"];
 var leads=[
-  {id:1041,n:"Klient #1041",s:0,city:"Kraków",val:420000,model:"Aurora 120",hh:"Handlowiec A."},
-  {id:1042,n:"Klient #1042",s:0,city:"Wrocław",val:510000,model:"Solaris 145",hh:"Handlowiec B."},
-  {id:1039,n:"Klient #1039",s:1,city:"Poznań",val:389000,model:"Nordica 96",hh:"Handlowiec A."},
-  {id:1036,n:"Klient #1036",s:1,city:"Gdańsk",val:435000,model:"Aurora 120",hh:"Handlowiec C."},
-  {id:1028,n:"Klient #1028",s:2,city:"Łódź",val:560000,model:"Solaris 145",hh:"Handlowiec A."},
-  {id:1031,n:"Klient #1031",s:2,city:"Katowice",val:402000,model:"Nordica 96",hh:"Handlowiec B."},
-  {id:1019,n:"Klient #1019",s:3,city:"Lublin",val:447000,model:"Aurora 120",hh:"Handlowiec C."},
-  {id:1007,n:"Klient #1007",s:4,city:"Rzeszów",val:528000,model:"Solaris 145",hh:"Handlowiec A."}
+  {id:1041,n:"Klient #1041",s:0,city:"Kraków",val:420000,model:"Aurora 142",hh:"Handlowiec A."},
+  {id:1042,n:"Klient #1042",s:0,city:"Wrocław",val:510000,model:"Boreal 188",hh:"Handlowiec B."},
+  {id:1039,n:"Klient #1039",s:1,city:"Poznań",val:389000,model:"Lumos 136",hh:"Handlowiec A."},
+  {id:1036,n:"Klient #1036",s:1,city:"Gdańsk",val:435000,model:"Aurora 142",hh:"Handlowiec C."},
+  {id:1028,n:"Klient #1028",s:2,city:"Łódź",val:560000,model:"Boreal 188",hh:"Handlowiec A."},
+  {id:1031,n:"Klient #1031",s:2,city:"Katowice",val:402000,model:"Lumos 136",hh:"Handlowiec B."},
+  {id:1019,n:"Klient #1019",s:3,city:"Lublin",val:447000,model:"Aurora 142",hh:"Handlowiec C."},
+  {id:1007,n:"Klient #1007",s:4,city:"Rzeszów",val:528000,model:"Boreal 188",hh:"Handlowiec A."}
 ];
 var klienci=[
-  {id:1007,n:"Klient #1007",city:"Rzeszów",model:"Solaris 145",etap:"Realizacja",val:528000,st:"act",lab:"Aktywny",hh:"Handlowiec A."},
-  {id:1019,n:"Klient #1019",city:"Lublin",model:"Aurora 120",etap:"Negocjacje",val:447000,st:"blue",lab:"Negocjacje",hh:"Handlowiec C."},
-  {id:1028,n:"Klient #1028",city:"Łódź",model:"Solaris 145",etap:"Oferta",val:560000,st:"blue",lab:"Oferta",hh:"Handlowiec A."},
-  {id:1031,n:"Klient #1031",city:"Katowice",model:"Nordica 96",etap:"Oferta",val:402000,st:"blue",lab:"Oferta",hh:"Handlowiec B."},
-  {id:996,n:"Klient #0996",city:"Warszawa",model:"Aurora 120",etap:"Realizacja",val:430000,st:"act",lab:"Aktywny",hh:"Handlowiec A."},
-  {id:984,n:"Klient #0984",city:"Szczecin",model:"Nordica 96",etap:"Odebrane",val:395000,st:"no",lab:"Zakończony",hh:"Handlowiec C."}
+  {id:1007,n:"Klient #1007",city:"Rzeszów",model:"Boreal 188",etap:"Realizacja",val:528000,st:"act",lab:"Aktywny",hh:"Handlowiec A."},
+  {id:1019,n:"Klient #1019",city:"Lublin",model:"Aurora 142",etap:"Negocjacje",val:447000,st:"blue",lab:"Negocjacje",hh:"Handlowiec C."},
+  {id:1028,n:"Klient #1028",city:"Łódź",model:"Boreal 188",etap:"Oferta",val:560000,st:"blue",lab:"Oferta",hh:"Handlowiec A."},
+  {id:1031,n:"Klient #1031",city:"Katowice",model:"Lumos 136",etap:"Oferta",val:402000,st:"blue",lab:"Oferta",hh:"Handlowiec B."},
+  {id:996,n:"Klient #0996",city:"Warszawa",model:"Aurora 142",etap:"Realizacja",val:430000,st:"act",lab:"Aktywny",hh:"Handlowiec A."},
+  {id:984,n:"Klient #0984",city:"Szczecin",model:"Lumos 136",etap:"Odebrane",val:395000,st:"no",lab:"Zakończony",hh:"Handlowiec C."}
 ];
 var rStages=[
   {t:"Umowa podpisana",d:"Podpis 12.03 · zaliczka rozliczona",p:100,e:"Biuro"},
@@ -300,9 +302,9 @@ var rStages=[
   {t:"Odbiór końcowy",d:"Oczekuje",p:0,e:"Biuro + Klient"}
 ];
 var offers=[
-  {id:1,n:"Aurora 120",area:"120 m²",rooms:"4 pokoje",tech:"Szkielet drewniany",base:350000,mont:40000,fund:30000,desc:"Nowoczesny parterowy dom z antresolą, energooszczędny standard, gotowy do zamieszkania w 4 miesiące."},
-  {id:2,n:"Solaris 145",area:"145 m²",rooms:"5 pokoi",tech:"Prefabrykat",base:430000,mont:50000,fund:30000,desc:"Piętrowy dom dla większej rodziny, duży salon z kuchnią, taras i garaż w bryle."},
-  {id:3,n:"Nordica 96",area:"96 m²",rooms:"3 pokoje",tech:"Szkielet stalowy",base:329000,mont:35000,fund:25000,desc:"Kompaktowy, szybki w montażu dom pod klucz — idealny pierwszy dom."}
+  {id:1,n:"Aurora 142",area:"142,1 m²",rooms:"4 pokoje",typ:"parterowy",typLab:"Parterowy",tech:"Płyta warstwowa",base:540000,mont:70000,fund:39900,desc:"Nowoczesny parterowy dom z dużym przeszkleniem i tarasem — energooszczędny standard, gotowy do zamieszkania w 4 miesiące."},
+  {id:2,n:"Boreal 188",area:"187,6 m²",rooms:"5 pokoi",typ:"pietrowy",typLab:"Piętrowy",tech:"Płyta warstwowa",base:740000,mont:95000,fund:44000,desc:"Piętrowy dom dla większej rodziny z garażem w bryle, balkonem i przestronnym salonem z kuchnią."},
+  {id:3,n:"Lumos 136",area:"136,5 m²",rooms:"5 pokoi",typ:"poddasze",typLab:"Z poddaszem",tech:"Płyta warstwowa",base:515000,mont:65000,fund:39500,desc:"Klasyczna bryła z poddaszem użytkowym i dwuspadowym dachem — ciepła, energooszczędna i komfortowa."}
 ];
 var fin=[
   {n:"Klient #1007",bank:"Bank A",amount:480000,lab:"Uruchomienie",st:"act"},
@@ -314,7 +316,7 @@ var fin=[
 var docs=[
   {n:"Umowa o budowę domu",typ:"Umowa",kl:"Klient #1007",date:"12.03.2026",lab:"Podpisany",st:"act"},
   {n:"Protokół odbioru fundamentów",typ:"Protokół",kl:"Klient #1007",date:"28.04.2026",lab:"Podpisany",st:"act"},
-  {n:"Oferta Solaris 145",typ:"Oferta PDF",kl:"Klient #1028",date:"02.06.2026",lab:"Wysłany",st:"blue"},
+  {n:"Oferta Boreal 188",typ:"Oferta PDF",kl:"Klient #1028",date:"02.06.2026",lab:"Wysłany",st:"blue"},
   {n:"Zgoda RODO",typ:"Zgoda",kl:"Klient #1031",date:"15.05.2026",lab:"Aktywna",st:"act"},
   {n:"Projekt budowlany v3",typ:"Projekt",kl:"Klient #1007",date:"20.03.2026",lab:"Zatwierdzony",st:"act"}
 ];
@@ -340,7 +342,7 @@ var meetings=[
 ];
 var camps=[
   {n:"Domy modułowe — wiosna 2026",sent:1840,open:"41%",click:"9%",st:"act",lab:"Wysłana"},
-  {n:"Promocja Aurora 120",sent:920,open:"37%",click:"7%",st:"act",lab:"Wysłana"},
+  {n:"Promocja Aurora 142",sent:920,open:"37%",click:"7%",st:"act",lab:"Wysłana"},
   {n:"Reaktywacja leadów Q2",sent:0,open:"—",click:"—",st:"blue",lab:"Wersja robocza"}
 ];
 
@@ -487,7 +489,7 @@ function openMtg(i){var m=meetings[i];var hd=hands.filter(function(x){return x.i
 /* ---------- REALIZACJA ---------- */
 function viewRealizacja(){
   var done=rStages.filter(function(s){return s.p===100}).length;var ov=Math.round(rStages.reduce(function(a,s){return a+s.p},0)/rStages.length);
-  var h='<div class="sec">'+svg('<path d="m9 11 3 3L22 4"/>')+'Realizacja — Klient #1007 · Solaris 145 · Rzeszów</div>';
+  var h='<div class="sec">'+svg('<path d="m9 11 3 3L22 4"/>')+'Realizacja — Klient #1007 · Boreal 188 · Rzeszów</div>';
   h+='<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between"><b style="font-family:Space Grotesk">Postęp inwestycji</b><span class="muted">'+done+'/'+rStages.length+' etapów · '+ov+'%</span></div><div class="progress"><i style="width:'+ov+'%"></i></div></div>';
   for(var i=0;i<rStages.length;i++){var s=rStages[i];var cls=s.p===100?"done":(s.p>0?"active":"");var ic=s.p===100?"✓":(i+1);var last=i===rStages.length-1;
     h+='<div class="stage '+cls+'" onclick="openStage('+i+')"><div class="rail"><div class="node">'+ic+'</div>'+(last?"":'<div class="line"></div>')+'</div><div class="body"><div class="ttl">'+s.t+'</div><div class="sub">'+s.d+' · '+s.e+'</div></div></div>';}
@@ -495,10 +497,26 @@ function viewRealizacja(){
 }
 function openStage(i){var s=rStages[i];drawer(s.t,'<div class="card"><div class="row"><span class="muted">Status</span><b>'+(s.p===100?"Zakończony":(s.p>0?"W toku":"Oczekuje"))+'</b></div><div class="row"><span class="muted">Odpowiedzialny</span><b>'+s.e+'</b></div><div class="row" style="border:0"><span class="muted">Postęp</span><b>'+s.p+'%</b></div><div class="progress"><i style="width:'+s.p+'%"></i></div></div><p class="muted">'+s.d+'</p><button class="btn ghost" style="width:100%;justify-content:center" onclick="closeAll()">Zamknij</button>');}
 /* ---------- OFERTY ---------- */
+var ofFilter="all";
+function setOf(f){ofFilter=f;go("oferty");}
+function spec(icon,big,small){return '<div style="text-align:center"><div style="color:var(--green);display:flex;justify-content:center;margin-bottom:5px">'+svg(icon)+'</div><div style="font-weight:700;font-size:13px;font-family:Space Grotesk">'+big+'</div><div class="muted" style="font-size:10.5px;line-height:1.3;margin-top:1px">'+small+'</div></div>';}
 function viewOferty(){
-  var h='<div class="sec">'+svg('<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>')+'Katalog domów — kliknij, by otworzyć ofertę z wyceną (PDF)</div><div class="grid offers">';
-  for(var i=0;i<offers.length;i++){var o=offers[i];var sum=o.base+o.mont+o.fund;
-    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+houseImg(o.n)+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+' · '+o.tech+'</div><div class="pr">od '+money(sum)+'</div></div></div>';}
+  var ico={pokoje:'<path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3"/><path d="M2 11v8"/><path d="M22 11v8"/><path d="M4 11h16a0 0 0 0 1 0 0v3H4z"/>',
+    metr:'<path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z"/><path d="m7 17 1.5-1.5"/><path d="m11 13 1.5-1.5"/><path d="m15 9 1.5-1.5"/>',
+    kond:'<rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01"/>',
+    eko:'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>'};
+  var typ=[["all","Wszystkie"],["parterowy","Parterowe"],["pietrowy","Piętrowe"],["poddasze","Z poddaszem"]];
+  var h='<div class="muted" style="margin:-2px 0 4px;font-size:13.5px"><span style="color:var(--green)">●</span> Nowoczesne domy z płyty warstwowej — energooszczędne i komfortowe</div>';
+  h+='<div class="filters" style="margin:12px 0 16px">';
+  for(var f=0;f<typ.length;f++)h+='<span class="f '+(ofFilter===typ[f][0]?"on":"")+'" onclick="setOf(\''+typ[f][0]+'\')">'+typ[f][1]+'</span>';
+  h+='</div><div class="grid offers">';
+  for(var i=0;i<offers.length;i++){var o=offers[i];if(ofFilter!=="all"&&o.typ!==ofFilter)continue;var sum=o.base+o.mont+o.fund;
+    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph" style="height:200px">'+houseImg(o.n)+'</div><div class="ob" style="padding:16px 17px">'
+      +'<div class="nm" style="font-size:17px">'+o.n+'</div>'
+      +'<div class="muted" style="font-size:12.5px;margin:4px 0 14px">'+o.rooms+' · '+o.area+' · '+o.typLab+'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">'
+        +spec(ico.pokoje,o.rooms.split(" ")[0],"pokoje")+spec(ico.metr,o.area,"powierzchnia")+spec(ico.kond,o.typLab,"kondygnacja")+spec(ico.eko,"Eko","standard")
+      +'</div><div class="pr" style="font-size:19px;margin-top:14px">od '+money(sum)+'</div></div></div>';}
   return h+'</div>';
 }
 function openOffer(id){var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];if(!o)return;
@@ -531,7 +549,7 @@ function viewNewsletter(){
   h+='<div class="sec">Podgląd kampanii</div><div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px"><div class="card" style="padding:0;overflow:hidden">';
   h+='<div style="height:6px;background:linear-gradient(90deg,#22d3ee,#10b981,#8b5cf6)"></div><div style="padding:22px 24px">';
   h+='<div style="letter-spacing:.2em;font-size:11px;color:var(--mut);font-weight:700">SKALORA · NEWSLETTER</div><h2 style="margin:8px 0 0;font-family:Space Grotesk">Wybuduj swój dom w 4 miesiące</h2>';
-  h+='<div style="height:160px;border-radius:12px;margin:14px 0;overflow:hidden;border:1px solid var(--line)">'+houseImg("Aurora 120")+'</div>';
+  h+='<div style="height:160px;border-radius:12px;margin:14px 0;overflow:hidden;border:1px solid var(--line)">'+houseImg("Aurora 142")+'</div>';
   h+='<p class="muted" style="font-size:14px;line-height:1.6">Nowoczesne domy modułowe pod klucz — Aurora, Solaris, Nordica. Sprawdź cennik i umów bezpłatną konsultację z doradcą.</p>';
   h+='<button class="btn green" style="margin-top:6px">Zobacz katalog →</button></div></div>';
   h+='<div class="grid" style="grid-template-columns:1fr;gap:11px">'+kpi("Subskrybenci","2 760","green")+kpi("Śr. otwarcia","39%","blue")+kpi("Śr. kliknięcia","8%","violet")+kpi("Leady z kampanii","48","green")+'</div></div>';
