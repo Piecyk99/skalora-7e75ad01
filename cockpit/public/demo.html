@@ -206,37 +206,50 @@ function houseSVGlight(){return '<svg viewBox="0 0 240 150" width="100%" height=
  '<rect x="82" y="76" width="18" height="16" fill="#bfe6f7" stroke="#10b981" stroke-width="1.3"/>'+
  '<rect x="140" y="76" width="18" height="16" fill="#bfe6f7" stroke="#10b981" stroke-width="1.3"/>'+
  '<rect x="176" y="96" width="28" height="26" fill="#e6f6ef" stroke="#10b981" stroke-width="1.3"/></svg>';}
-// bogatsza wizualizacja domu (3 warianty: Aurora/Solaris/Nordica) z niebem i trawą
+// realistyczna, nowoczesna wizualizacja domu (3 warianty) — render architektoniczny
 function houseArt(model){
   var k=model&&model.indexOf("Solaris")>=0?"s":(model&&model.indexOf("Nordica")>=0?"n":"a");
-  var roof="#0ea371";
-  var d='<defs><linearGradient id="sky_'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfeafb"/><stop offset="1" stop-color="#eef7fc"/></linearGradient>'
-    +'<linearGradient id="grs_'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6cd"/><stop offset="1" stop-color="#9ed7b0"/></linearGradient></defs>';
-  var bg='<rect width="400" height="225" fill="url(#sky_'+k+')"/>'
-    +'<circle cx="338" cy="46" r="22" fill="#ffe487"/>'
-    +'<ellipse cx="92" cy="44" rx="34" ry="13" fill="#fff" opacity=".85"/><ellipse cx="122" cy="38" rx="24" ry="11" fill="#fff" opacity=".85"/>'
-    +'<rect y="158" width="400" height="67" fill="url(#grs_'+k+')"/>'
-    +'<rect x="36" y="150" width="7" height="20" fill="#8a5a3c"/><circle cx="39" cy="142" r="16" fill="#5cb87f"/><circle cx="52" cy="148" r="12" fill="#6cc78d"/>';
+  function rep(n,fn){var s="";for(var i=0;i<n;i++)s+=fn(i);return s;}
+  function glass(x,y,w,h,cols){var s='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="url(#gls'+k+')"/>';var st=w/cols;for(var i=1;i<cols;i++)s+='<line x1="'+(x+st*i)+'" y1="'+y+'" x2="'+(x+st*i)+'" y2="'+(y+h)+'" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.4"/>';s+='<polygon points="'+x+','+y+' '+(x+w*0.5)+','+y+' '+(x+w*0.2)+','+(y+h)+' '+x+','+(y+h)+'" fill="#ffffff" opacity="0.10"/>';s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="none" stroke="#394654" stroke-opacity="0.45" stroke-width="1.5"/>';return s;}
+  function wood(x,y,w,h){var s='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="url(#wd'+k+')"/>';for(var i=1;i*6<w;i++)s+='<line x1="'+(x+i*6)+'" y1="'+y+'" x2="'+(x+i*6)+'" y2="'+(y+h)+'" stroke="#8a5824" stroke-opacity="0.45" stroke-width="1"/>';return s;}
+  function slab(x,y,w,h){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="1.5" fill="#2b3440"/><rect x="'+x+'" y="'+(y+h)+'" width="'+w+'" height="3" fill="#0b1018" opacity="0.16"/>';}
+  function door(x,y,w,h){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#222d38"/><rect x="'+(x+w-4)+'" y="'+(y+h*0.4)+'" width="2" height="10" fill="#9fb0bd"/>';}
+  var d='<defs>'
+    +'<linearGradient id="sky'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe6fb"/><stop offset="0.65" stop-color="#e9f4fd"/><stop offset="1" stop-color="#f6fbfe"/></linearGradient>'
+    +'<radialGradient id="sun'+k+'" cx="0.84" cy="0.16" r="0.55"><stop offset="0" stop-color="#fff7da" stop-opacity="0.9"/><stop offset="1" stop-color="#fff7da" stop-opacity="0"/></radialGradient>'
+    +'<linearGradient id="lawn'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe7c4"/><stop offset="1" stop-color="#9ecd93"/></linearGradient>'
+    +'<linearGradient id="gls'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2f4fc"/><stop offset="0.5" stop-color="#bcdfee"/><stop offset="0.52" stop-color="#ffe7b6"/><stop offset="1" stop-color="#ffd47e"/></linearGradient>'
+    +'<linearGradient id="wd'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a44"/><stop offset="1" stop-color="#a4692c"/></linearGradient>'
+    +'<linearGradient id="con'+k+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fcfdfe"/><stop offset="1" stop-color="#dde7ed"/></linearGradient></defs>';
+  var bg='<rect width="400" height="240" fill="url(#sky'+k+')"/><rect width="400" height="240" fill="url(#sun'+k+')"/>'
+    +'<circle cx="332" cy="46" r="15" fill="#fff2bd"/>'
+    +'<g opacity="0.45" fill="#bcd9b4">'+rep(8,function(i){return '<ellipse cx="'+(i*58+8)+'" cy="170" rx="40" ry="22"/>';})+'</g>'
+    +'<rect y="172" width="400" height="68" fill="url(#lawn'+k+')"/><rect y="172" width="400" height="5" fill="#ffffff" opacity="0.22"/>'
+    +'<ellipse cx="200" cy="176" rx="150" ry="11" fill="#162430" opacity="0.13"/>';
+  var fg='<g><rect x="40" y="150" width="6" height="24" rx="3" fill="#7a5230"/><circle cx="43" cy="141" r="15" fill="#4fae74"/><circle cx="55" cy="150" r="11" fill="#5fbd83"/><circle cx="32" cy="151" r="10" fill="#54b079"/>'
+    +'<ellipse cx="112" cy="214" rx="20" ry="8" fill="#83c389"/><ellipse cx="312" cy="216" rx="26" ry="9" fill="#79bb80"/></g>';
   var house;
-  if(k==="s"){
-    house='<rect x="238" y="126" width="74" height="46" fill="#eef3f6" stroke="#cdd9e0" stroke-width="1.5"/><line x1="238" y1="138" x2="312" y2="138" stroke="#cdd9e0"/>'
-      +'<rect x="108" y="84" width="132" height="88" fill="#fff" stroke="#d7e3ea" stroke-width="2"/>'
-      +'<polygon points="98,86 174,44 250,86" fill="'+roof+'"/>'
-      +'<rect x="124" y="98" width="26" height="20" fill="#bfe6f7" stroke="#9fc7d6"/><rect x="198" y="98" width="26" height="20" fill="#bfe6f7" stroke="#9fc7d6"/>'
-      +'<rect x="124" y="134" width="26" height="22" fill="#bfe6f7" stroke="#9fc7d6"/><rect x="170" y="128" width="24" height="44" fill="#cfe9df" stroke="#9fc7d6"/>';
-  }else if(k==="n"){
-    house='<rect x="132" y="92" width="136" height="12" fill="'+roof+'"/>'
-      +'<rect x="140" y="104" width="118" height="68" fill="#fff" stroke="#d7e3ea" stroke-width="2"/>'
-      +'<rect x="152" y="116" width="54" height="56" fill="#bfe6f7" stroke="#9fc7d6"/>'
-      +'<rect x="220" y="128" width="24" height="44" fill="#cfe9df" stroke="#9fc7d6"/>';
-  }else{
-    house='<rect x="266" y="134" width="52" height="38" fill="#eef3f6" stroke="#cdd9e0" stroke-width="1.5"/><line x1="266" y1="146" x2="318" y2="146" stroke="#cdd9e0"/>'
-      +'<rect x="118" y="118" width="150" height="54" fill="#fff" stroke="#d7e3ea" stroke-width="2"/>'
-      +'<polygon points="106,120 193,78 280,120" fill="'+roof+'"/>'
-      +'<rect x="132" y="130" width="28" height="22" fill="#bfe6f7" stroke="#9fc7d6"/><rect x="226" y="130" width="28" height="22" fill="#bfe6f7" stroke="#9fc7d6"/>'
-      +'<rect x="184" y="142" width="22" height="30" fill="#cfe9df" stroke="#9fc7d6"/>';
+  if(k==="s"){ // Solaris — piętrowy z wysuniętym piętrem
+    house=slab(92,100,182,7)
+      +'<rect x="96" y="104" width="168" height="68" fill="url(#con'+k+')"/>'
+      +glass(108,114,104,50,4)+door(232,124,18,48)
+      +'<rect x="250" y="120" width="14" height="52" fill="#e6edf2"/>'
+      +wood(82,58,150,48)
+      +slab(76,52,164,8)
+      +glass(92,68,120,26,6);
+  }else if(k==="n"){ // Nordica — zwarta kostka z lamelami i narożnym przeszkleniem
+    house=slab(124,74,146,9)
+      +'<rect x="132" y="82" width="128" height="86" fill="url(#con'+k+')"/>'
+      +wood(132,82,40,86)
+      +glass(178,94,72,68,4)
+      +door(236,122,18,46);
+  }else{ // Aurora — parterowy, L-kształt z garażem
+    house='<rect x="256" y="116" width="70" height="52" fill="url(#con'+k+')"/>'+slab(252,110,78,7)
+      +'<rect x="266" y="126" width="54" height="40" fill="#dde7ee"/>'+rep(4,function(i){return '<line x1="266" y1="'+(126+(i+1)*8)+'" x2="320" y2="'+(126+(i+1)*8)+'" stroke="#b6c4cd" stroke-width="1"/>';})
+      +'<rect x="86" y="92" width="172" height="76" fill="url(#con'+k+')"/>'+slab(78,84,190,9)
+      +glass(100,104,96,52,4)+door(202,122,16,46)+wood(222,104,28,52);
   }
-  return '<svg viewBox="0 0 400 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">'+d+bg+house+'</svg>';
+  return '<svg viewBox="0 0 400 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">'+d+bg+house+fg+'</svg>';
 }
 function toast(m){var d=el("toast");if(!d){d=document.createElement("div");d.id="toast";d.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#0e1626;border:1px solid #23304a;color:#eef2f8;padding:12px 18px;border-radius:12px;z-index:80;box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:14px;font-weight:600;transition:.2s;opacity:0";document.body.appendChild(d);}d.textContent=m;d.style.opacity="1";clearTimeout(window.__tt);window.__tt=setTimeout(function(){d.style.opacity="0"},2400);}
 
