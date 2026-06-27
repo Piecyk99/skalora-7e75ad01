@@ -42,6 +42,17 @@ const chip = (label: string, value: string, color: string) =>
      <span style="color:${color};font-weight:800;">${value}</span> ${label}
    </span>`;
 
+// karta modułu ERP (tytuł + krótki opis)
+const mod = (title: string, desc: string, color: string) =>
+  `<td width="50%" valign="top" style="padding:6px;">
+     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#11141d;border:1px solid rgba(255,255,255,0.07);border-radius:12px;height:100%;">
+       <tr><td style="padding:14px 16px;">
+         <div style="font-size:14px;font-weight:700;color:#e6e9f0;font-family:Arial,Helvetica,sans-serif;"><span style="color:${color};">●</span>&nbsp; ${title}</div>
+         <div style="font-size:12px;color:#8b93a7;margin-top:5px;line-height:1.45;font-family:Arial,Helvetica,sans-serif;">${desc}</div>
+       </td></tr>
+     </table>
+   </td>`;
+
 function buildHtml(): string {
   const CY = "#22d3ee", GR = "#34d399", AM = "#f59e0b", RD = "#f43f5e", BL = "#60a5fa", NE = "#cbd5e1";
   return `<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -52,15 +63,17 @@ function buildHtml(): string {
   <tr><td style="height:5px;line-height:5px;font-size:0;background:#22d3ee;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);">&nbsp;</td></tr>
 
   <tr><td style="padding:36px 40px 6px;">
-    <div style="font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#7e87a0;">SKALORA</div>
+    <div style="font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#7e87a0;">SKALORA · SYSTEM ERP</div>
     <h1 style="margin:10px 0 0;font-size:30px;line-height:1.25;font-weight:800;color:#ffffff;">
-      Zrobimy CRM skrojony pod Wasz proces — z kampanią od pierwszego dnia
+      Pełny system ERP dla Waszej firmy — od leada, przez ofertę, po montaż domu
     </h1>
     <p style="margin:16px 0 0;font-size:16px;line-height:1.6;color:#aeb6c6;">
-      Cześć! Zbudujemy dla Was system sprzedaży dopasowany 1:1 do tego, jak naprawdę
-      pracuje zespół: leady, pipeline, zadania i SLA, automatyzacje oraz
-      <strong style="color:#e6e9f0;">kampanie e-mail / outreach z trackingiem otwarć i kliknięć</strong>.
-      Wszystko spięte w jednym, czytelnym dashboardzie — poniżej podgląd na żywo.
+      Cześć! Zbudujemy dla Was <strong style="color:#e6e9f0;">jeden system, który obejmuje cały
+      proces budowy domu</strong> — nie tylko sprzedaż. Sprzedaż i CRM, finansowanie,
+      <strong style="color:#e6e9f0;">architekci i projekty</strong>, pełna
+      <strong style="color:#e6e9f0;">realizacja inwestycji</strong> oraz
+      <strong style="color:#e6e9f0;">ekipy montażowe w terenie</strong> — wszystko dopasowane 1:1
+      do tego, jak naprawdę pracuje Wasza firma, spięte w jednym dashboardzie. Podgląd niżej.
     </p>
   </td></tr>
 
@@ -85,16 +98,34 @@ function buildHtml(): string {
     </table>
   </td></tr>
 
-  <!-- CO DOSTAJECIE -->
-  <tr><td style="padding:24px 40px 4px;">
-    <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:10px;">Co dostajecie</div>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;line-height:1.55;color:#c7cddb;">
-      <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; CRM dopasowany do Waszego procesu — leady, pipeline, statusy, role i uprawnienia</td></tr>
-      <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; Kampanie e-mail / outreach z automatyzacją i trackingiem (otwarcia, kliknięcia)</td></tr>
-      <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; Zadania, SLA i przypomnienia — nic nie wypada z lejka</td></tr>
-      <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; Dashboard zespołu w czasie rzeczywistym + raporty aktywności</td></tr>
-      <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; Zgodność z RODO i bezpieczny dostęp wg ról</td></tr>
-    </table>
+  <!-- MODUŁY ERP -->
+  <tr><td style="padding:26px 34px 4px;">
+    <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:4px;">Jeden system — wszystkie działy</div>
+    <div style="font-size:13px;color:#7e87a0;margin-bottom:6px;">Sprzedaż → finansowanie → projekt → realizacja → montaż → rozliczenie</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      ${mod("Leady & Call Center", "Pozyskiwanie i kwalifikacja leadów, kampanie, scoring, kolejki połączeń.", CY)}
+      ${mod("Oferty PDF & Katalogi", "Generator spersonalizowanych ofert i katalogów domów jednym kliknięciem.", CY)}
+    </tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      ${mod("Handlowcy, zadania & SLA", "Przydziały, terminy, przypomnienia, prowizje — nic nie wypada z lejka.", GR)}
+      ${mod("Finansowanie & kredyty", "Ścieżka kredytowa klienta, banki, komplet dokumentów i statusy.", GR)}
+    </tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      ${mod("Architekci & projekty", "Uzgodnienia, wersje projektów, statusy i wymiana plików z pracownią.", BL)}
+      ${mod("Realizacja inwestycji", "Od umowy do odbioru: etapy budowy, kamienie milowe, harmonogram.", BL)}
+    </tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      ${mod("Ekipy montażowe", "Zlecenia i grafik ekip, postęp prac w terenie, zdjęcia i protokoły.", AM)}
+      ${mod("Dokumenty & podpisy", "Umowy, protokoły odbioru, repozytorium plików z dostępem wg ról.", AM)}
+    </tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      ${mod("Automatyzacje & newsletter", "Sekwencje e-mail/SMS, przypomnienia i powiadomienia — tracking otwarć.", CY)}
+      ${mod("Monitoring bankowy", "Wpłaty, raty i rozliczenia inwestycji z automatycznymi alertami.", GR)}
+    </tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      ${mod("Uprawnienia, role & RODO", "Każdy widzi tylko swoje dane — handlowiec, architekt, ekipa, zarząd.", NE)}
+      ${mod("Aplikacja mobilna", "Dla ekip i handlowców w terenie — Android/iOS, praca z telefonu.", BL)}
+    </tr></table>
   </td></tr>
 
   <tr><td style="padding:28px 40px 6px;">
@@ -129,7 +160,7 @@ Deno.serve(async (req) => {
   const RESEND_FROM = (await secret(db, "RESEND_FROM", ENV_RESEND_FROM)) ?? "Skalora <kontakt@skalora.pl>";
   if (!RESEND_API_KEY) return json({ error: "Brak RESEND_API_KEY" }, 400);
 
-  const subject = body.subject ?? "Zróbmy CRM skrojony pod Was — demo + plan kampanii";
+  const subject = body.subject ?? "Pełny system ERP dla Waszej firmy — sprzedaż, realizacja, montaż w jednym";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${RESEND_API_KEY}` },
