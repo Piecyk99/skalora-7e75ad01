@@ -541,7 +541,7 @@ function openOffer(id){var o=null;for(var i=0;i<offers.length;i++)if(offers[i].i
   H+='<p style="color:#41505f;font-size:13.5px;line-height:1.6;margin:14px 0 6px">'+o.desc+'</p>';
   H+='<div style="font-weight:800;font-family:Space Grotesk;margin-top:8px;font-size:13px;letter-spacing:.05em;color:#16202b">WYCENA</div>';
   H+='<table class="qt"><tr><td>Dom '+o.n+' (stan deweloperski)</td><td>'+money(o.base)+'</td></tr><tr><td>Montaż i transport</td><td>'+money(o.mont)+'</td></tr><tr><td>Płyta fundamentowa</td><td>'+money(o.fund)+'</td></tr><tr class="sum"><td>Razem (brutto)</td><td style="color:#0b8a5e">'+money(sum)+'</td></tr></table>';
-  H+='<div style="background:#eaf7f1;border:1px solid #bfe6d6;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px;color:#16202b">💡 Szacowana rata kredytu: <b>~'+money(rata)+'/mc</b> · doradca finansowy w cenie · gotowy dom w 4–5 miesięcy.</div>';
+  H+='<div style="background:#eaf7f1;border:1px solid #bfe6d6;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px;color:#16202b">💡 Szacowana rata kredytu: <b>~'+money(rata)+'/mc</b> · gotowy dom w 4–5 miesięcy.</div>';
   H+='<div style="display:flex;gap:10px;margin-top:18px"><button class="btn green" onclick="alert(\'Demo: generowanie PDF oferty…\')">⬇ Pobierz PDF</button><button class="btn" style="background:#16202b" onclick="alert(\'Demo: oferta wysłana e-mailem do klienta.\')">✉ Wyślij klientowi</button><button class="btn ghost" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">Zamknij</button></div></div>';
   el("sheet").innerHTML=H;el("modal").classList.add("show");el("scrim").classList.add("show");
 }
