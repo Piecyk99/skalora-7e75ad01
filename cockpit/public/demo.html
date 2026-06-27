@@ -251,6 +251,17 @@ function houseArt(model){
   }
   return '<svg viewBox="0 0 400 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">'+d+bg+house+fg+'</svg>';
 }
+// prawdziwe zdjęcie domu (Unsplash) z fallbackiem do renderu SVG — onerror usuwa img, spod spodu widać SVG
+function photoFor(model){
+  var id=model&&model.indexOf("Solaris")>=0?"1570129477492-45c003edd2be":(model&&model.indexOf("Nordica")>=0?"1512917774080-9991f1c4c750":"1600585154340-be6161a56a0c");
+  return "https://images.unsplash.com/photo-"+id+"?auto=format&fit=crop&w=900&q=70";
+}
+function houseImg(model){
+  return '<div style="position:relative;width:100%;height:100%;overflow:hidden">'
+    +'<div style="position:absolute;inset:0">'+houseArt(model)+'</div>'
+    +'<img src="'+photoFor(model)+'" alt="'+(model||"dom")+'" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove()">'
+    +'</div>';
+}
 function toast(m){var d=el("toast");if(!d){d=document.createElement("div");d.id="toast";d.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#0e1626;border:1px solid #23304a;color:#eef2f8;padding:12px 18px;border-radius:12px;z-index:80;box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:14px;font-weight:600;transition:.2s;opacity:0";document.body.appendChild(d);}d.textContent=m;d.style.opacity="1";clearTimeout(window.__tt);window.__tt=setTimeout(function(){d.style.opacity="0"},2400);}
 
 var team=[
@@ -396,7 +407,7 @@ function leadTab(o){
   if(cardTab==="oferty"){
     var h='<div class="card"><div class="sec" style="margin:0 0 10px">Oferty dla klienta — kliknij, by otworzyć</div><div class="grid g3">';
     for(var k=0;k<offers.length;k++){var of=offers[k];var sum=of.base+of.mont+of.fund;
-      h+='<div class="card offer" style="border:1px solid var(--line)" onclick="openOffer('+of.id+')"><div class="ph" style="height:96px">'+houseArt(of.n)+'</div><div class="ob" style="padding:11px"><div class="nm" style="font-size:13px">'+of.n+'</div><div class="pr" style="font-size:14px">od '+money(sum)+'</div></div></div>';}
+      h+='<div class="card offer" style="border:1px solid var(--line)" onclick="openOffer('+of.id+')"><div class="ph" style="height:96px">'+houseImg(of.n)+'</div><div class="ob" style="padding:11px"><div class="nm" style="font-size:13px">'+of.n+'</div><div class="pr" style="font-size:14px">od '+money(sum)+'</div></div></div>';}
     return h+'</div><button class="btn green" style="margin-top:12px" onclick="openOffer('+oid+');toast(\'📄 Oferta przygotowana\')">📄 Wyślij dopasowaną ofertę PDF</button></div>';
   }
   if(cardTab==="dokumenty"){
@@ -408,7 +419,7 @@ function leadTab(o){
   // DANE (domyślnie) — z wizualizacją domu
   var phone="+48 600 "+String(o.id).slice(-3)+" "+(100+(o.id%900));
   var email="klient"+o.id+"@przyklad.pl";
-  var h='<div class="card" style="padding:0;overflow:hidden"><div style="height:170px">'+houseArt(o.model)+'</div><div style="padding:13px 16px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-family:Space Grotesk">'+o.model+'</b><div class="muted" style="font-size:12px">Model zainteresowania klienta</div></div><button class="btn green" onclick="openOffer('+oid+')">📄 Oferta PDF</button></div></div>';
+  var h='<div class="card" style="padding:0;overflow:hidden"><div style="height:170px">'+houseImg(o.model)+'</div><div style="padding:13px 16px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-family:Space Grotesk">'+o.model+'</b><div class="muted" style="font-size:12px">Model zainteresowania klienta</div></div><button class="btn green" onclick="openOffer('+oid+')">📄 Oferta PDF</button></div></div>';
   h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 8px">Dane klienta</div>'+rowKV("Telefon",phone)+rowKV("E-mail",email)+rowKV("Miasto",o.city)+rowKV("Model",o.model)+rowKV("Finansowanie","Kredyt")+rowKV("Źródło","excel_import")+'</div>';
   h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 8px">⚡ Dane kwalifikacyjne</div>'+rowKV("Budżet klienta",money(o.val))+rowKV("Działka","Tak — własna")+rowKV("Termin budowy","2026 Q4")+rowKV("Lokalizacja",o.city+", woj.")+'</div>';
   h+='<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn green" onclick="openOffer('+oid+')">📄 Wyślij ofertę PDF</button><button class="btn ghost" onclick="toast(\'📅 Otwieram kalendarz…\');go(\'kalendarz\')">📅 Umów spotkanie</button></div>';
@@ -489,14 +500,14 @@ function openStage(i){var s=rStages[i];drawer(s.t,'<div class="card"><div class=
 function viewOferty(){
   var h='<div class="sec">'+svg('<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>')+'Katalog domów — kliknij, by otworzyć ofertę z wyceną (PDF)</div><div class="grid offers">';
   for(var i=0;i<offers.length;i++){var o=offers[i];var sum=o.base+o.mont+o.fund;
-    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+houseArt(o.n)+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+' · '+o.tech+'</div><div class="pr">od '+money(sum)+'</div></div></div>';}
+    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+houseImg(o.n)+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+' · '+o.tech+'</div><div class="pr">od '+money(sum)+'</div></div></div>';}
   return h+'</div>';
 }
 function openOffer(id){var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];if(!o)return;
   var sum=o.base+o.mont+o.fund;var rata=Math.round(sum/300/10)*10;
   var H='<div style="height:8px;background:linear-gradient(90deg,#22d3ee,#10b981,#059669)"></div><div style="padding:26px 32px">';
   H+='<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="letter-spacing:.2em;font-size:11px;color:#11a37a;font-weight:800">OFERTA · KATALOG DOMÓW</div><h2 style="margin:6px 0 0;font-family:Space Grotesk">'+o.n+'</h2><div style="color:#7a8696;font-size:12px;margin-top:3px">Nr 2026/00'+(40+o.id)+' · ważna 30 dni</div></div><button class="x" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">✕</button></div>';
-  H+='<div style="height:180px;border-radius:13px;margin:16px 0;overflow:hidden;border:1px solid #d9e3ea">'+houseArt(o.n)+'</div>';
+  H+='<div style="height:180px;border-radius:13px;margin:16px 0;overflow:hidden;border:1px solid #d9e3ea">'+houseImg(o.n)+'</div>';
   H+='<div class="lrow"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div><div class="lrow"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div><div class="lrow"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div>';
   H+='<p style="color:#41505f;font-size:13.5px;line-height:1.6;margin:14px 0 6px">'+o.desc+'</p>';
   H+='<div style="font-weight:800;font-family:Space Grotesk;margin-top:8px;font-size:13px;letter-spacing:.05em;color:#16202b">WYCENA</div>';
@@ -522,7 +533,7 @@ function viewNewsletter(){
   h+='<div class="sec">Podgląd kampanii</div><div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px"><div class="card" style="padding:0;overflow:hidden">';
   h+='<div style="height:6px;background:linear-gradient(90deg,#22d3ee,#10b981,#8b5cf6)"></div><div style="padding:22px 24px">';
   h+='<div style="letter-spacing:.2em;font-size:11px;color:var(--mut);font-weight:700">SKALORA · NEWSLETTER</div><h2 style="margin:8px 0 0;font-family:Space Grotesk">Wybuduj swój dom w 4 miesiące</h2>';
-  h+='<div style="height:160px;border-radius:12px;margin:14px 0;overflow:hidden;border:1px solid var(--line)">'+houseArt("Aurora 120")+'</div>';
+  h+='<div style="height:160px;border-radius:12px;margin:14px 0;overflow:hidden;border:1px solid var(--line)">'+houseImg("Aurora 120")+'</div>';
   h+='<p class="muted" style="font-size:14px;line-height:1.6">Nowoczesne domy modułowe pod klucz — Aurora, Solaris, Nordica. Sprawdź cennik i umów bezpłatną konsultację z doradcą.</p>';
   h+='<button class="btn green" style="margin-top:6px">Zobacz katalog →</button></div></div>';
   h+='<div class="grid" style="grid-template-columns:1fr;gap:11px">'+kpi("Subskrybenci","2 760","green")+kpi("Śr. otwarcia","39%","blue")+kpi("Śr. kliknięcia","8%","violet")+kpi("Leady z kampanii","48","green")+'</div></div>';
