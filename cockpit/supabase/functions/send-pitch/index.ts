@@ -128,8 +128,11 @@ function buildHtml(): string {
     </tr></table>
   </td></tr>
 
-  <tr><td style="padding:28px 40px 6px;">
-    <a href="https://skalora.pl" style="display:inline-block;background:#22d3ee;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);color:#050608;text-decoration:none;padding:15px 32px;border-radius:11px;font-weight:800;font-size:15px;">Umów krótkie demo →</a>
+  <tr><td style="padding:28px 40px 2px;">
+    <a href="https://crm.skalora.pl/demo.html" style="display:inline-block;background:#22d3ee;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);color:#050608;text-decoration:none;padding:15px 32px;border-radius:11px;font-weight:800;font-size:15px;">▶ Otwórz interaktywne demo CRM</a>
+  </td></tr>
+  <tr><td style="padding:6px 40px 6px;">
+    <div style="font-size:13px;color:#8b93a7;">Klikalny mini-system: Dashboard, Pipeline, Realizacja (etapy budowy), Oferty PDF, Ekipy montażowe. Działa w przeglądarce — możesz poklikać.</div>
   </td></tr>
 
   <tr><td style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);margin-top:10px;">
