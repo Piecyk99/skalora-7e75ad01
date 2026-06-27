@@ -27,36 +27,36 @@ async function secret(db: ReturnType<typeof createClient>, name: string, envVal?
 
 // jeden kafelek KPI dashboardu
 const tile = (label: string, value: string, color: string) =>
-  `<td width="25%" valign="top" style="padding:5px;">
+  `<td width="25%" valign="top" style="padding:6px;">
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#11141d;border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
-       <tr><td style="padding:13px 12px 11px;">
+       <tr><td style="padding:15px 14px 13px;">
          <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#7e87a0;font-family:Arial,Helvetica,sans-serif;">${label}</div>
-         <div style="font-size:26px;font-weight:800;color:${color};font-family:Arial,Helvetica,sans-serif;line-height:1.1;margin-top:5px;">${value}</div>
+         <div style="font-size:30px;font-weight:800;color:${color};font-family:Arial,Helvetica,sans-serif;line-height:1.1;margin-top:6px;">${value}</div>
        </td></tr>
      </table>
    </td>`;
 
 // chip w pasku górnym
 const chip = (label: string, value: string, color: string) =>
-  `<span style="display:inline-block;background:#11141d;border:1px solid rgba(255,255,255,0.08);border-radius:999px;padding:6px 13px;margin:0 6px 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#c7cddb;">
+  `<span style="display:inline-block;background:#11141d;border:1px solid rgba(255,255,255,0.08);border-radius:999px;padding:7px 14px;margin:0 7px 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#c7cddb;">
      <span style="color:${color};font-weight:800;">${value}</span> ${label}
    </span>`;
 
 function buildHtml(): string {
   const CY = "#22d3ee", GR = "#34d399", AM = "#f59e0b", RD = "#f43f5e", BL = "#60a5fa", NE = "#cbd5e1";
   return `<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;background:#050608;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#ffffff;">
+<body style="margin:0;background:#eef1f5;padding:28px 16px;font-family:Arial,Helvetica,sans-serif;color:#0b0d14;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0b0d14;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">
+<table role="presentation" width="760" cellpadding="0" cellspacing="0" style="max-width:760px;width:100%;background:#0b0d14;border-radius:18px;overflow:hidden;border:1px solid rgba(0,0,0,0.12);box-shadow:0 10px 30px rgba(15,23,42,0.18);">
 
   <tr><td style="height:5px;line-height:5px;font-size:0;background:#22d3ee;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);">&nbsp;</td></tr>
 
-  <tr><td style="padding:32px 34px 6px;">
+  <tr><td style="padding:36px 40px 6px;">
     <div style="font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#7e87a0;">SKALORA</div>
-    <h1 style="margin:10px 0 0;font-size:27px;line-height:1.25;font-weight:800;color:#ffffff;">
+    <h1 style="margin:10px 0 0;font-size:30px;line-height:1.25;font-weight:800;color:#ffffff;">
       Zrobimy CRM skrojony pod Wasz proces — z kampanią od pierwszego dnia
     </h1>
-    <p style="margin:16px 0 0;font-size:15px;line-height:1.6;color:#aeb6c6;">
+    <p style="margin:16px 0 0;font-size:16px;line-height:1.6;color:#aeb6c6;">
       Cześć! Zbudujemy dla Was system sprzedaży dopasowany 1:1 do tego, jak naprawdę
       pracuje zespół: leady, pipeline, zadania i SLA, automatyzacje oraz
       <strong style="color:#e6e9f0;">kampanie e-mail / outreach z trackingiem otwarć i kliknięć</strong>.
@@ -65,13 +65,13 @@ function buildHtml(): string {
   </td></tr>
 
   <!-- DASHBOARD PREVIEW -->
-  <tr><td style="padding:22px 26px 4px;">
+  <tr><td style="padding:24px 30px 4px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#080a10;border:1px solid rgba(255,255,255,0.07);border-radius:16px;">
-      <tr><td style="padding:18px 18px 6px;">
-        <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:12px;">Dashboard operacyjny · podgląd</div>
+      <tr><td style="padding:20px 20px 6px;">
+        <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:13px;">Dashboard operacyjny · podgląd</div>
         ${chip("Zadania", "163", CY)}${chip("Overdue", "156", RD)}${chip("Ryzyko", "7", AM)}${chip("Leady", "172", GR)}
       </td></tr>
-      <tr><td style="padding:2px 13px 4px;">
+      <tr><td style="padding:2px 14px 6px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           ${tile("Nieprzypisane", "1", RD)}${tile("Bez next stepu", "65", AM)}${tile("Po terminie", "107", RD)}${tile("Blisko sprzedaży", "1", GR)}
         </tr></table>
@@ -79,16 +79,16 @@ function buildHtml(): string {
           ${tile("Po terminie (zadania)", "94", RD)}${tile("Dziś", "7", BL)}${tile("W ryzyku", "7", AM)}${tile("Zadania aktywne", "207", NE)}
         </tr></table>
       </td></tr>
-      <tr><td style="padding:8px 18px 18px;">
+      <tr><td style="padding:10px 20px 20px;">
         <div style="font-size:11px;color:#5f6880;">Jedno źródło prawdy (KPI z bazy w czasie rzeczywistym) — te same definicje na całym koncie.</div>
       </td></tr>
     </table>
   </td></tr>
 
   <!-- CO DOSTAJECIE -->
-  <tr><td style="padding:22px 34px 4px;">
+  <tr><td style="padding:24px 40px 4px;">
     <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:10px;">Co dostajecie</div>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.55;color:#c7cddb;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;line-height:1.55;color:#c7cddb;">
       <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; CRM dopasowany do Waszego procesu — leady, pipeline, statusy, role i uprawnienia</td></tr>
       <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; Kampanie e-mail / outreach z automatyzacją i trackingiem (otwarcia, kliknięcia)</td></tr>
       <tr><td style="padding:5px 0;"><span style="color:#22d3ee;font-weight:800;">›</span>&nbsp; Zadania, SLA i przypomnienia — nic nie wypada z lejka</td></tr>
@@ -97,11 +97,11 @@ function buildHtml(): string {
     </table>
   </td></tr>
 
-  <tr><td style="padding:26px 34px 6px;">
-    <a href="https://skalora.pl" style="display:inline-block;background:#22d3ee;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);color:#050608;text-decoration:none;padding:14px 30px;border-radius:11px;font-weight:800;font-size:15px;">Umów krótkie demo →</a>
+  <tr><td style="padding:28px 40px 6px;">
+    <a href="https://skalora.pl" style="display:inline-block;background:#22d3ee;background:linear-gradient(90deg,#00F0FF 0%,#6B8AFF 50%,#8A2BE2 100%);color:#050608;text-decoration:none;padding:15px 32px;border-radius:11px;font-weight:800;font-size:15px;">Umów krótkie demo →</a>
   </td></tr>
 
-  <tr><td style="padding:22px 34px 30px;border-top:1px solid rgba(255,255,255,0.07);margin-top:10px;">
+  <tr><td style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);margin-top:10px;">
     <div style="font-size:12px;color:#5f6880;line-height:1.6;">
       Skalora · CRM &amp; automatyzacje sprzedaży<br>
       kontakt@skalora.pl · skalora.pl
@@ -109,7 +109,7 @@ function buildHtml(): string {
   </td></tr>
 
 </table>
-<div style="font-size:11px;color:#3f4658;margin-top:14px;font-family:Arial,Helvetica,sans-serif;">Wiadomość testowa (demo szablonu ofertowego).</div>
+<div style="font-size:11px;color:#9aa3b2;margin-top:14px;font-family:Arial,Helvetica,sans-serif;">Wiadomość testowa (demo szablonu ofertowego).</div>
 </td></tr></table>
 </body></html>`;
 }
