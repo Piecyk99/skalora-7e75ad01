@@ -10,7 +10,7 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ENV_RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const ENV_RESEND_FROM = Deno.env.get("RESEND_FROM");
 
-const ALLOWED = new Set(["dpsolutionsbusiness@gmail.com"]);
+const ALLOWED = new Set(["dpsolutionsbusiness@gmail.com", "jarekrol23@gmail.com"]);
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -81,15 +81,15 @@ function buildHtml(): string {
   <tr><td style="padding:24px 30px 4px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#080a10;border:1px solid rgba(255,255,255,0.07);border-radius:16px;">
       <tr><td style="padding:20px 20px 6px;">
-        <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:13px;">Dashboard operacyjny · podgląd</div>
-        ${chip("Zadania", "163", CY)}${chip("Overdue", "156", RD)}${chip("Ryzyko", "7", AM)}${chip("Leady", "172", GR)}
+        <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7e87a0;margin-bottom:13px;">Lejek sprzedaży · podgląd</div>
+        ${chip("Nowe leady", "28", GR)}${chip("Oferty", "19", "#a78bfa")}${chip("Wygrane", "14", GR)}${chip("Leady", "172", CY)}
       </td></tr>
       <tr><td style="padding:2px 14px 6px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          ${tile("Nieprzypisane", "1", RD)}${tile("Bez next stepu", "65", AM)}${tile("Po terminie", "107", RD)}${tile("Blisko sprzedaży", "1", GR)}
+          ${tile("Nowe leady", "28", GR)}${tile("Następny krok", "156", GR)}${tile("Analiza działki", "12", BL)}${tile("Oferty wysłane", "19", "#a78bfa")}
         </tr></table>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          ${tile("Po terminie (zadania)", "94", RD)}${tile("Dziś", "7", BL)}${tile("W ryzyku", "7", AM)}${tile("Zadania aktywne", "207", NE)}
+          ${tile("Blisko sprzedaży", "9", GR)}${tile("Wygrane (mies.)", "14", GR)}${tile("Do newslettera", "41", BL)}${tile("Zadania na dziś", "7", BL)}
         </tr></table>
       </td></tr>
       <tr><td style="padding:10px 20px 20px;">
