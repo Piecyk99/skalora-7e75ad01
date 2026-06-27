@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skalora — interaktywne demo CRM/ERP</title>
+<style>
+  :root{
+    --bg:#070810; --panel:#0d0f18; --panel2:#11141d; --line:rgba(255,255,255,.08);
+    --txt:#e8ebf2; --mut:#8b93a7; --cy:#22d3ee; --gr:#34d399; --am:#f59e0b; --rd:#f43f5e; --bl:#60a5fa; --vi:#a78bfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Outfit',Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .app{display:flex;min-height:100vh}
+  /* sidebar */
+  .side{width:230px;flex:0 0 230px;background:linear-gradient(180deg,#0b0d16,#080a12);border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#00F0FF,#6B8AFF 50%,#8A2BE2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#06070d;font-size:20px}
+  .brand b{font-size:16px;letter-spacing:.02em}
+  .brand span{display:block;font-size:10px;color:var(--mut);letter-spacing:.18em;text-transform:uppercase}
+  .nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+  .nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;color:var(--mut);padding:11px 12px;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit}
+  .nav button:hover{background:var(--panel2);color:var(--txt)}
+  .nav button.on{background:var(--panel2);color:#fff}
+  .nav button.on .dot{background:var(--cy)}
+  .dot{width:7px;height:7px;border-radius:50%;background:#3a4258}
+  .side .demo-tag{position:absolute;bottom:16px;left:14px;right:14px;font-size:11px;color:var(--mut);border:1px dashed var(--line);border-radius:10px;padding:10px;text-align:center}
+  /* main */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .top h1{font-size:18px;margin:0;font-weight:700}
+  .chips{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:#c7cddb}
+  .chip b{font-weight:800}
+  .content{padding:22px;max-width:1180px;width:100%}
+  .muted{color:var(--mut)}
+  h2.sec{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:0 0 12px}
+  /* kpi grid */
+  .grid{display:grid;gap:12px}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+  .kpi .val{font-size:30px;font-weight:800;margin-top:6px;line-height:1}
+  /* pipeline */
+  .board{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start}
+  .col{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:120px}
+  .col h3{font-size:12px;margin:4px 6px 10px;color:var(--mut);display:flex;justify-content:space-between}
+  .lead{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer;transition:.12s}
+  .lead:hover{border-color:var(--cy);transform:translateY(-1px)}
+  .lead .nm{font-weight:600;font-size:13px}
+  .lead .mt{font-size:11px;color:var(--mut);margin-top:3px;display:flex;justify-content:space-between}
+  .tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  /* realizacja timeline */
+  .timeline{display:flex;flex-direction:column;gap:0}
+  .stage{display:flex;gap:14px;cursor:pointer}
+  .stage .rail{display:flex;flex-direction:column;align-items:center}
+  .stage .node{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mut)}
+  .stage .line{width:2px;flex:1;background:var(--line);min-height:26px}
+  .stage.done .node{background:var(--gr);border-color:var(--gr);color:#06210f}
+  .stage.active .node{background:var(--cy);border-color:var(--cy);color:#06210f;box-shadow:0 0 0 4px rgba(34,211,238,.18)}
+  .stage .body{padding-bottom:18px}
+  .stage .ttl{font-weight:600}
+  .stage:hover .ttl{color:var(--cy)}
+  .stage .sub{font-size:12px;color:var(--mut);margin-top:2px}
+  .progress{height:8px;background:var(--panel2);border-radius:999px;overflow:hidden;margin-top:10px}
+  .progress>i{display:block;height:100%;background:linear-gradient(90deg,#00F0FF,#6B8AFF,#8A2BE2)}
+  /* oferty */
+  .offers{grid-template-columns:repeat(3,1fr)}
+  .offer{cursor:pointer;transition:.12s;overflow:hidden}
+  .offer:hover{border-color:var(--cy);transform:translateY(-2px)}
+  .offer .ph{height:120px;border-radius:10px;background:linear-gradient(135deg,#16324a,#1d2740);display:flex;align-items:center;justify-content:center;color:#7fb6d6;font-size:13px;border:1px solid var(--line)}
+  .offer .nm{font-weight:700;margin-top:10px}
+  .offer .pr{color:var(--cy);font-weight:800;margin-top:4px}
+  /* ekipy */
+  .sched{width:100%;border-collapse:collapse;font-size:13px}
+  .sched th,.sched td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  .sched th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}
+  .pill{font-size:11px;padding:3px 8px;border-radius:999px;display:inline-block}
+  /* modal/drawer */
+  .scrim{position:fixed;inset:0;background:rgba(2,3,7,.6);backdrop-filter:blur(2px);display:none;z-index:40}
+  .scrim.show{display:block}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:92vw;background:var(--panel);border-left:1px solid var(--line);z-index:50;transform:translateX(100%);transition:.22s;overflow:auto}
+  .drawer.show{transform:none}
+  .drawer .dh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .drawer .db{padding:18px 20px}
+  .x{background:none;border:1px solid var(--line);color:var(--mut);border-radius:8px;width:30px;height:30px;cursor:pointer}
+  .modal{position:fixed;z-index:50;inset:0;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{background:#fff;color:#16202b;width:560px;max-width:95vw;max-height:90vh;overflow:auto;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eef1f5;font-size:14px}
+  .btn{display:inline-block;background:linear-gradient(90deg,#00F0FF,#6B8AFF,#8A2BE2);color:#06070d;border:0;border-radius:10px;padding:11px 18px;font-weight:800;cursor:pointer;font-family:inherit;font-size:14px}
+  .btn.ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+  .hide{display:none!important}
+  @media(max-width:900px){
+    .side{position:fixed;left:-240px;transition:.2s;z-index:60}.side.show{left:0}
+    .kpis{grid-template-columns:repeat(2,1fr)}.board{grid-template-columns:1fr;}.offers{grid-template-columns:1fr}
+    .burger{display:inline-flex!important}
+  }
+  .burger{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);background:var(--panel2);border-radius:9px;color:var(--txt);cursor:pointer;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><div class="logo">S</div><div><b>Skalora</b><span>System ERP</span></div></div>
+    <nav class="nav" id="nav">
+      <button data-tab="dashboard" class="on"><i class="dot"></i> Dashboard</button>
+      <button data-tab="pipeline"><i class="dot"></i> Pipeline</button>
+      <button data-tab="realizacja"><i class="dot"></i> Realizacja</button>
+      <button data-tab="oferty"><i class="dot"></i> Oferty (PDF)</button>
+      <button data-tab="ekipy"><i class="dot"></i> Ekipy montażowe</button>
+    </nav>
+    <div class="demo-tag">Demo interaktywne · dane przykładowe</div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <button class="burger" id="burger">☰</button>
+      <h1 id="title">Dashboard</h1>
+      <div class="chips">
+        <span class="chip"><b style="color:var(--cy)">163</b> Zadania</span>
+        <span class="chip"><b style="color:var(--rd)">156</b> Overdue</span>
+        <span class="chip"><b style="color:var(--am)">7</b> Ryzyko</span>
+        <span class="chip"><b style="color:var(--gr)">172</b> Leady</span>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="dh"><b id="dTitle">Szczegóły</b><button class="x" id="dClose">✕</button></div>
+  <div class="db" id="dBody"></div>
+</aside>
+
+<div class="modal" id="modal">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+/* ---------- dane przykładowe ---------- */
+var STAGES=["Nowy","Kontakt","Oferta","Negocjacje","Wygrane"];
+var leads=[
+  {id:1,n:"Kowalski — dom Verona",s:0,city:"Kraków",val:420000,model:"Verona 120"},
+  {id:2,n:"Nowak — dom Wenecja",s:0,city:"Wrocław",val:510000,model:"Wenecja 145"},
+  {id:3,n:"Zieliński — Mediolan",s:1,city:"Poznań",val:389000,model:"Mediolan 96"},
+  {id:4,n:"Wójcik — Verona",s:1,city:"Gdańsk",val:435000,model:"Verona 120"},
+  {id:5,n:"Lewandowski — Wenecja",s:2,city:"Łódź",val:560000,model:"Wenecja 145"},
+  {id:6,n:"Kamińska — Mediolan",s:2,city:"Katowice",val:402000,model:"Mediolan 96"},
+  {id:7,n:"Szymański — Verona",s:3,city:"Lublin",val:447000,model:"Verona 120"},
+  {id:8,n:"Dąbrowski — Wenecja",s:4,city:"Rzeszów",val:528000,model:"Wenecja 145"}
+];
+var rStages=[
+  {t:"Umowa podpisana",d:"Podpis 12.03 · zaliczka rozliczona",p:100,e:"Biuro"},
+  {t:"Projekt i pozwolenia",d:"Architekt: P. Pilarski · komplet uzgodnień",p:100,e:"Architekci"},
+  {t:"Fundamenty",d:"Płyta fundamentowa wylana, odbiór OK",p:100,e:"Ekipa A"},
+  {t:"Konstrukcja / prefabrykaty",d:"Montaż ścian i stropu w toku",p:62,e:"Ekipa Montaż 1"},
+  {t:"Montaż dachu i okien",d:"Zaplanowane na 02.07",p:0,e:"Ekipa Montaż 2"},
+  {t:"Instalacje i wykończenie",d:"Oczekuje",p:0,e:"Podwykonawcy"},
+  {t:"Odbiór końcowy",d:"Oczekuje",p:0,e:"Biuro + Klient"}
+];
+var offers=[
+  {id:1,n:"Verona 120",pr:"od 420 000 zł",area:"120 m²",rooms:"4 pokoje",tech:"Szkielet drewniany",desc:"Nowoczesny parterowy dom z antresolą, energooszczędny standard."},
+  {id:2,n:"Wenecja 145",pr:"od 510 000 zł",area:"145 m²",rooms:"5 pokoi",tech:"Prefabrykat",desc:"Piętrowy dom dla większej rodziny, duży salon z kuchnią."},
+  {id:3,n:"Mediolan 96",pr:"od 389 000 zł",area:"96 m²",rooms:"3 pokoje",tech:"Szkielet stalowy",desc:"Kompaktowy, szybki w montażu, idealny pod klucz."}
+];
+var ekipy=[
+  {n:"Ekipa Montaż 1",lead:"M. Górski",task:"Kowalski — konstrukcja",col:"var(--cy)"},
+  {n:"Ekipa Montaż 2",lead:"T. Kruk",task:"Nowak — dach (02.07)",col:"var(--bl)"},
+  {n:"Ekipa A (fundamenty)",lead:"R. Sowa",task:"Zieliński — płyta",col:"var(--gr)"},
+  {n:"Wykończenia",lead:"K. Bąk",task:"Wolne od 05.07",col:"var(--am)"}
+];
+var days=["Pon","Wt","Śr","Czw","Pt"];
+
+/* ---------- helpers ---------- */
+function el(id){return document.getElementById(id)}
+function money(v){return v.toLocaleString("pl-PL")+" zł"}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+
+/* ---------- renderery ---------- */
+function viewDashboard(){
+  var k=[["Nieprzypisane","1","var(--rd)"],["Bez next stepu","65","var(--am)"],["Po terminie","107","var(--rd)"],["Blisko sprzedaży","1","var(--gr)"],
+         ["Po terminie (zadania)","94","var(--rd)"],["Dziś","7","var(--bl)"],["W ryzyku","7","var(--am)"],["Zadania aktywne","207","#cbd5e1"]];
+  var h='<h2 class="sec">Lejek sprzedaży — aktualny stan</h2><div class="grid kpis">';
+  for(var i=0;i<k.length;i++){h+='<div class="card kpi"><div class="lab">'+k[i][0]+'</div><div class="val" style="color:'+k[i][2]+'">'+k[i][1]+'</div></div>';}
+  h+='</div>';
+  h+='<h2 class="sec" style="margin-top:24px">Aktywność zespołu (7 dni)</h2><div class="grid kpis">';
+  var a=[["Telefony","86","var(--cy)"],["Skuteczne","84","var(--gr)"],["Spotkania","3","var(--bl)"],["Oferty wysłane","3","var(--vi)"]];
+  for(var j=0;j<a.length;j++){h+='<div class="card kpi"><div class="lab">'+a[j][0]+'</div><div class="val" style="color:'+a[j][2]+'">'+a[j][1]+'</div></div>';}
+  h+='</div><p class="muted" style="margin-top:18px">Kliknij <b>Pipeline</b>, <b>Realizacja</b> lub <b>Oferty</b> w menu, żeby poklikać moduły.</p>';
+  return h;
+}
+function viewPipeline(){
+  var h='<h2 class="sec">Pipeline pozysku — kliknij kartę leada</h2><div class="board">';
+  for(var s=0;s<STAGES.length;s++){
+    var inCol=leads.filter(function(l){return l.s===s});
+    h+='<div class="col"><h3><span>'+STAGES[s]+'</span><span>'+inCol.length+'</span></h3>';
+    for(var i=0;i<inCol.length;i++){var l=inCol[i];
+      h+='<div class="lead" onclick="openLead('+l.id+')"><div class="nm">'+esc(l.n)+'</div><div class="mt"><span>'+l.city+'</span><span>'+money(l.val)+'</span></div></div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+function viewRealizacja(){
+  var doneCount=rStages.filter(function(s){return s.p===100}).length;
+  var overall=Math.round(rStages.reduce(function(a,s){return a+s.p},0)/rStages.length);
+  var h='<h2 class="sec">Realizacja — Kowalski, dom Verona 120 · Kraków</h2>';
+  h+='<div class="card" style="margin-bottom:18px"><div style="display:flex;justify-content:space-between"><b>Postęp inwestycji</b><span class="muted">'+doneCount+'/'+rStages.length+' etapów · '+overall+'%</span></div><div class="progress"><i style="width:'+overall+'%"></i></div></div>';
+  h+='<div class="timeline">';
+  for(var i=0;i<rStages.length;i++){var s=rStages[i];
+    var cls=s.p===100?"done":(s.p>0?"active":"");
+    var ic=s.p===100?"✓":(i+1);
+    var last=i===rStages.length-1;
+    h+='<div class="stage '+cls+'" onclick="openStage('+i+')"><div class="rail"><div class="node">'+ic+'</div>'+(last?"":'<div class="line"></div>')+'</div><div class="body"><div class="ttl">'+s.t+'</div><div class="sub">'+s.d+' · '+s.e+'</div></div></div>';
+  }
+  h+='</div>';
+  return h;
+}
+function viewOferty(){
+  var h='<h2 class="sec">Katalog domów — kliknij, by otworzyć ofertę</h2><div class="grid offers">';
+  for(var i=0;i<offers.length;i++){var o=offers[i];
+    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+o.n+'</div><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:2px">'+o.area+' · '+o.rooms+'</div><div class="pr">'+o.pr+'</div></div>';
+  }
+  h+='</div>';
+  return h;
+}
+function viewEkipy(){
+  var h='<h2 class="sec">Ekipy montażowe — bieżące zlecenia</h2><div class="grid" style="grid-template-columns:repeat(2,1fr)">';
+  for(var i=0;i<ekipy.length;i++){var e=ekipy[i];
+    h+='<div class="card"><div style="display:flex;justify-content:space-between"><b>'+e.n+'</b><span class="pill" style="background:'+e.col+'22;color:'+e.col+';border:1px solid '+e.col+'55">aktywna</span></div><div class="muted" style="margin-top:6px;font-size:13px">Brygadzista: '+e.lead+'</div><div style="margin-top:6px">'+e.task+'</div></div>';
+  }
+  h+='</div>';
+  h+='<h2 class="sec" style="margin-top:24px">Grafik tygodnia</h2><div class="card" style="overflow:auto"><table class="sched"><tr><th>Ekipa</th>';
+  for(var d=0;d<days.length;d++)h+='<th>'+days[d]+'</th>';
+  h+='</tr>';
+  var plan=[["Montaż 1","Kowalski","Kowalski","Kowalski","Nowak","Nowak"],
+            ["Montaż 2","—","Wójcik","Wójcik","Wójcik","Dach Nowak"],
+            ["Fundamenty","Zieliński","Zieliński","—","Lewand.","Lewand."],
+            ["Wykończenia","Szymański","Szymański","Szymański","—","—"]];
+  var cols=["var(--cy)","var(--bl)","var(--gr)","var(--am)"];
+  for(var r=0;r<plan.length;r++){h+='<tr><td><b>'+plan[r][0]+'</b></td>';
+    for(var c=1;c<plan[r].length;c++){var v=plan[r][c];h+='<td>'+(v==="—"?'<span class="muted">—</span>':'<span class="pill" style="background:'+cols[r]+'1f;color:'+cols[r]+'">'+v+'</span>')+'</td>';}
+    h+='</tr>';}
+  h+='</table></div>';
+  return h;
+}
+
+var views={dashboard:viewDashboard,pipeline:viewPipeline,realizacja:viewRealizacja,oferty:viewOferty,ekipy:viewEkipy};
+var titles={dashboard:"Dashboard",pipeline:"Pipeline pozysku",realizacja:"Realizacja inwestycji",oferty:"Oferty / Katalog",ekipy:"Ekipy montażowe"};
+
+function go(tab){
+  el("content").innerHTML=views[tab]();
+  el("title").textContent=titles[tab];
+  var b=el("nav").getElementsByTagName("button");
+  for(var i=0;i<b.length;i++)b[i].className=(b[i].getAttribute("data-tab")===tab?"on":"");
+  el("side").classList.remove("show");
+}
+
+/* ---------- drawer (lead / etap) ---------- */
+function drawer(title,body){el("dTitle").textContent=title;el("dBody").innerHTML=body;el("drawer").classList.add("show");el("scrim").classList.add("show");}
+function closeAll(){el("drawer").classList.remove("show");el("scrim").classList.remove("show");el("modal").classList.remove("show");}
+function openLead(id){
+  var l=null;for(var i=0;i<leads.length;i++)if(leads[i].id===id)l=leads[i];
+  if(!l)return;
+  var next=l.s<STAGES.length-1?'<button class="btn" style="margin-top:16px" onclick="advance('+l.id+')">Przesuń do: '+STAGES[l.s+1]+' →</button>':'<div style="margin-top:16px" class="pill" style="background:var(--gr)22;color:var(--gr)">Wygrana 🎉</div>';
+  drawer(l.n,
+    '<div class="card"><div class="row"><span class="muted">Etap</span><b>'+STAGES[l.s]+'</b></div>'+
+    '<div class="row"><span class="muted">Miasto</span><b>'+l.city+'</b></div>'+
+    '<div class="row"><span class="muted">Model</span><b>'+l.model+'</b></div>'+
+    '<div class="row" style="border:0"><span class="muted">Wartość</span><b style="color:var(--cy)">'+money(l.val)+'</b></div></div>'+
+    next+
+    '<button class="btn ghost" style="margin-top:10px" onclick="closeAll()">Zamknij</button>');
+}
+function advance(id){for(var i=0;i<leads.length;i++)if(leads[i].id===id&&leads[i].s<STAGES.length-1)leads[i].s++;go("pipeline");openLead(id);}
+function openStage(i){
+  var s=rStages[i];
+  drawer(s.t,
+    '<div class="card"><div class="row"><span class="muted">Status</span><b>'+(s.p===100?"Zakończony":(s.p>0?"W toku":"Oczekuje"))+'</b></div>'+
+    '<div class="row"><span class="muted">Odpowiedzialny</span><b>'+s.e+'</b></div>'+
+    '<div class="row" style="border:0"><span class="muted">Postęp</span><b>'+s.p+'%</b></div>'+
+    '<div class="progress"><i style="width:'+s.p+'%"></i></div></div>'+
+    '<p class="muted">'+s.d+'</p>'+
+    '<button class="btn ghost" onclick="closeAll()">Zamknij</button>');
+}
+/* ---------- oferta (PDF-like) ---------- */
+function openOffer(id){
+  var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];
+  if(!o)return;
+  el("sheet").innerHTML=
+    '<div style="height:8px;background:linear-gradient(90deg,#00F0FF,#6B8AFF,#8A2BE2)"></div>'+
+    '<div style="padding:26px 30px">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="letter-spacing:.2em;font-size:11px;color:#8a93a3">SKALORA · OFERTA</div><h2 style="margin:6px 0 0">'+o.n+'</h2></div><button class="x" onclick="closeAll()" style="color:#16202b;border-color:#dfe4ec">✕</button></div>'+
+    '<div style="height:150px;border-radius:12px;margin:16px 0;background:linear-gradient(135deg,#16324a,#26406b);display:flex;align-items:center;justify-content:center;color:#cfe6f5;font-weight:700">Wizualizacja: '+o.n+'</div>'+
+    '<div class="row"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div>'+
+    '<div class="row"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div>'+
+    '<div class="row"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div>'+
+    '<div class="row"><span style="color:#5b6675">Cena</span><b style="color:#0b8aa0">'+o.pr+'</b></div>'+
+    '<p style="color:#41505f;font-size:14px;line-height:1.6;margin-top:14px">'+o.desc+'</p>'+
+    '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn" onclick="alert(\'Demo: tu generuje się PDF oferty i wysyła do klienta.\')">Pobierz PDF</button><button class="btn ghost" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">Zamknij</button></div>'+
+    '</div>';
+  el("modal").classList.add("show");el("scrim").classList.add("show");
+}
+
+/* ---------- init ---------- */
+el("nav").addEventListener("click",function(e){var b=e.target.closest("button");if(b)go(b.getAttribute("data-tab"));});
+el("scrim").addEventListener("click",closeAll);
+el("dClose").addEventListener("click",closeAll);
+el("burger").addEventListener("click",function(){el("side").classList.toggle("show")});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeAll()});
+go("dashboard");
+</script>
+</body>
+</html>
