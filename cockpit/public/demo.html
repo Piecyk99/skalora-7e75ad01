@@ -206,6 +206,39 @@ function houseSVGlight(){return '<svg viewBox="0 0 240 150" width="100%" height=
  '<rect x="82" y="76" width="18" height="16" fill="#bfe6f7" stroke="#10b981" stroke-width="1.3"/>'+
  '<rect x="140" y="76" width="18" height="16" fill="#bfe6f7" stroke="#10b981" stroke-width="1.3"/>'+
  '<rect x="176" y="96" width="28" height="26" fill="#e6f6ef" stroke="#10b981" stroke-width="1.3"/></svg>';}
+// bogatsza wizualizacja domu (3 warianty: Aurora/Solaris/Nordica) z niebem i trawą
+function houseArt(model){
+  var k=model&&model.indexOf("Solaris")>=0?"s":(model&&model.indexOf("Nordica")>=0?"n":"a");
+  var roof="#0ea371";
+  var d='<defs><linearGradient id="sky_'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfeafb"/><stop offset="1" stop-color="#eef7fc"/></linearGradient>'
+    +'<linearGradient id="grs_'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6cd"/><stop offset="1" stop-color="#9ed7b0"/></linearGradient></defs>';
+  var bg='<rect width="400" height="225" fill="url(#sky_'+k+')"/>'
+    +'<circle cx="338" cy="46" r="22" fill="#ffe487"/>'
+    +'<ellipse cx="92" cy="44" rx="34" ry="13" fill="#fff" opacity=".85"/><ellipse cx="122" cy="38" rx="24" ry="11" fill="#fff" opacity=".85"/>'
+    +'<rect y="158" width="400" height="67" fill="url(#grs_'+k+')"/>'
+    +'<rect x="36" y="150" width="7" height="20" fill="#8a5a3c"/><circle cx="39" cy="142" r="16" fill="#5cb87f"/><circle cx="52" cy="148" r="12" fill="#6cc78d"/>';
+  var house;
+  if(k==="s"){
+    house='<rect x="238" y="126" width="74" height="46" fill="#eef3f6" stroke="#cdd9e0" stroke-width="1.5"/><line x1="238" y1="138" x2="312" y2="138" stroke="#cdd9e0"/>'
+      +'<rect x="108" y="84" width="132" height="88" fill="#fff" stroke="#d7e3ea" stroke-width="2"/>'
+      +'<polygon points="98,86 174,44 250,86" fill="'+roof+'"/>'
+      +'<rect x="124" y="98" width="26" height="20" fill="#bfe6f7" stroke="#9fc7d6"/><rect x="198" y="98" width="26" height="20" fill="#bfe6f7" stroke="#9fc7d6"/>'
+      +'<rect x="124" y="134" width="26" height="22" fill="#bfe6f7" stroke="#9fc7d6"/><rect x="170" y="128" width="24" height="44" fill="#cfe9df" stroke="#9fc7d6"/>';
+  }else if(k==="n"){
+    house='<rect x="132" y="92" width="136" height="12" fill="'+roof+'"/>'
+      +'<rect x="140" y="104" width="118" height="68" fill="#fff" stroke="#d7e3ea" stroke-width="2"/>'
+      +'<rect x="152" y="116" width="54" height="56" fill="#bfe6f7" stroke="#9fc7d6"/>'
+      +'<rect x="220" y="128" width="24" height="44" fill="#cfe9df" stroke="#9fc7d6"/>';
+  }else{
+    house='<rect x="266" y="134" width="52" height="38" fill="#eef3f6" stroke="#cdd9e0" stroke-width="1.5"/><line x1="266" y1="146" x2="318" y2="146" stroke="#cdd9e0"/>'
+      +'<rect x="118" y="118" width="150" height="54" fill="#fff" stroke="#d7e3ea" stroke-width="2"/>'
+      +'<polygon points="106,120 193,78 280,120" fill="'+roof+'"/>'
+      +'<rect x="132" y="130" width="28" height="22" fill="#bfe6f7" stroke="#9fc7d6"/><rect x="226" y="130" width="28" height="22" fill="#bfe6f7" stroke="#9fc7d6"/>'
+      +'<rect x="184" y="142" width="22" height="30" fill="#cfe9df" stroke="#9fc7d6"/>';
+  }
+  return '<svg viewBox="0 0 400 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">'+d+bg+house+'</svg>';
+}
+function toast(m){var d=el("toast");if(!d){d=document.createElement("div");d.id="toast";d.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#0e1626;border:1px solid #23304a;color:#eef2f8;padding:12px 18px;border-radius:12px;z-index:80;box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:14px;font-weight:600;transition:.2s;opacity:0";document.body.appendChild(d);}d.textContent=m;d.style.opacity="1";clearTimeout(window.__tt);window.__tt=setTimeout(function(){d.style.opacity="0"},2400);}
 
 var team=[
   {name:"Handlowiec A.",role:"HANDLOWIEC",zad:14,sp:1,prob:197,not:22,stat:31,of:5,score:81,st:"act",zalN:0,przydz:24,zal:0,tel:197,skut:168,dalsze:81},
@@ -320,36 +353,83 @@ function viewLeady(){
     h+='</div>';}
   return h+'</div>';
 }
-/* ---------- KARTA KLIENTA ---------- */
+/* ---------- KARTA KLIENTA (interaktywna) ---------- */
 function findLead(id){for(var i=0;i<leads.length;i++)if(leads[i].id===id)return leads[i];for(var j=0;j<klienci.length;j++)if(klienci[j].id===id)return klienci[j];return null;}
+var cardId=null,cardTab="dane",cardTasks=[],cardHist=[];
+function offerIdForModel(m){return m&&m.indexOf("Solaris")>=0?2:(m&&m.indexOf("Nordica")>=0?3:1);}
+function note(tg,tx,tm){return '<div class="note"><div class="tg">'+tg+'</div><div class="tx">'+tx+'</div><div class="tm">'+tm+'</div></div>';}
+function leadTab(o){
+  var oid=offerIdForModel(o.model);
+  if(cardTab==="zadania"){
+    var h='<div class="card"><div class="sec" style="margin:0 0 10px">Zadania</div>';
+    for(var i=0;i<cardTasks.length;i++){var t=cardTasks[i];
+      h+='<div onclick="toggleTask('+i+')" style="display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line);cursor:pointer">'
+       +'<span style="width:20px;height:20px;border-radius:6px;border:2px solid '+(t.done?"var(--green)":"var(--line)")+';background:'+(t.done?"var(--green)":"transparent")+';color:#04130d;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">'+(t.done?"✓":"")+'</span>'
+       +'<div style="flex:1"><div style="font-weight:600;'+(t.done?"text-decoration:line-through;color:var(--mut)":"")+'">'+t.t+'</div><div class="muted" style="font-size:11px">'+t.due+'</div></div></div>';}
+    h+='<button class="btn ghost" style="margin-top:12px" onclick="addTask()">+ Dodaj zadanie</button></div>';
+    return h;
+  }
+  if(cardTab==="spotkania"){
+    return '<div class="card"><div class="sec" style="margin:0 0 10px">Spotkania klienta</div>'
+      +'<div class="mtg" style="border-left-color:var(--green);cursor:default"><b>śr. 25.06 · 16:00</b>Prezentacja domu '+o.model+'<div class="who" style="color:var(--green)">● '+(o.hh||"Handlowiec A.")+' · Dom pokazowy</div></div>'
+      +'<div class="mtg" style="border-left-color:#60a5fa;cursor:default"><b>pt. 27.06 · 12:00</b>Follow-up po prezentacji<div class="who" style="color:#60a5fa">● Telefon</div></div>'
+      +'<button class="btn green" style="margin-top:8px" onclick="toast(\'📅 Otwieram kreator spotkania…\');go(\'kalendarz\')">+ Umów spotkanie</button></div>';
+  }
+  if(cardTab==="historia"){
+    var h='<div class="card"><div class="sec" style="margin:0 0 10px">Pełna historia</div>';
+    for(var j=0;j<cardHist.length;j++)h+=note(cardHist[j].tg,cardHist[j].tx,cardHist[j].tm);
+    return h+'</div>';
+  }
+  if(cardTab==="oferty"){
+    var h='<div class="card"><div class="sec" style="margin:0 0 10px">Oferty dla klienta — kliknij, by otworzyć</div><div class="grid g3">';
+    for(var k=0;k<offers.length;k++){var of=offers[k];var sum=of.base+of.mont+of.fund;
+      h+='<div class="card offer" style="border:1px solid var(--line)" onclick="openOffer('+of.id+')"><div class="ph" style="height:96px">'+houseArt(of.n)+'</div><div class="ob" style="padding:11px"><div class="nm" style="font-size:13px">'+of.n+'</div><div class="pr" style="font-size:14px">od '+money(sum)+'</div></div></div>';}
+    return h+'</div><button class="btn green" style="margin-top:12px" onclick="openOffer('+oid+');toast(\'📄 Oferta przygotowana\')">📄 Wyślij dopasowaną ofertę PDF</button></div>';
+  }
+  if(cardTab==="dokumenty"){
+    var h='<div class="card"><div class="sec" style="margin:0 0 10px">Dokumenty</div><table class="t" style="font-size:12.5px"><tbody>';
+    var dd=[["Umowa o budowę domu","Umowa","Podpisany","act"],["Oferta "+o.model,"Oferta PDF","Wysłany","blue"],["Zgoda RODO","Zgoda","Aktywna","act"]];
+    for(var m=0;m<dd.length;m++)h+='<tr class="click"><td class="l"><b>'+dd[m][0]+'</b></td><td class="l role">'+dd[m][1]+'</td><td style="text-align:right">'+badge(dd[m][3],dd[m][2])+'</td></tr>';
+    return h+'</tbody></table></div>';
+  }
+  // DANE (domyślnie) — z wizualizacją domu
+  var phone="+48 600 "+String(o.id).slice(-3)+" "+(100+(o.id%900));
+  var email="klient"+o.id+"@przyklad.pl";
+  var h='<div class="card" style="padding:0;overflow:hidden"><div style="height:170px">'+houseArt(o.model)+'</div><div style="padding:13px 16px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-family:Space Grotesk">'+o.model+'</b><div class="muted" style="font-size:12px">Model zainteresowania klienta</div></div><button class="btn green" onclick="openOffer('+oid+')">📄 Oferta PDF</button></div></div>';
+  h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 8px">Dane klienta</div>'+rowKV("Telefon",phone)+rowKV("E-mail",email)+rowKV("Miasto",o.city)+rowKV("Model",o.model)+rowKV("Finansowanie","Kredyt")+rowKV("Źródło","excel_import")+'</div>';
+  h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 8px">⚡ Dane kwalifikacyjne</div>'+rowKV("Budżet klienta",money(o.val))+rowKV("Działka","Tak — własna")+rowKV("Termin budowy","2026 Q4")+rowKV("Lokalizacja",o.city+", woj.")+'</div>';
+  h+='<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn green" onclick="openOffer('+oid+')">📄 Wyślij ofertę PDF</button><button class="btn ghost" onclick="toast(\'📅 Otwieram kalendarz…\');go(\'kalendarz\')">📅 Umów spotkanie</button></div>';
+  return h;
+}
+function tabbtn(id,lab){return '<span class="f '+(cardTab===id?"on":"")+'" onclick="setLeadTab(\''+id+'\')">'+lab+'</span>';}
 function viewLeadCard(id){
   var o=findLead(id);if(!o)return "Brak.";
   var stage=o.s!=null?STAGES[o.s]:(o.etap||"—");
-  var phone="+48 600 "+String(o.id).slice(-3)+" "+(100+(o.id%900));
-  var email="klient"+o.id+"@przyklad.pl";
-  var h='<div class="lc-head">';
-  h+='<button class="x" onclick="go(\'leady\')">←</button>';
+  var h='<div class="lc-head"><button class="x" onclick="go(\'leady\')">←</button>';
   h+='<div><h2 style="margin:0;color:var(--green);font-family:Space Grotesk">'+o.n+'</h2><div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">'+badge("blue",stage)+badge("no","Indywidualny")+badge("no","excel_import")+'</div></div>';
-  h+='<div class="lc-actions"><button class="btn green">📞 Zadzwoń</button><button class="btn ghost">✉ Wiadomość</button><button class="btn ghost">Materiały</button><button class="btn ghost" onclick="go(\'finansowanie\')">Finansowanie</button></div></div>';
-  // CO TERAZ
+  h+='<div class="lc-actions"><button class="btn green" onclick="leadAct(\'call\')">📞 Zadzwoń</button><button class="btn ghost" onclick="toast(\'✉ Wiadomość wysłana (demo)\')">✉ Wiadomość</button><button class="btn ghost" onclick="toast(\'📎 Materiały wysłane\')">Materiały</button><button class="btn ghost" onclick="go(\'finansowanie\')">Finansowanie</button></div></div>';
   h+='<div class="card panel-now" style="margin-top:14px"><div style="display:flex;justify-content:space-between"><small style="color:#fbbf24;font-weight:800;letter-spacing:.12em;font-size:11px">CO TERAZ?</small>'+badge("over","Dziś")+'</div>';
   h+='<div style="font-size:19px;font-weight:700;margin-top:9px;font-family:Space Grotesk">Oddzwonić</div><div class="muted" style="font-size:13px;margin-top:3px">⏰ sob., 27.06.2026, 10:00</div>';
-  h+='<div class="nowbtns"><button class="btn green" style="justify-content:center">📞 Zadzwoń</button><button class="btn ghost" style="justify-content:center;color:#fbbf24">Nie odebrał</button><button class="btn ghost" style="justify-content:center;color:#f87171">Nie zainteresowany</button><button class="btn ghost" style="justify-content:center">✎ Zmień</button></div></div>';
-  // tabs
-  h+='<div class="filters" style="margin-top:16px"><span class="f on">Dane</span><span class="f">Zadania</span><span class="f">Spotkania</span><span class="f">Historia</span><span class="f">Oferty</span><span class="f">Dokumenty</span></div>';
-  // columns
-  h+='<div class="lc-cols" style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:4px"><div>';
-  h+='<div class="card"><div class="sec" style="margin:0 0 8px">Dane klienta</div>'+rowKV("Telefon",phone)+rowKV("E-mail",email)+rowKV("Miasto",o.city)+rowKV("Model",o.model)+rowKV("Finansowanie","Kredyt")+rowKV("Źródło","excel_import")+'</div>';
-  h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 8px">⚡ Dane kwalifikacyjne</div>'+rowKV("Model domu",o.model)+rowKV("Budżet klienta",money(o.val))+rowKV("Działka","Tak — własna")+rowKV("Termin budowy","2026 Q4")+rowKV("Lokalizacja",o.city+", woj.")+'</div>';
-  h+='<div style="margin-top:12px"><button class="btn green" onclick="openOffer(1)">📄 Wyślij ofertę PDF</button> <button class="btn ghost" onclick="go(\'kalendarz\')">📅 Umów spotkanie</button></div>';
-  h+='</div><div>';
+  h+='<div class="nowbtns"><button class="btn green" style="justify-content:center" onclick="leadAct(\'call\')">📞 Zadzwoń</button><button class="btn ghost" style="justify-content:center;color:#fbbf24" onclick="leadAct(\'noans\')">Nie odebrał</button><button class="btn ghost" style="justify-content:center;color:#f87171" onclick="leadAct(\'lost\')">Nie zainteresowany</button><button class="btn ghost" style="justify-content:center" onclick="leadAct(\'edit\')">✎ Zmień</button></div></div>';
+  h+='<div class="filters" style="margin-top:16px">'+tabbtn("dane","Dane")+tabbtn("zadania","Zadania")+tabbtn("spotkania","Spotkania")+tabbtn("historia","Historia")+tabbtn("oferty","Oferty")+tabbtn("dokumenty","Dokumenty")+'</div>';
+  h+='<div class="lc-cols" style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:4px"><div>'+leadTab(o)+'</div><div>';
   h+='<div class="card"><div class="sec" style="margin:0 0 8px">Zespół</div>'+rowKV("Handlowiec",o.hh||"Handlowiec A.")+rowKV("Call Center","Nieprzypisany")+'</div>';
-  h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 10px">Notatki / historia</div>';
-  h+='<div class="note"><div class="tg">Zadanie utworzone</div><div class="tx">Pierwszy kontakt</div><div class="tm">26.06.2026, 12:47</div></div>';
-  h+='<div class="note"><div class="tg">Zdarzenie · system</div><div class="tx">Brak odpowiedzi (no_answer)</div><div class="tm">26.06.2026, 13:20</div></div>';
-  h+='<div class="note" style="border:0;padding-bottom:0"><div class="tg">Zdarzenie</div><div class="tx">Lead zaimportowany (excel_import)</div><div class="tm">26.06.2026, 09:32</div></div>';
+  h+='<div class="card" style="margin-top:12px"><div class="sec" style="margin:0 0 10px">Ostatnie zdarzenia</div>';
+  for(var i=0;i<Math.min(3,cardHist.length);i++)h+=note(cardHist[i].tg,cardHist[i].tx,cardHist[i].tm);
   h+='</div></div></div>';
   return h;
+}
+function renderCard(){var o=findLead(cardId);el("content").innerHTML=viewLeadCard(cardId);el("title").textContent=o?o.n:"Karta";setActive("leady");}
+function setLeadTab(t){cardTab=t;renderCard();}
+function toggleTask(i){cardTasks[i].done=!cardTasks[i].done;renderCard();toast(cardTasks[i].done?"✓ Zadanie odhaczone":"Zadanie wznowione");}
+function addTask(){cardTasks.push({t:"Nowe zadanie",due:"termin: dziś",done:false});renderCard();toast("➕ Dodano zadanie");}
+function leadAct(a){
+  var now="27.06.2026, "+(10+Math.floor(cardHist.length))%24+":0"+(cardHist.length%6);
+  if(a==="call"){cardHist.unshift({tg:"Rozmowa telefoniczna",tx:"Połączenie wykonane — klient zainteresowany, umówiono prezentację",tm:now});toast("📞 Rozmowa zapisana w historii");}
+  else if(a==="noans"){cardHist.unshift({tg:"Zdarzenie · system",tx:"Nie odebrał — zaplanowano ponowną próbę jutro",tm:now});toast("Zapisano: nie odebrał");}
+  else if(a==="lost"){cardHist.unshift({tg:"Status",tx:"Oznaczono jako: niezainteresowany",tm:now});toast("Lead oznaczony jako niezainteresowany");}
+  else{toast("✎ Edycja następnego kroku (demo)");return;}
+  renderCard();
 }
 /* ---------- KLIENCI ---------- */
 function viewKlienci(){
@@ -396,14 +476,14 @@ function openStage(i){var s=rStages[i];drawer(s.t,'<div class="card"><div class=
 function viewOferty(){
   var h='<div class="sec">'+svg('<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>')+'Katalog domów — kliknij, by otworzyć ofertę z wyceną (PDF)</div><div class="grid offers">';
   for(var i=0;i<offers.length;i++){var o=offers[i];var sum=o.base+o.mont+o.fund;
-    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+houseSVG()+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+' · '+o.tech+'</div><div class="pr">od '+money(sum)+'</div></div></div>';}
+    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+houseArt(o.n)+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+' · '+o.tech+'</div><div class="pr">od '+money(sum)+'</div></div></div>';}
   return h+'</div>';
 }
 function openOffer(id){var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];if(!o)return;
   var sum=o.base+o.mont+o.fund;var rata=Math.round(sum/300/10)*10;
   var H='<div style="height:8px;background:linear-gradient(90deg,#22d3ee,#10b981,#059669)"></div><div style="padding:26px 32px">';
   H+='<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="letter-spacing:.2em;font-size:11px;color:#11a37a;font-weight:800">OFERTA · KATALOG DOMÓW</div><h2 style="margin:6px 0 0;font-family:Space Grotesk">'+o.n+'</h2><div style="color:#7a8696;font-size:12px;margin-top:3px">Nr 2026/00'+(40+o.id)+' · ważna 30 dni</div></div><button class="x" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">✕</button></div>';
-  H+='<div style="height:180px;border-radius:13px;margin:16px 0;overflow:hidden;border:1px solid #d9e3ea">'+houseSVGlight()+'</div>';
+  H+='<div style="height:180px;border-radius:13px;margin:16px 0;overflow:hidden;border:1px solid #d9e3ea">'+houseArt(o.n)+'</div>';
   H+='<div class="lrow"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div><div class="lrow"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div><div class="lrow"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div>';
   H+='<p style="color:#41505f;font-size:13.5px;line-height:1.6;margin:14px 0 6px">'+o.desc+'</p>';
   H+='<div style="font-weight:800;font-family:Space Grotesk;margin-top:8px;font-size:13px;letter-spacing:.05em;color:#16202b">WYCENA</div>';
@@ -429,7 +509,7 @@ function viewNewsletter(){
   h+='<div class="sec">Podgląd kampanii</div><div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px"><div class="card" style="padding:0;overflow:hidden">';
   h+='<div style="height:6px;background:linear-gradient(90deg,#22d3ee,#10b981,#8b5cf6)"></div><div style="padding:22px 24px">';
   h+='<div style="letter-spacing:.2em;font-size:11px;color:var(--mut);font-weight:700">SKALORA · NEWSLETTER</div><h2 style="margin:8px 0 0;font-family:Space Grotesk">Wybuduj swój dom w 4 miesiące</h2>';
-  h+='<div style="height:150px;border-radius:12px;margin:14px 0;overflow:hidden;background:linear-gradient(135deg,#0c2a22,#123a4d)">'+houseSVG()+'</div>';
+  h+='<div style="height:160px;border-radius:12px;margin:14px 0;overflow:hidden;border:1px solid var(--line)">'+houseArt("Aurora 120")+'</div>';
   h+='<p class="muted" style="font-size:14px;line-height:1.6">Nowoczesne domy modułowe pod klucz — Aurora, Solaris, Nordica. Sprawdź cennik i umów bezpłatną konsultację z doradcą.</p>';
   h+='<button class="btn green" style="margin-top:6px">Zobacz katalog →</button></div></div>';
   h+='<div class="grid" style="grid-template-columns:1fr;gap:11px">'+kpi("Subskrybenci","2 760","green")+kpi("Śr. otwarcia","39%","blue")+kpi("Śr. kliknięcia","8%","violet")+kpi("Leady z kampanii","48","green")+'</div></div>';
@@ -457,7 +537,12 @@ var views={dashboard:viewDashboard,leady:viewLeady,klienci:viewKlienci,kalendarz
 var titles={dashboard:"Dashboard",leady:"Leady / Pipeline",klienci:"Klienci",kalendarz:"Kalendarz spotkań",realizacja:"Realizacja inwestycji",oferty:"Oferty / Katalog",finansowanie:"Finansowanie",newsletter:"Newsletter",ekipy:"Ekipy montażowe",dokumenty:"Dokumenty"};
 function setActive(tab){var b=el("nav").getElementsByTagName("button");for(var i=0;i<b.length;i++)b[i].className=(b[i].getAttribute("data-tab")===tab?"on":"");}
 function go(tab){el("content").innerHTML=views[tab]();el("title").textContent=titles[tab];setActive(tab);window.scrollTo(0,0);closeAll();}
-function openCard(id){var o=findLead(id);el("content").innerHTML=viewLeadCard(id);el("title").textContent=o?o.n:"Karta";setActive("leady");window.scrollTo(0,0);closeAll();}
+function openCard(id){
+  cardId=id;cardTab="dane";
+  cardTasks=[{t:"Oddzwonić do klienta",due:"termin: dziś 10:00",done:false},{t:"Wysłać ofertę PDF",due:"termin: dziś",done:false},{t:"Przygotować projekt umowy",due:"termin: +3 dni",done:false}];
+  cardHist=[{tg:"Zadanie utworzone",tx:"Pierwszy kontakt",tm:"26.06.2026, 12:47"},{tg:"Zdarzenie · system",tx:"Brak odpowiedzi (no_answer)",tm:"26.06.2026, 13:20"},{tg:"Zdarzenie",tx:"Lead zaimportowany (excel_import)",tm:"26.06.2026, 09:32"}];
+  renderCard();window.scrollTo(0,0);closeAll();
+}
 
 function drawer(t,b){el("dTitle").textContent=t;el("dBody").innerHTML=b;el("drawer").classList.add("show");el("scrim").classList.add("show");}
 function closeAll(){el("drawer").classList.remove("show");el("scrim").classList.remove("show");el("modal").classList.remove("show");el("sidemenu").classList.remove("show");}
