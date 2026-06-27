@@ -3,126 +3,168 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Skalora — interaktywne demo CRM/ERP</title>
+<title>EkoTechnika — CRM/ERP (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#070810; --panel:#0d0f18; --panel2:#11141d; --line:rgba(255,255,255,.08);
-    --txt:#e8ebf2; --mut:#8b93a7; --cy:#22d3ee; --gr:#34d399; --am:#f59e0b; --rd:#f43f5e; --bl:#60a5fa; --vi:#a78bfa;
+    --bg:#030712; --card:#0f172a; --card2:#111c33; --muted:#151f33; --line:#1e293b;
+    --txt:#eef1f6; --mut:#94a1b2;
+    --green:#10b981; --green2:#0ea371; --red:#ef4444; --red-bg:#1e0b0e; --amber:#f59e0b; --amber-bg:#1f1606;
+    --blue:#3b82f6; --violet:#8b5cf6; --orange:#fb923c; --emerald:#10b981;
+    --r:14px;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Outfit',Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.head{font-family:'Space Grotesk','Plus Jakarta Sans',sans-serif}
   .app{display:flex;min-height:100vh}
   /* sidebar */
-  .side{width:230px;flex:0 0 230px;background:linear-gradient(180deg,#0b0d16,#080a12);border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh}
-  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
-  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#00F0FF,#6B8AFF 50%,#8A2BE2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#06070d;font-size:20px}
-  .brand b{font-size:16px;letter-spacing:.02em}
-  .brand span{display:block;font-size:10px;color:var(--mut);letter-spacing:.18em;text-transform:uppercase}
-  .nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
-  .nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;color:var(--mut);padding:11px 12px;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit}
-  .nav button:hover{background:var(--panel2);color:var(--txt)}
-  .nav button.on{background:var(--panel2);color:#fff}
-  .nav button.on .dot{background:var(--cy)}
-  .dot{width:7px;height:7px;border-radius:50%;background:#3a4258}
-  .side .demo-tag{position:absolute;bottom:16px;left:14px;right:14px;font-size:11px;color:var(--mut);border:1px dashed var(--line);border-radius:10px;padding:10px;text-align:center}
+  .side{width:236px;flex:0 0 236px;background:#0b1322;border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 16px}
+  .blogo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#04130d;font-weight:800;font-size:16px}
+  .brand b{font-size:15px;letter-spacing:.04em;font-family:'Space Grotesk'}
+  .brand small{display:block;font-size:9px;color:var(--mut);letter-spacing:.22em;text-transform:uppercase;margin-top:1px}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+  .nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;color:var(--mut);padding:10px 12px;border-radius:10px;font-size:13.5px;cursor:pointer;font-family:inherit;font-weight:600}
+  .nav button:hover{background:var(--muted);color:var(--txt)}
+  .nav button.on{background:rgba(16,185,129,.12);color:#d6f7ea}
+  .nav button.on svg{color:var(--green)}
+  .nav svg{width:18px;height:18px;color:#64748b}
+  .grow{flex:1}
+  .side .tag{font-size:11px;color:var(--mut);border:1px dashed var(--line);border-radius:10px;padding:9px;text-align:center}
   /* main */
   .main{flex:1;min-width:0;display:flex;flex-direction:column}
-  .top{display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-  .top h1{font-size:18px;margin:0;font-weight:700}
-  .chips{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:#c7cddb}
-  .chip b{font-weight:800}
-  .content{padding:22px;max-width:1180px;width:100%}
+  .top{display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid var(--line);background:#0a1120;position:sticky;top:0;z-index:20}
+  .pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill2{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#0d1626;border-radius:999px;padding:5px 11px;font-size:12px;color:var(--mut);font-weight:600}
+  .pill2 b{font-weight:800}
+  .spacer{flex:1}
+  .search{display:flex;align-items:center;gap:8px;background:var(--muted);border:1px solid var(--line);border-radius:9px;padding:7px 11px;color:var(--mut);font-size:12.5px;min-width:150px}
+  .ava{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#04130d;font-weight:800;font-size:12px}
+  .pagehead{display:flex;align-items:center;gap:12px;padding:18px 22px 4px;flex-wrap:wrap}
+  .pagehead h1{margin:0;font-size:23px;font-weight:700}
+  .pagehead .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;color:#fff}
+  .btn svg{width:15px;height:15px}
+  .btn.green{background:var(--green);color:#04130d}
+  .btn.blue{background:var(--blue)}
+  .btn.violet{background:var(--violet)}
+  .btn.ghost{background:var(--muted);color:var(--txt);border:1px solid var(--line)}
+  .content{padding:14px 22px 40px;max-width:1180px;width:100%}
   .muted{color:var(--mut)}
-  h2.sec{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:0 0 12px}
-  /* kpi grid */
-  .grid{display:grid;gap:12px}
-  .kpis{grid-template-columns:repeat(4,1fr)}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-  .kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
-  .kpi .val{font-size:30px;font-weight:800;margin-top:6px;line-height:1}
+  .sec{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:800;margin:22px 2px 9px}
+  /* KPI cards (jak DashboardKPIs) */
+  .grid{display:grid;gap:10px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .kpi{border:2px solid var(--line);background:var(--card);border-radius:var(--r);padding:13px;text-align:left;cursor:default;transition:.14s}
+  .kpi:hover{transform:translateY(-2px)}
+  .kpi .kh{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+  .kpi .kh svg{width:16px;height:16px}
+  .kpi .kl{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:700}
+  .kpi .kv{font-family:'Space Grotesk';font-weight:700;font-size:30px;line-height:1}
+  .kpi.red{border-color:var(--red);background:var(--red-bg);box-shadow:0 8px 24px rgba(239,68,68,.16)}
+  .kpi.red .kv,.kpi.red svg{color:#f87171}
+  .kpi.amber{border-color:var(--amber);background:var(--amber-bg);box-shadow:0 8px 24px rgba(245,158,11,.14)}
+  .kpi.amber .kv,.kpi.amber svg{color:#fbbf24}
+  .kpi.green .kv,.kpi.green svg{color:var(--green)}
+  .kpi.blue .kv,.kpi.blue svg{color:#60a5fa}
+  .kpi.violet .kv,.kpi.violet svg{color:#a78bfa}
+  .kpi.neutral .kv{color:var(--txt)} .kpi.neutral svg{color:var(--mut)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   /* pipeline */
-  .board{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start}
-  .col{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:120px}
-  .col h3{font-size:12px;margin:4px 6px 10px;color:var(--mut);display:flex;justify-content:space-between}
-  .lead{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer;transition:.12s}
-  .lead:hover{border-color:var(--cy);transform:translateY(-1px)}
-  .lead .nm{font-weight:600;font-size:13px}
-  .lead .mt{font-size:11px;color:var(--mut);margin-top:3px;display:flex;justify-content:space-between}
-  .tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
-  /* realizacja timeline */
-  .timeline{display:flex;flex-direction:column;gap:0}
+  .board{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:start}
+  .col{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:9px;min-height:120px}
+  .col h3{font-size:11px;margin:4px 6px 9px;color:var(--mut);display:flex;justify-content:space-between;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .col h3 .cnt{background:var(--muted);border-radius:999px;padding:1px 8px;color:var(--txt)}
+  .lead{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer;transition:.12s}
+  .lead:hover{border-color:var(--green);transform:translateY(-1px)}
+  .lead .nm{font-weight:700;font-size:13px}
+  .lead .mt{font-size:11px;color:var(--mut);margin-top:4px;display:flex;justify-content:space-between}
+  .lead .mt b{color:var(--green);font-weight:700}
+  /* realizacja */
   .stage{display:flex;gap:14px;cursor:pointer}
   .stage .rail{display:flex;flex-direction:column;align-items:center}
-  .stage .node{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mut)}
-  .stage .line{width:2px;flex:1;background:var(--line);min-height:26px}
-  .stage.done .node{background:var(--gr);border-color:var(--gr);color:#06210f}
-  .stage.active .node{background:var(--cy);border-color:var(--cy);color:#06210f;box-shadow:0 0 0 4px rgba(34,211,238,.18)}
+  .stage .node{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mut);font-weight:700}
+  .stage .line{width:2px;flex:1;background:var(--line);min-height:24px}
+  .stage.done .node{background:var(--green);border-color:var(--green);color:#04130d}
+  .stage.active .node{background:#0a1120;border-color:var(--green);color:var(--green);box-shadow:0 0 0 4px rgba(16,185,129,.2)}
   .stage .body{padding-bottom:18px}
-  .stage .ttl{font-weight:600}
-  .stage:hover .ttl{color:var(--cy)}
+  .stage .ttl{font-weight:700}
+  .stage:hover .ttl{color:var(--green)}
   .stage .sub{font-size:12px;color:var(--mut);margin-top:2px}
-  .progress{height:8px;background:var(--panel2);border-radius:999px;overflow:hidden;margin-top:10px}
-  .progress>i{display:block;height:100%;background:linear-gradient(90deg,#00F0FF,#6B8AFF,#8A2BE2)}
+  .progress{height:9px;background:var(--muted);border-radius:999px;overflow:hidden;margin-top:10px}
+  .progress>i{display:block;height:100%;background:linear-gradient(90deg,#10b981,#34d399)}
   /* oferty */
   .offers{grid-template-columns:repeat(3,1fr)}
-  .offer{cursor:pointer;transition:.12s;overflow:hidden}
-  .offer:hover{border-color:var(--cy);transform:translateY(-2px)}
-  .offer .ph{height:120px;border-radius:10px;background:linear-gradient(135deg,#16324a,#1d2740);display:flex;align-items:center;justify-content:center;color:#7fb6d6;font-size:13px;border:1px solid var(--line)}
-  .offer .nm{font-weight:700;margin-top:10px}
-  .offer .pr{color:var(--cy);font-weight:800;margin-top:4px}
+  .offer{cursor:pointer;transition:.12s;padding:0;overflow:hidden}
+  .offer:hover{border-color:var(--green);transform:translateY(-2px)}
+  .offer .ph{height:130px;background:linear-gradient(135deg,#0c2a22,#10381f);display:flex;align-items:center;justify-content:center;color:#7fe3bf;font-weight:700;border-bottom:1px solid var(--line)}
+  .offer .ob{padding:14px}
+  .offer .nm{font-weight:700;font-family:'Space Grotesk'}
+  .offer .pr{color:var(--green);font-weight:800;margin-top:5px;font-family:'Space Grotesk'}
   /* ekipy */
   .sched{width:100%;border-collapse:collapse;font-size:13px}
-  .sched th,.sched td{border:1px solid var(--line);padding:8px 10px;text-align:left}
-  .sched th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}
-  .pill{font-size:11px;padding:3px 8px;border-radius:999px;display:inline-block}
-  /* modal/drawer */
-  .scrim{position:fixed;inset:0;background:rgba(2,3,7,.6);backdrop-filter:blur(2px);display:none;z-index:40}
+  .sched th,.sched td{border:1px solid var(--line);padding:9px 10px;text-align:left}
+  .sched th{color:var(--mut);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+  .pillc{font-size:11px;padding:3px 9px;border-radius:999px;display:inline-block;font-weight:600}
+  /* drawer + modal */
+  .scrim{position:fixed;inset:0;background:rgba(2,6,15,.66);backdrop-filter:blur(2px);display:none;z-index:40}
   .scrim.show{display:block}
-  .drawer{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:92vw;background:var(--panel);border-left:1px solid var(--line);z-index:50;transform:translateX(100%);transition:.22s;overflow:auto}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:430px;max-width:92vw;background:var(--card);border-left:1px solid var(--line);z-index:50;transform:translateX(100%);transition:.22s;overflow:auto}
   .drawer.show{transform:none}
-  .drawer .dh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-  .drawer .db{padding:18px 20px}
-  .x{background:none;border:1px solid var(--line);color:var(--mut);border-radius:8px;width:30px;height:30px;cursor:pointer}
-  .modal{position:fixed;z-index:50;inset:0;display:none;align-items:center;justify-content:center;padding:20px}
+  .dh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .dh b{font-family:'Space Grotesk';font-size:16px}
+  .db{padding:18px 20px}
+  .x{background:none;border:1px solid var(--line);color:var(--mut);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px}
+  .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
   .modal.show{display:flex}
-  .sheet{background:#fff;color:#16202b;width:560px;max-width:95vw;max-height:90vh;overflow:auto;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
-  .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eef1f5;font-size:14px}
-  .btn{display:inline-block;background:linear-gradient(90deg,#00F0FF,#6B8AFF,#8A2BE2);color:#06070d;border:0;border-radius:10px;padding:11px 18px;font-weight:800;cursor:pointer;font-family:inherit;font-size:14px}
-  .btn.ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
-  .hide{display:none!important}
-  @media(max-width:900px){
-    .side{position:fixed;left:-240px;transition:.2s;z-index:60}.side.show{left:0}
-    .kpis{grid-template-columns:repeat(2,1fr)}.board{grid-template-columns:1fr;}.offers{grid-template-columns:1fr}
-    .burger{display:inline-flex!important}
+  .sheet{background:#fff;color:#16202b;width:580px;max-width:95vw;max-height:90vh;overflow:auto;border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+  .lrow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eef1f5;font-size:14px}
+  @media(max-width:920px){
+    .side{position:fixed;left:-250px;transition:.2s;z-index:60}.side.show{left:0}
+    .g4{grid-template-columns:repeat(2,1fr)}.board{grid-template-columns:1fr}.offers{grid-template-columns:1fr}
+    .burger{display:inline-flex!important}.search{display:none}
   }
-  .burger{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);background:var(--panel2);border-radius:9px;color:var(--txt);cursor:pointer;margin-right:6px}
+  .burger{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);background:var(--muted);border-radius:9px;color:var(--txt);cursor:pointer}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="side" id="side">
-    <div class="brand"><div class="logo">S</div><div><b>Skalora</b><span>System ERP</span></div></div>
+    <div class="brand"><div class="blogo">E</div><div><b>EKOTECHNIKA</b><small>CRM · ERP</small></div></div>
     <nav class="nav" id="nav">
-      <button data-tab="dashboard" class="on"><i class="dot"></i> Dashboard</button>
-      <button data-tab="pipeline"><i class="dot"></i> Pipeline</button>
-      <button data-tab="realizacja"><i class="dot"></i> Realizacja</button>
-      <button data-tab="oferty"><i class="dot"></i> Oferty (PDF)</button>
-      <button data-tab="ekipy"><i class="dot"></i> Ekipy montażowe</button>
+      <button data-tab="dashboard" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> Dashboard</button>
+      <button data-tab="pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="9" y2="18"/></svg> Pipeline</button>
+      <button data-tab="realizacja"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h.86c.85 0 1.65.33 2.25.93l1.25 1.25"/></svg> Realizacja</button>
+      <button data-tab="oferty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> Oferty (PDF)</button>
+      <button data-tab="ekipy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Ekipy montażowe</button>
     </nav>
-    <div class="demo-tag">Demo interaktywne · dane przykładowe</div>
+    <div class="grow"></div>
+    <div class="tag">Demo interaktywne · dane przykładowe<br>by <b style="color:var(--green)">Skalora</b></div>
   </aside>
 
   <main class="main">
     <div class="top">
       <button class="burger" id="burger">☰</button>
+      <div class="pills">
+        <span class="pill2"><b style="color:var(--green)">163</b> Zadania</span>
+        <span class="pill2"><b style="color:#f87171">156</b> Overdue</span>
+        <span class="pill2"><b style="color:#fbbf24">7</b> Ryzyko</span>
+        <span class="pill2"><b style="color:var(--green)">172</b> Leady</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="search">🔍 Szukaj…</div>
+      <div class="ava">D</div>
+    </div>
+
+    <div class="pagehead">
       <h1 id="title">Dashboard</h1>
-      <div class="chips">
-        <span class="chip"><b style="color:var(--cy)">163</b> Zadania</span>
-        <span class="chip"><b style="color:var(--rd)">156</b> Overdue</span>
-        <span class="chip"><b style="color:var(--am)">7</b> Ryzyko</span>
-        <span class="chip"><b style="color:var(--gr)">172</b> Leady</span>
+      <div class="acts">
+        <button class="btn green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nowy Lead</button>
+        <button class="btn blue">Zadanie</button>
+        <button class="btn violet">Spotkanie</button>
       </div>
     </div>
     <div class="content" id="content"></div>
@@ -130,21 +172,29 @@
 </div>
 
 <div class="scrim" id="scrim"></div>
-<aside class="drawer" id="drawer">
-  <div class="dh"><b id="dTitle">Szczegóły</b><button class="x" id="dClose">✕</button></div>
-  <div class="db" id="dBody"></div>
-</aside>
-
-<div class="modal" id="modal">
-  <div class="sheet" id="sheet"></div>
-</div>
+<aside class="drawer" id="drawer"><div class="dh"><b id="dTitle">Szczegóły</b><button class="x" id="dClose">✕</button></div><div class="db" id="dBody"></div></aside>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 
 <script>
-/* ---------- dane przykładowe ---------- */
+var ICON={
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  cal:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+  check:'<path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  userx:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" x2="22" y1="8" y2="13"/><line x1="22" x2="17" y1="8" y2="13"/>',
+  msgoff:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h9"/><line x1="2" x2="22" y1="2" y2="22"/>',
+  file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>',
+  trend:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'
+};
+function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ICON[n]||'')+'</svg>';}
+
 var STAGES=["Nowy","Kontakt","Oferta","Negocjacje","Wygrane"];
 var leads=[
-  {id:1,n:"Kowalski — dom Verona",s:0,city:"Kraków",val:420000,model:"Verona 120"},
-  {id:2,n:"Nowak — dom Wenecja",s:0,city:"Wrocław",val:510000,model:"Wenecja 145"},
+  {id:1,n:"Kowalski — Verona",s:0,city:"Kraków",val:420000,model:"Verona 120"},
+  {id:2,n:"Nowak — Wenecja",s:0,city:"Wrocław",val:510000,model:"Wenecja 145"},
   {id:3,n:"Zieliński — Mediolan",s:1,city:"Poznań",val:389000,model:"Mediolan 96"},
   {id:4,n:"Wójcik — Verona",s:1,city:"Gdańsk",val:435000,model:"Verona 120"},
   {id:5,n:"Lewandowski — Wenecja",s:2,city:"Łódź",val:560000,model:"Wenecja 145"},
@@ -167,145 +217,97 @@ var offers=[
   {id:3,n:"Mediolan 96",pr:"od 389 000 zł",area:"96 m²",rooms:"3 pokoje",tech:"Szkielet stalowy",desc:"Kompaktowy, szybki w montażu, idealny pod klucz."}
 ];
 var ekipy=[
-  {n:"Ekipa Montaż 1",lead:"M. Górski",task:"Kowalski — konstrukcja",col:"var(--cy)"},
-  {n:"Ekipa Montaż 2",lead:"T. Kruk",task:"Nowak — dach (02.07)",col:"var(--bl)"},
-  {n:"Ekipa A (fundamenty)",lead:"R. Sowa",task:"Zieliński — płyta",col:"var(--gr)"},
-  {n:"Wykończenia",lead:"K. Bąk",task:"Wolne od 05.07",col:"var(--am)"}
+  {n:"Ekipa Montaż 1",lead:"M. Górski",task:"Kowalski — konstrukcja",col:"var(--green)"},
+  {n:"Ekipa Montaż 2",lead:"T. Kruk",task:"Nowak — dach (02.07)",col:"#60a5fa"},
+  {n:"Ekipa A (fundamenty)",lead:"R. Sowa",task:"Zieliński — płyta",col:"#34d399"},
+  {n:"Wykończenia",lead:"K. Bąk",task:"Wolne od 05.07",col:"#fbbf24"}
 ];
 var days=["Pon","Wt","Śr","Czw","Pt"];
 
-/* ---------- helpers ---------- */
 function el(id){return document.getElementById(id)}
 function money(v){return v.toLocaleString("pl-PL")+" zł"}
 function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function kpi(label,val,icon,cls){return '<div class="kpi '+cls+'"><div class="kh">'+svg(icon)+'<span class="kl">'+label+'</span></div><div class="kv">'+val+'</div></div>';}
 
-/* ---------- renderery ---------- */
 function viewDashboard(){
-  var k=[["Nieprzypisane","1","var(--rd)"],["Bez next stepu","65","var(--am)"],["Po terminie","107","var(--rd)"],["Blisko sprzedaży","1","var(--gr)"],
-         ["Po terminie (zadania)","94","var(--rd)"],["Dziś","7","var(--bl)"],["W ryzyku","7","var(--am)"],["Zadania aktywne","207","#cbd5e1"]];
-  var h='<h2 class="sec">Lejek sprzedaży — aktualny stan</h2><div class="grid kpis">';
-  for(var i=0;i<k.length;i++){h+='<div class="card kpi"><div class="lab">'+k[i][0]+'</div><div class="val" style="color:'+k[i][2]+'">'+k[i][1]+'</div></div>';}
+  var h='<div class="sec">Lejek sprzedaży — aktualny stan</div><div class="grid g4">';
+  h+=kpi("Nieprzypisane","1","userx","red");
+  h+=kpi("Bez next stepu","65","msgoff","amber");
+  h+=kpi("Po terminie","107","alert","red");
+  h+=kpi("Blisko sprzedaży","1","trend","green");
+  h+=kpi("Po terminie (zadania)","94","alert","red");
+  h+=kpi("Dziś","7","cal","blue");
+  h+=kpi("W ryzyku","7","flame","amber");
+  h+=kpi("Zadania aktywne","207","check","neutral");
   h+='</div>';
-  h+='<h2 class="sec" style="margin-top:24px">Aktywność zespołu (7 dni)</h2><div class="grid kpis">';
-  var a=[["Telefony","86","var(--cy)"],["Skuteczne","84","var(--gr)"],["Spotkania","3","var(--bl)"],["Oferty wysłane","3","var(--vi)"]];
-  for(var j=0;j<a.length;j++){h+='<div class="card kpi"><div class="lab">'+a[j][0]+'</div><div class="val" style="color:'+a[j][2]+'">'+a[j][1]+'</div></div>';}
-  h+='</div><p class="muted" style="margin-top:18px">Kliknij <b>Pipeline</b>, <b>Realizacja</b> lub <b>Oferty</b> w menu, żeby poklikać moduły.</p>';
+  h+='<div class="sec">Aktywność zespołu (7 dni)</div><div class="grid g4">';
+  h+=kpi("Telefony","86","clock","green");
+  h+=kpi("Skuteczne kontakty","84","check","green");
+  h+=kpi("Spotkania odbyte","3","cal","blue");
+  h+=kpi("Oferty wysłane","3","file","violet");
+  h+='</div><p class="muted" style="margin-top:18px;font-size:14px">Otwórz <b>Pipeline</b>, <b>Realizacja</b> lub <b>Oferty</b> w menu — wszystko jest klikalne.</p>';
   return h;
 }
 function viewPipeline(){
-  var h='<h2 class="sec">Pipeline pozysku — kliknij kartę leada</h2><div class="board">';
+  var h='<div class="sec">Pipeline pozysku — kliknij kartę leada</div><div class="board">';
   for(var s=0;s<STAGES.length;s++){
-    var inCol=leads.filter(function(l){return l.s===s});
-    h+='<div class="col"><h3><span>'+STAGES[s]+'</span><span>'+inCol.length+'</span></h3>';
-    for(var i=0;i<inCol.length;i++){var l=inCol[i];
-      h+='<div class="lead" onclick="openLead('+l.id+')"><div class="nm">'+esc(l.n)+'</div><div class="mt"><span>'+l.city+'</span><span>'+money(l.val)+'</span></div></div>';
-    }
+    var c=leads.filter(function(l){return l.s===s});
+    h+='<div class="col"><h3><span>'+STAGES[s]+'</span><span class="cnt">'+c.length+'</span></h3>';
+    for(var i=0;i<c.length;i++){var l=c[i];
+      h+='<div class="lead" onclick="openLead('+l.id+')"><div class="nm">'+esc(l.n)+'</div><div class="mt"><span>'+l.city+'</span><b>'+money(l.val)+'</b></div></div>';}
     h+='</div>';
   }
-  h+='</div>';
-  return h;
+  return h+'</div>';
 }
 function viewRealizacja(){
-  var doneCount=rStages.filter(function(s){return s.p===100}).length;
-  var overall=Math.round(rStages.reduce(function(a,s){return a+s.p},0)/rStages.length);
-  var h='<h2 class="sec">Realizacja — Kowalski, dom Verona 120 · Kraków</h2>';
-  h+='<div class="card" style="margin-bottom:18px"><div style="display:flex;justify-content:space-between"><b>Postęp inwestycji</b><span class="muted">'+doneCount+'/'+rStages.length+' etapów · '+overall+'%</span></div><div class="progress"><i style="width:'+overall+'%"></i></div></div>';
-  h+='<div class="timeline">';
+  var done=rStages.filter(function(s){return s.p===100}).length;
+  var ov=Math.round(rStages.reduce(function(a,s){return a+s.p},0)/rStages.length);
+  var h='<div class="sec">Realizacja — Kowalski, dom Verona 120 · Kraków</div>';
+  h+='<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between"><b style="font-family:Space Grotesk">Postęp inwestycji</b><span class="muted">'+done+'/'+rStages.length+' etapów · '+ov+'%</span></div><div class="progress"><i style="width:'+ov+'%"></i></div></div>';
   for(var i=0;i<rStages.length;i++){var s=rStages[i];
     var cls=s.p===100?"done":(s.p>0?"active":"");
-    var ic=s.p===100?"✓":(i+1);
-    var last=i===rStages.length-1;
-    h+='<div class="stage '+cls+'" onclick="openStage('+i+')"><div class="rail"><div class="node">'+ic+'</div>'+(last?"":'<div class="line"></div>')+'</div><div class="body"><div class="ttl">'+s.t+'</div><div class="sub">'+s.d+' · '+s.e+'</div></div></div>';
-  }
-  h+='</div>';
+    var ic=s.p===100?"✓":(i+1);var last=i===rStages.length-1;
+    h+='<div class="stage '+cls+'" onclick="openStage('+i+')"><div class="rail"><div class="node">'+ic+'</div>'+(last?"":'<div class="line"></div>')+'</div><div class="body"><div class="ttl">'+s.t+'</div><div class="sub">'+s.d+' · '+s.e+'</div></div></div>';}
   return h;
 }
 function viewOferty(){
-  var h='<h2 class="sec">Katalog domów — kliknij, by otworzyć ofertę</h2><div class="grid offers">';
+  var h='<div class="sec">Katalog domów — kliknij, by otworzyć ofertę</div><div class="grid offers">';
   for(var i=0;i<offers.length;i++){var o=offers[i];
-    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+o.n+'</div><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:2px">'+o.area+' · '+o.rooms+'</div><div class="pr">'+o.pr+'</div></div>';
-  }
-  h+='</div>';
-  return h;
+    h+='<div class="card offer" onclick="openOffer('+o.id+')"><div class="ph">'+o.n+'</div><div class="ob"><div class="nm">'+o.n+'</div><div class="muted" style="font-size:12px;margin-top:3px">'+o.area+' · '+o.rooms+'</div><div class="pr">'+o.pr+'</div></div></div>';}
+  return h+'</div>';
 }
 function viewEkipy(){
-  var h='<h2 class="sec">Ekipy montażowe — bieżące zlecenia</h2><div class="grid" style="grid-template-columns:repeat(2,1fr)">';
+  var h='<div class="sec">Ekipy montażowe — bieżące zlecenia</div><div class="grid" style="grid-template-columns:repeat(2,1fr)">';
   for(var i=0;i<ekipy.length;i++){var e=ekipy[i];
-    h+='<div class="card"><div style="display:flex;justify-content:space-between"><b>'+e.n+'</b><span class="pill" style="background:'+e.col+'22;color:'+e.col+';border:1px solid '+e.col+'55">aktywna</span></div><div class="muted" style="margin-top:6px;font-size:13px">Brygadzista: '+e.lead+'</div><div style="margin-top:6px">'+e.task+'</div></div>';
-  }
-  h+='</div>';
-  h+='<h2 class="sec" style="margin-top:24px">Grafik tygodnia</h2><div class="card" style="overflow:auto"><table class="sched"><tr><th>Ekipa</th>';
+    h+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-family:Space Grotesk">'+e.n+'</b><span class="pillc" style="background:'+e.col+'22;color:'+e.col+';border:1px solid '+e.col+'55">aktywna</span></div><div class="muted" style="margin-top:7px;font-size:13px">Brygadzista: '+e.lead+'</div><div style="margin-top:5px">'+e.task+'</div></div>';}
+  h+='</div><div class="sec">Grafik tygodnia</div><div class="card" style="overflow:auto"><table class="sched"><tr><th>Ekipa</th>';
   for(var d=0;d<days.length;d++)h+='<th>'+days[d]+'</th>';
   h+='</tr>';
-  var plan=[["Montaż 1","Kowalski","Kowalski","Kowalski","Nowak","Nowak"],
-            ["Montaż 2","—","Wójcik","Wójcik","Wójcik","Dach Nowak"],
-            ["Fundamenty","Zieliński","Zieliński","—","Lewand.","Lewand."],
-            ["Wykończenia","Szymański","Szymański","Szymański","—","—"]];
-  var cols=["var(--cy)","var(--bl)","var(--gr)","var(--am)"];
+  var plan=[["Montaż 1","Kowalski","Kowalski","Kowalski","Nowak","Nowak"],["Montaż 2","—","Wójcik","Wójcik","Wójcik","Dach Nowak"],["Fundamenty","Zieliński","Zieliński","—","Lewand.","Lewand."],["Wykończenia","Szymański","Szymański","Szymański","—","—"]];
+  var cols=["var(--green)","#60a5fa","#34d399","#fbbf24"];
   for(var r=0;r<plan.length;r++){h+='<tr><td><b>'+plan[r][0]+'</b></td>';
-    for(var c=1;c<plan[r].length;c++){var v=plan[r][c];h+='<td>'+(v==="—"?'<span class="muted">—</span>':'<span class="pill" style="background:'+cols[r]+'1f;color:'+cols[r]+'">'+v+'</span>')+'</td>';}
+    for(var c=1;c<plan[r].length;c++){var v=plan[r][c];h+='<td>'+(v==="—"?'<span class="muted">—</span>':'<span class="pillc" style="background:'+cols[r]+'1f;color:'+cols[r]+'">'+v+'</span>')+'</td>';}
     h+='</tr>';}
-  h+='</table></div>';
-  return h;
+  return h+'</table></div>';
 }
-
 var views={dashboard:viewDashboard,pipeline:viewPipeline,realizacja:viewRealizacja,oferty:viewOferty,ekipy:viewEkipy};
 var titles={dashboard:"Dashboard",pipeline:"Pipeline pozysku",realizacja:"Realizacja inwestycji",oferty:"Oferty / Katalog",ekipy:"Ekipy montażowe"};
+function go(tab){el("content").innerHTML=views[tab]();el("title").textContent=titles[tab];
+  var b=el("nav").getElementsByTagName("button");for(var i=0;i<b.length;i++)b[i].className=(b[i].getAttribute("data-tab")===tab?"on":"");
+  el("side").classList.remove("show");window.scrollTo(0,0);}
 
-function go(tab){
-  el("content").innerHTML=views[tab]();
-  el("title").textContent=titles[tab];
-  var b=el("nav").getElementsByTagName("button");
-  for(var i=0;i<b.length;i++)b[i].className=(b[i].getAttribute("data-tab")===tab?"on":"");
-  el("side").classList.remove("show");
-}
-
-/* ---------- drawer (lead / etap) ---------- */
-function drawer(title,body){el("dTitle").textContent=title;el("dBody").innerHTML=body;el("drawer").classList.add("show");el("scrim").classList.add("show");}
+function drawer(t,b){el("dTitle").textContent=t;el("dBody").innerHTML=b;el("drawer").classList.add("show");el("scrim").classList.add("show");}
 function closeAll(){el("drawer").classList.remove("show");el("scrim").classList.remove("show");el("modal").classList.remove("show");}
-function openLead(id){
-  var l=null;for(var i=0;i<leads.length;i++)if(leads[i].id===id)l=leads[i];
-  if(!l)return;
-  var next=l.s<STAGES.length-1?'<button class="btn" style="margin-top:16px" onclick="advance('+l.id+')">Przesuń do: '+STAGES[l.s+1]+' →</button>':'<div style="margin-top:16px" class="pill" style="background:var(--gr)22;color:var(--gr)">Wygrana 🎉</div>';
-  drawer(l.n,
-    '<div class="card"><div class="row"><span class="muted">Etap</span><b>'+STAGES[l.s]+'</b></div>'+
-    '<div class="row"><span class="muted">Miasto</span><b>'+l.city+'</b></div>'+
-    '<div class="row"><span class="muted">Model</span><b>'+l.model+'</b></div>'+
-    '<div class="row" style="border:0"><span class="muted">Wartość</span><b style="color:var(--cy)">'+money(l.val)+'</b></div></div>'+
-    next+
-    '<button class="btn ghost" style="margin-top:10px" onclick="closeAll()">Zamknij</button>');
-}
+function openLead(id){var l=null;for(var i=0;i<leads.length;i++)if(leads[i].id===id)l=leads[i];if(!l)return;
+  var next=l.s<STAGES.length-1?'<button class="btn green" style="margin-top:16px;width:100%;justify-content:center" onclick="advance('+l.id+')">Przesuń do: '+STAGES[l.s+1]+' →</button>':'<div style="margin-top:16px" class="pillc" style="background:var(--green)22;color:var(--green)">Wygrana 🎉</div>';
+  drawer(l.n,'<div class="card"><div class="row"><span class="muted">Etap</span><b>'+STAGES[l.s]+'</b></div><div class="row"><span class="muted">Miasto</span><b>'+l.city+'</b></div><div class="row"><span class="muted">Model</span><b>'+l.model+'</b></div><div class="row" style="border:0"><span class="muted">Wartość</span><b style="color:var(--green)">'+money(l.val)+'</b></div></div>'+next+'<button class="btn ghost" style="margin-top:10px;width:100%;justify-content:center" onclick="closeAll()">Zamknij</button>');}
 function advance(id){for(var i=0;i<leads.length;i++)if(leads[i].id===id&&leads[i].s<STAGES.length-1)leads[i].s++;go("pipeline");openLead(id);}
-function openStage(i){
-  var s=rStages[i];
-  drawer(s.t,
-    '<div class="card"><div class="row"><span class="muted">Status</span><b>'+(s.p===100?"Zakończony":(s.p>0?"W toku":"Oczekuje"))+'</b></div>'+
-    '<div class="row"><span class="muted">Odpowiedzialny</span><b>'+s.e+'</b></div>'+
-    '<div class="row" style="border:0"><span class="muted">Postęp</span><b>'+s.p+'%</b></div>'+
-    '<div class="progress"><i style="width:'+s.p+'%"></i></div></div>'+
-    '<p class="muted">'+s.d+'</p>'+
-    '<button class="btn ghost" onclick="closeAll()">Zamknij</button>');
-}
-/* ---------- oferta (PDF-like) ---------- */
-function openOffer(id){
-  var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];
-  if(!o)return;
-  el("sheet").innerHTML=
-    '<div style="height:8px;background:linear-gradient(90deg,#00F0FF,#6B8AFF,#8A2BE2)"></div>'+
-    '<div style="padding:26px 30px">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="letter-spacing:.2em;font-size:11px;color:#8a93a3">SKALORA · OFERTA</div><h2 style="margin:6px 0 0">'+o.n+'</h2></div><button class="x" onclick="closeAll()" style="color:#16202b;border-color:#dfe4ec">✕</button></div>'+
-    '<div style="height:150px;border-radius:12px;margin:16px 0;background:linear-gradient(135deg,#16324a,#26406b);display:flex;align-items:center;justify-content:center;color:#cfe6f5;font-weight:700">Wizualizacja: '+o.n+'</div>'+
-    '<div class="row"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div>'+
-    '<div class="row"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div>'+
-    '<div class="row"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div>'+
-    '<div class="row"><span style="color:#5b6675">Cena</span><b style="color:#0b8aa0">'+o.pr+'</b></div>'+
-    '<p style="color:#41505f;font-size:14px;line-height:1.6;margin-top:14px">'+o.desc+'</p>'+
-    '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn" onclick="alert(\'Demo: tu generuje się PDF oferty i wysyła do klienta.\')">Pobierz PDF</button><button class="btn ghost" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">Zamknij</button></div>'+
-    '</div>';
-  el("modal").classList.add("show");el("scrim").classList.add("show");
-}
+function openStage(i){var s=rStages[i];
+  drawer(s.t,'<div class="card"><div class="row"><span class="muted">Status</span><b>'+(s.p===100?"Zakończony":(s.p>0?"W toku":"Oczekuje"))+'</b></div><div class="row"><span class="muted">Odpowiedzialny</span><b>'+s.e+'</b></div><div class="row" style="border:0"><span class="muted">Postęp</span><b>'+s.p+'%</b></div><div class="progress"><i style="width:'+s.p+'%"></i></div></div><p class="muted">'+s.d+'</p><button class="btn ghost" style="width:100%;justify-content:center" onclick="closeAll()">Zamknij</button>');}
+function openOffer(id){var o=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id)o=offers[i];if(!o)return;
+  el("sheet").innerHTML='<div style="height:8px;background:linear-gradient(90deg,#10b981,#34d399,#059669)"></div><div style="padding:26px 30px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="letter-spacing:.2em;font-size:11px;color:#11a37a;font-weight:700">EKOTECHNIKA · OFERTA</div><h2 style="margin:6px 0 0;font-family:Space Grotesk">'+o.n+'</h2></div><button class="x" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">✕</button></div><div style="height:160px;border-radius:12px;margin:16px 0;background:linear-gradient(135deg,#0c2a22,#19543a);display:flex;align-items:center;justify-content:center;color:#bff3df;font-weight:700">Wizualizacja: '+o.n+'</div><div class="lrow"><span style="color:#5b6675">Powierzchnia</span><b>'+o.area+'</b></div><div class="lrow"><span style="color:#5b6675">Układ</span><b>'+o.rooms+'</b></div><div class="lrow"><span style="color:#5b6675">Technologia</span><b>'+o.tech+'</b></div><div class="lrow"><span style="color:#5b6675">Cena</span><b style="color:#0b8a5e">'+o.pr+'</b></div><p style="color:#41505f;font-size:14px;line-height:1.6;margin-top:14px">'+o.desc+'</p><div style="display:flex;gap:10px;margin-top:18px"><button class="btn green" onclick="alert(\'Demo: tu generuje się PDF oferty i wysyła do klienta.\')">Pobierz PDF</button><button class="btn ghost" style="color:#16202b;border-color:#dfe4ec" onclick="closeAll()">Zamknij</button></div></div>';
+  el("modal").classList.add("show");el("scrim").classList.add("show");}
 
-/* ---------- init ---------- */
 el("nav").addEventListener("click",function(e){var b=e.target.closest("button");if(b)go(b.getAttribute("data-tab"));});
 el("scrim").addEventListener("click",closeAll);
 el("dClose").addEventListener("click",closeAll);
