@@ -3,8 +3,8 @@ import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const NAV_LINKS: [string, string][] = [
-  ["Rozwiązania", "solutions"],
-  ["Awatar AI", "ai-avatar"],
+  ["Oferta", "oferta"],
+  ["Wdrożenie CRM", "solutions"],
   ["Dla kogo", "for-whom"],
   ["FAQ", "faq"],
 ];
