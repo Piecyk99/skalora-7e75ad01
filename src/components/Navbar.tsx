@@ -45,8 +45,8 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-8">
             {/* Product switcher */}
-            <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
-              <span className="px-3 py-1.5 text-sm text-white bg-white/10 rounded-md font-medium font-manrope">
+            <div className="flex items-center gap-1 rounded-lg p-1" style={{ background: "rgba(255,255,255,0.05)" }}>
+              <span className="px-3 py-1.5 text-sm font-semibold rounded-md font-manrope" style={{ background: "rgba(0,240,255,0.1)", color: "#00F0FF" }}>
                 Agencja
               </span>
               <Link

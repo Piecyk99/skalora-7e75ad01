@@ -3,7 +3,7 @@ import { ArrowRight, ChevronDown, Check } from "lucide-react";
 const BULLETS = [
   "Reklamy (Meta / Google) + CRM + automatyzacje — w jednym systemie",
   "Płacisz 1/3 ceny wdrożenia — resztę rozliczamy leadami kredytowymi / współpracą",
-  "Fokus: domy modułowe i budownictwo (działamy też w innych branżach)",
+  "Specjalizujemy się w sprzedaży domów szkieletowych i modułowych (działamy też w innych branżach)",
 ];
 
 const METRICS = [
@@ -39,7 +39,7 @@ export default function HeroSection() {
         <div>
           <div data-testid="hero-overline" className="overline mb-5 flex items-center gap-3">
             <span className="w-8 h-px bg-cyan-400" />
-            Reklamy + wdrożenie CRM · domy modułowe
+            Reklamy + wdrożenie CRM · domy szkieletowe i modułowe
           </div>
 
           <h1 data-testid="hero-headline" className="font-outfit font-black text-5xl sm:text-6xl lg:text-7xl tracking-tighter leading-[1.05] mb-5 text-white">
@@ -51,8 +51,9 @@ export default function HeroSection() {
           <p data-testid="hero-subheadline" className="text-lg text-zinc-300 leading-relaxed mb-6 max-w-xl font-manrope">
             Prowadzimy reklamy i wdrażamy kompletny CRM/ERP — leady, oferty, realizacja,
             ekipy, automatyzacje — wszystko w jednym systemie. Płacisz ułamek ceny wdrożenia,
-            resztę rozliczamy współpracą i leadami kredytowymi. Fokus: domy modułowe
-            i budownictwo, ale działamy też w innych branżach.
+            resztę rozliczamy współpracą i leadami kredytowymi. Znamy proces sprzedaży
+            domów i w nim się specjalizujemy — domy szkieletowe i modułowe. Działamy też
+            w innych branżach.
           </p>
 
           <ul className="space-y-2.5 mb-8">
