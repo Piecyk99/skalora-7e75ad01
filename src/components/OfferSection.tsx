@@ -19,7 +19,7 @@ const CARDS = [
     icon: Layers,
     title: "Wszystko w jednym systemie",
     desc: "Sprzedaż → finansowanie → projekt → realizacja → montaż → rozliczenie — bez chaosu i wielu narzędzi.",
-    points: ["Fokus: domy modułowe i budownictwo", "Działamy też w innych branżach", "Jedno źródło prawdy dla całego zespołu"],
+    points: ["Specjalizacja: sprzedaż domów szkieletowych i modułowych", "Działamy też w innych branżach", "Jedno źródło prawdy dla całego zespołu"],
   },
 ];
 

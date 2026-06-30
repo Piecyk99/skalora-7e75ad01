@@ -730,8 +730,8 @@ export default function SkaloraCRMPage(){
           <div className="flex items-center gap-8">
             <span className="font-black text-xl bg-gradient-to-r from-[#00F0FF] to-[#8A2BE2] bg-clip-text text-transparent tracking-tight">SKALORA</span>
             <div className="hidden sm:flex items-center gap-1 rounded-lg p-1" style={{background:"rgba(255,255,255,0.05)"}}>
-              <Link to="/" className="px-3 py-1.5 text-sm text-white/40 hover:text-white rounded-md transition-colors">Agencja</Link>
-              <span className="px-3 py-1.5 text-sm text-white font-semibold rounded-md" style={{background:"rgba(0,240,255,0.1)",color:"#00F0FF"}}>CRM</span>
+              <Link to="/" className="px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-md transition-colors">Agencja</Link>
+              <span className="px-3 py-1.5 text-sm font-semibold rounded-md" style={{background:"rgba(0,240,255,0.1)",color:"#00F0FF"}}>CRM</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -801,15 +801,23 @@ export default function SkaloraCRMPage(){
           <div className="absolute -inset-4 rounded-3xl pointer-events-none" style={{background:"radial-gradient(ellipse at 50% 0%,rgba(0,240,255,0.12) 0%,transparent 70%)",filter:"blur(20px)"}} />
           <div className="relative rounded-2xl overflow-hidden" style={{border:"1px solid rgba(0,240,255,0.15)",boxShadow:"0 0 80px rgba(0,240,255,0.06),0 40px 80px rgba(0,0,0,0.6)"}}>
             <div className="text-center py-2" style={{background:"rgba(0,240,255,0.06)",borderBottom:"1px solid rgba(0,240,255,0.1)"}}>
-              <span className="text-[11px] font-medium" style={{color:"rgba(0,240,255,0.7)"}}>↙ Interaktywny podgląd — kliknij moduły w sidebarze lub zakładki u góry ↗</span>
+              <span className="text-[11px] font-medium" style={{color:"rgba(0,240,255,0.7)"}}>↙ Pełny, klikalny system — kliknij moduły, leady, oferty, kalendarz ↗</span>
             </div>
-            <div style={{height:"600px"}}>
-              <CRMPreview />
-            </div>
+            <iframe
+              src="https://crm.skalora.pl/demo.html"
+              title="Demo Skalora CRM"
+              loading="lazy"
+              style={{ width: "100%", height: "640px", border: 0, display: "block", background: "#070d1c" }}
+            />
           </div>
-          <p className="text-center text-[12px] mt-4" style={{color:"rgba(255,255,255,0.3)"}}>
-            Dashboard · Leady · Zadania · Kanban · Analytics · Finansowanie · Realizacja · Ekipy · Monitor Banków · Oferty
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-5">
+            <a href="https://crm.skalora.pl/demo.html" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-sm transition-all hover:opacity-90 hover:scale-[1.02]" style={{background:"linear-gradient(135deg,#00F0FF,#8A2BE2)",color:"#000"}}>
+              Otwórz pełne demo <ArrowRight size={15}/>
+            </a>
+            <p className="text-center text-[12px]" style={{color:"rgba(255,255,255,0.3)"}}>
+              Dashboard · Leady · Realizacja · Oferty PDF · Kalendarz · Ekipy · Finansowanie
+            </p>
+          </div>
         </div>
       </section>
 
@@ -961,7 +969,7 @@ export default function SkaloraCRMPage(){
               <button onClick={()=>setDemo(false)} className="text-white/30 hover:text-white text-2xl transition-colors leading-none">×</button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <CRMPreview fullScreen/>
+              <iframe src="https://crm.skalora.pl/demo.html" title="Demo Skalora CRM (pełny ekran)" style={{ width: "100%", height: "100%", minHeight: "70vh", border: 0, display: "block", background: "#070d1c" }} />
             </div>
             <div className="px-6 py-4 flex items-center justify-between" style={{borderTop:"1px solid rgba(255,255,255,0.07)"}}>
               <p className="text-sm" style={{color:"rgba(255,255,255,0.4)"}}>Chcesz taki system dla swojej firmy?</p>
