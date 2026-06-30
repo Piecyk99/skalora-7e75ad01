@@ -7,8 +7,8 @@ const STRIPS = [
 ];
 
 const SECTORS = [
-  "Coaching & Mentoring", "E-commerce", "Nieruchomości",
-  "Edukacja Online", "Usługi B2B", "Firmy lokalne",
+  "Domy modułowe", "Budownictwo", "Deweloperzy", "Wykończenia",
+  "Nieruchomości", "Usługi B2B", "Firmy lokalne",
 ];
 
 export default function TrustSection() {
