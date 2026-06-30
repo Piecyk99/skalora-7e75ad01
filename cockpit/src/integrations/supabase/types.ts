@@ -46,6 +46,23 @@ export interface PartnerLead {
   updated_at: string;
 }
 
+// Leady ze strony skalora.pl (formularz) — inbound, osobna tabela website_leads.
+export type WebsiteLeadStatus = "nowy" | "kontakt" | "kwalifikacja" | "wygrany" | "odrzucony";
+export interface WebsiteLead {
+  id: string;
+  imie: string | null;
+  email: string;
+  telefon: string | null;
+  company_stage: string | null;
+  growth_blocker: string | null;
+  wiadomosc: string | null;
+  source: string;
+  status: string;
+  assigned_to: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Prospect {
   id: string;
   firma_nazwa: string;
@@ -109,6 +126,7 @@ export interface Database {
     Tables: {
       profiles: Tbl<Profile>;
       partner_leads: Tbl<PartnerLead>;
+      website_leads: Tbl<WebsiteLead>;
       prospects: Tbl<Prospect>;
       outreach: Tbl<Outreach>;
       activity_log: Tbl<ActivityLog>;

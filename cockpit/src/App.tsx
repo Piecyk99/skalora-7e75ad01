@@ -4,6 +4,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import Login from "@/pages/Login";
 import Cockpit from "@/pages/Cockpit";
 import Pipeline from "@/pages/Pipeline";
+import WebsiteLeads from "@/pages/WebsiteLeads";
 import Prospects from "@/pages/Prospects";
 import Outreach from "@/pages/Outreach";
 import Admin from "@/pages/Admin";
@@ -21,6 +22,7 @@ export default function App() {
       >
         <Route index element={<RequireAuth permission="partner_leads.view"><Cockpit /></RequireAuth>} />
         <Route path="pipeline" element={<RequireAuth permission="partner_leads.view"><Pipeline /></RequireAuth>} />
+        <Route path="leady-ze-strony" element={<RequireAuth permission="partner_leads.view"><WebsiteLeads /></RequireAuth>} />
         <Route path="prospects" element={<RequireAuth permission="prospects.view"><Prospects /></RequireAuth>} />
         <Route path="outreach" element={<RequireAuth permission="outreach.view"><Outreach /></RequireAuth>} />
         <Route path="admin" element={<RequireAuth permission="admin.manage_roles"><Admin /></RequireAuth>} />

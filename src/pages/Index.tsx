@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
+import OfferSection from "../components/OfferSection";
 import TrustSection from "../components/TrustSection";
 import ProblemsSection from "../components/ProblemsSection";
 import SolutionsSection from "../components/SolutionsSection";
@@ -21,6 +22,7 @@ const Index = () => {
     <div className="bg-skalora-bg min-h-screen">
       <Navbar />
       <HeroSection />
+      <OfferSection />
       <TrustSection />
       <ProblemsSection />
       <SolutionsSection />

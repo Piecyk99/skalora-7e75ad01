@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, KanbanSquare, Radar, Mail, ShieldCheck, LogOut, Sun, Moon, Menu } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Globe, Radar, Mail, ShieldCheck, LogOut, Sun, Moon, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/", label: "Cockpit", icon: LayoutDashboard, end: true, perm: "partner_leads.view" },
   { to: "/pipeline", label: "Pipeline pozysku", icon: KanbanSquare, perm: "partner_leads.view" },
+  { to: "/leady-ze-strony", label: "Leady ze strony", icon: Globe, perm: "partner_leads.view" },
   { to: "/prospects", label: "Prospects", icon: Radar, perm: "prospects.view" },
   { to: "/outreach", label: "Outreach", icon: Mail, perm: "outreach.view" },
   { to: "/admin", label: "Administracja", icon: ShieldCheck, perm: "admin.manage_roles" },

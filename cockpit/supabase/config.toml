@@ -30,6 +30,10 @@ verify_jwt = true
 [functions.send-pitch]
 verify_jwt = true
 
+# Publiczny odbiór formularza ze skalora.pl -> website_leads. verify_jwt=false (otwarty dla strony).
+[functions.web-lead-intake]
+verify_jwt = false
+
 # Agent-copywriter (Faza 3b). verify_jwt=true. Generuje drafty, NIE wysyła.
 [functions.copywriter]
 verify_jwt = true

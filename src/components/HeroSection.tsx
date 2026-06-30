@@ -1,18 +1,18 @@
 import { ArrowRight, ChevronDown, Check } from "lucide-react";
 
 const BULLETS = [
-  "Strategia, content i sprzedaż w jednym systemie",
-  "Strona i lejek zaprojektowane pod leady",
-  "Więcej porządku, lepsza konwersja, szybsza reakcja",
+  "Reklamy (Meta / Google) + CRM + automatyzacje — w jednym systemie",
+  "Płacisz 1/3 ceny wdrożenia — resztę rozliczamy leadami kredytowymi / współpracą",
+  "Fokus: domy modułowe i budownictwo (działamy też w innych branżach)",
 ];
 
 const METRICS = [
-  { label: "System pozyskiwania", value: "360°" },
-  { label: "Czas na wyniki", value: "<90 dni" },
-  { label: "Model pracy", value: "Strategia + egzekucja" },
+  { label: "Wdrożenie CRM", value: "1/3 ceny" },
+  { label: "Start", value: "< 30 dni" },
+  { label: "Model", value: "Reklamy + CRM + leady" },
 ];
 
-const TAGS = ["AI Avatar", "Lejki", "Social Media", "Strony", "Kursy", "Automatyzacje"];
+const TAGS = ["CRM", "Reklamy Meta/Google", "Automatyzacje", "Leady kredytowe", "Domy modułowe", "Aplikacja mobilna"];
 
 const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
@@ -39,19 +39,20 @@ export default function HeroSection() {
         <div>
           <div data-testid="hero-overline" className="overline mb-5 flex items-center gap-3">
             <span className="w-8 h-px bg-cyan-400" />
-            Agencja Growth Premium
+            Reklamy + wdrożenie CRM · domy modułowe
           </div>
 
           <h1 data-testid="hero-headline" className="font-outfit font-black text-5xl sm:text-6xl lg:text-7xl tracking-tighter leading-[1.05] mb-5 text-white">
-            Budujemy systemy,{" "}
-            <span className="gradient-text">które zamieniają</span>{" "}
-            uwagę w klientów.
+            Wdrożymy Wam CRM{" "}
+            <span className="gradient-text">za 1/3 ceny</span>{" "}
+            — w zamian za leady kredytowe.
           </h1>
 
           <p data-testid="hero-subheadline" className="text-lg text-zinc-300 leading-relaxed mb-6 max-w-xl font-manrope">
-            Łączymy komunikację, treści, stronę internetową, lejek sprzedażowy i obsługę
-            leada w jeden system, który pomaga firmom zdobywać więcej klientów i rosnąć
-            bez chaosu.
+            Prowadzimy reklamy i wdrażamy kompletny CRM/ERP — leady, oferty, realizacja,
+            ekipy, automatyzacje — wszystko w jednym systemie. Płacisz ułamek ceny wdrożenia,
+            resztę rozliczamy współpracą i leadami kredytowymi. Fokus: domy modułowe
+            i budownictwo, ale działamy też w innych branżach.
           </p>
 
           <ul className="space-y-2.5 mb-8">
@@ -77,13 +78,15 @@ export default function HeroSection() {
               Umów konsultację
               <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform duration-300" />
             </button>
-            <button
+            <a
               data-testid="hero-cta-secondary"
-              onClick={() => scrollTo("process")}
+              href="https://crm.skalora.pl/demo.html"
+              target="_blank"
+              rel="noreferrer"
               className="text-white border border-white/15 hover:border-cyan-500/40 hover:bg-white/5 font-manrope font-semibold px-8 py-4 rounded-full transition-all duration-300 backdrop-blur-sm"
             >
-              Zobacz, jak działa współpraca
-            </button>
+              Zobacz demo CRM →
+            </a>
           </div>
 
           <p className="text-xs text-zinc-600 font-manrope">

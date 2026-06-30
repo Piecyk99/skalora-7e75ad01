@@ -80,6 +80,14 @@ export interface StatsResponse {
   by_status: { status: string; count: number }[];
 }
 
+// Formularz ze strony trafia do JEDNEGO CRM (cockpit crm.skalora.pl), do zakładki
+// „Leady ze strony" (tabela website_leads), przez publiczny edge function web-lead-intake.
+// Anon key cockpitu = klucz publiczny (jak każdy front), bez sekretów.
+const COCKPIT_INTAKE_URL =
+  "https://meactqtvjiztahuzgxqp.supabase.co/functions/v1/web-lead-intake";
+const COCKPIT_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYWN0cXR2aml6dGFodXpneHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NjUxNDIsImV4cCI6MjA5NzA0MTE0Mn0.7bAcCXj_1zsPGj-epTSpPEycMPW8V0q69v_tG-N5stE";
+
 export async function submitLead(data: {
   name: string;
   email: string;
@@ -87,20 +95,25 @@ export async function submitLead(data: {
   company_stage?: string;
   growth_blocker?: string;
 }) {
-  const { data: lead, error } = await supabase
-    .from("leads")
-    .insert({ ...data, source: "landing_page", status: "new" })
-    .select()
-    .single();
-  if (error) throw error;
-
-  await supabase.from("activities").insert({
-    lead_id: lead.id,
-    type: "created",
-    description: "Lead dodany przez formularz na stronie",
+  const res = await fetch(COCKPIT_INTAKE_URL, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      apikey: COCKPIT_ANON_KEY,
+      authorization: `Bearer ${COCKPIT_ANON_KEY}`,
+    },
+    body: JSON.stringify({
+      imie: data.name,
+      email: data.email,
+      telefon: data.phone,
+      company_stage: data.company_stage,
+      growth_blocker: data.growth_blocker,
+      source: "skalora.pl",
+    }),
   });
-
-  return lead;
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok || out?.error) throw new Error(out?.error ?? "Nie udało się wysłać formularza.");
+  return out;
 }
 
 export async function fetchLeads(params?: {
