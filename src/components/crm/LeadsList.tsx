@@ -116,7 +116,7 @@ export default function LeadsList() {
                     <td className="px-4 py-3 text-gray-300">{lead.email}</td>
                     <td className="px-4 py-3 text-gray-300 hidden sm:table-cell">{lead.phone}</td>
                     <td className="px-4 py-3 text-gray-400 hidden md:table-cell text-xs">
-                      {lead.company_stage ?? "—"}
+                      {lead.company_stage ?? "brak"}
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge status={lead.status} />
@@ -125,7 +125,7 @@ export default function LeadsList() {
                     <td className="px-4 py-3 text-gray-400">
                       {lead.notes_count > 0 ? (
                         <span className="text-[#00F0FF]/70">{lead.notes_count}</span>
-                      ) : "—"}
+                      ) : "brak"}
                     </td>
                   </tr>
                 ))}

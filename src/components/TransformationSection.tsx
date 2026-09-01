@@ -52,7 +52,7 @@ export default function TransformationSection() {
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "rgba(239,68,68,0.12)", color: "#f87171" }}>✕</div>
                       <span className="text-xs font-outfit font-bold uppercase tracking-wider text-zinc-500">Przed</span>
-                      <span className="text-xs font-manrope text-zinc-500 ml-1">— {t.before.title}</span>
+                      <span className="text-xs font-manrope text-zinc-500 ml-1">{t.before.title}</span>
                     </div>
                     <ul className="space-y-1.5">
                       {t.before.items.map((item, j) => (
@@ -71,7 +71,7 @@ export default function TransformationSection() {
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: `rgba(${rgba},0.12)`, color: t.accent }}>✓</div>
                       <span className="text-xs font-outfit font-bold uppercase tracking-wider" style={{ color: t.accent }}>Po</span>
-                      <span className="text-xs font-manrope text-zinc-400 ml-1">— {t.after.title}</span>
+                      <span className="text-xs font-manrope text-zinc-400 ml-1">{t.after.title}</span>
                     </div>
                     <ul className="space-y-1.5">
                       {t.after.items.map((item, j) => (

@@ -19,7 +19,7 @@ export default function CaseStudySection() {
           <div>
             <div className="overline reveal mb-4">Uczciwie o nas</div>
             <h2 className="reveal font-outfit font-black text-4xl sm:text-5xl tracking-tighter text-white mb-5">
-              Startujemy —{" "}<span className="gradient-text">i to jest właśnie dobry moment.</span>
+              Startujemy{" "}<span className="gradient-text">i to jest właśnie dobry moment.</span>
             </h2>
             <p className="reveal text-base text-zinc-400 font-manrope leading-relaxed mb-6">
               Nie mamy jeszcze długiej listy klientów. Mamy za to coś, co duże agencje dawno straciły: <strong className="text-zinc-200">pełne skupienie na Twoim projekcie</strong>, bezpośredni kontakt i przestrzeń, żeby zbudować coś realnego, nie zaliczyć kolejne zlecenie.

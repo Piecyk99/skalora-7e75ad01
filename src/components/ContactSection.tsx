@@ -59,7 +59,7 @@ export default function ContactSection() {
         <div className="text-center mb-12">
           <div className="overline reveal mb-4">Zacznijmy</div>
           <h2 className="reveal font-outfit font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter text-white mb-5">
-            Jeśli chcesz zdobywać więcej klientów{" "}<span className="gradient-text">— porozmawiajmy.</span>
+            Jeśli chcesz zdobywać więcej klientów{" "}<span className="gradient-text">porozmawiajmy.</span>
           </h2>
           <p className="reveal text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Krótka rozmowa strategiczna. Bez oferty handlowej. Pokażemy, co konkretnie można zrobić w Twoim przypadku.</p>
         </div>
