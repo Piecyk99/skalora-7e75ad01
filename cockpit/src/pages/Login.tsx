@@ -32,6 +32,19 @@ export default function Login() {
     toast.success("Konto utworzone. Jeśli włączona jest weryfikacja e-mail, potwierdź adres.");
   };
 
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) {
+      setBusy(false);
+      toast.error(error.message);
+    }
+  };
+
+
   const bootstrap = async () => {
     setBusy(true);
     try {
@@ -94,6 +107,13 @@ export default function Login() {
           <Button variant="outline" className="w-full" disabled={busy} onClick={signUp}>
             Utwórz konto
           </Button>
+          <div className="relative py-1 text-center text-xs text-muted-foreground">
+            <span className="bg-card px-2">lub</span>
+          </div>
+          <Button variant="secondary" className="w-full" disabled={busy} onClick={signInWithGoogle}>
+            Zaloguj przez Google
+          </Button>
+
         </CardContent>
       </Card>
     </div>
