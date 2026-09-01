@@ -107,6 +107,13 @@ export default function Login() {
           <Button variant="outline" className="w-full" disabled={busy} onClick={signUp}>
             Utwórz konto
           </Button>
+          <div className="relative py-1 text-center text-xs text-muted-foreground">
+            <span className="bg-card px-2">lub</span>
+          </div>
+          <Button variant="secondary" className="w-full" disabled={busy} onClick={signInWithGoogle}>
+            Zaloguj przez Google
+          </Button>
+
         </CardContent>
       </Card>
     </div>
