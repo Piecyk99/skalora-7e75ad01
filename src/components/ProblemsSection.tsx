@@ -11,10 +11,10 @@ interface Problem {
 }
 
 const PROBLEMS: Problem[] = [
-  { number: "01", icon: Target, title: "Brak przewidywalnych leadów", desc: "Zależysz od poleceń i szczęścia, a nie od systemu. Nie wiesz, skąd przyjdzie kolejny klient — ani kiedy.", hint: "Budujemy lejek, który generuje zapytania co miesiąc.", accent: "#00F0FF" },
-  { number: "02", icon: TrendingDown, title: "Treści nie prowadzą do sprzedaży", desc: "Posty wychodzą, polubienia są, ale nikt nie pisze ani nie kupuje. Content bez strategii to tylko koszt — czasu i energii.", hint: "Tworzymy treści zaprojektowane pod uwagę, leady i pozycję.", accent: "#8A2BE2" },
+  { number: "01", icon: Target, title: "Brak przewidywalnych leadów", desc: "Zależysz od poleceń i szczęścia, a nie od systemu. Nie wiesz, skąd przyjdzie kolejny klient, ani kiedy.", hint: "Budujemy lejek, który generuje zapytania co miesiąc.", accent: "#00F0FF" },
+  { number: "02", icon: TrendingDown, title: "Treści nie prowadzą do sprzedaży", desc: "Posty wychodzą, polubienia są, ale nikt nie pisze ani nie kupuje. Content bez strategii to tylko koszt, czasu i energii.", hint: "Tworzymy treści zaprojektowane pod uwagę, leady i pozycję.", accent: "#8A2BE2" },
   { number: "03", icon: Globe, title: "Strona nie konwertuje odwiedzin", desc: "Odwiedzający przychodzą i wychodzą bez żadnego działania. Strona nie buduje zaufania i nie ma celu konwersyjnego.", hint: "Projektujemy strony, które prowadzą do kontaktu.", accent: "#00F0FF" },
-  { number: "04", icon: DollarSign, title: "Brak systemu monetyzacji", desc: "Masz wiedzę, klientów i doświadczenie — ale nie masz systemu, który zamienia to w przewidywalny, skalowalny przychód.", hint: "Budujemy lejki, kursy i automatyzacje, które zarabiają.", accent: "#8A2BE2" },
+  { number: "04", icon: DollarSign, title: "Brak systemu monetyzacji", desc: "Masz wiedzę, klientów i doświadczenie, ale nie masz systemu, który zamienia to w przewidywalny, skalowalny przychód.", hint: "Budujemy lejki, kursy i automatyzacje, które zarabiają.", accent: "#8A2BE2" },
 ];
 
 const rgbaFromAccent = (accent: string) => accent === "#00F0FF" ? "0,240,255" : "138,43,226";

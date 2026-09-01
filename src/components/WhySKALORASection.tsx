@@ -9,11 +9,11 @@ interface Reason {
 }
 
 const REASONS: Reason[] = [
-  { icon: Target, title: "Jeden system, nie zbiór działań", desc: "Nie prowadzimy social mediów osobno, strony osobno i reklam osobno. Projektujemy i budujemy całą ścieżkę — od pierwszego kontaktu do zamkniętej sprzedaży — jako jeden spójny mechanizm.", accent: "#00F0FF" },
-  { icon: TrendingUp, title: "Patrzymy na wynik, nie na estetykę", desc: "Każda decyzja projektowa, contentowa i techniczna jest podejmowana z myślą o jednym: ile zapytań to wygeneruje. Nie, czy dobrze wygląda na Instagramie. Miernikiem sukcesu jest lead — nie zasięg.", accent: "#6B8AFF" },
-  { icon: Wrench, title: "Wdrażamy — nie tylko rekomendujemy", desc: "Nie dostajesz strategii w PDF do samodzielnej realizacji. Budujemy razem — od planu przez produkcję po uruchomienie i optymalizację. Jesteśmy przy tym na każdym etapie.", accent: "#A855F7" },
-  { icon: Shield, title: "Porządkujemy cały proces sprzedaży", desc: "Zajmujemy się nie tylko tym, jak pozyskać lead, ale też jak go właściwie obsłużyć. CRM, follow-up, kwalifikacja, domknięcie — to też jest nasz obszar pracy.", accent: "#00F0FF" },
-  { icon: ArrowRight, title: "Budujemy pod skalę", desc: "To, co tworzymy, ma działać nie tylko dziś, ale rosnąć razem z Tobą. System contentowy, automatyzacje i lejek zaprojektowane z myślą o przyszłości — nie jednorazowy sprint.", accent: "#6B8AFF" },
+  { icon: Target, title: "Jeden system, nie zbiór działań", desc: "Nie prowadzimy social mediów osobno, strony osobno i reklam osobno. Projektujemy i budujemy całą ścieżkę, od pierwszego kontaktu do zamkniętej sprzedaży, jako jeden spójny mechanizm.", accent: "#00F0FF" },
+  { icon: TrendingUp, title: "Patrzymy na wynik, nie na estetykę", desc: "Każda decyzja projektowa, contentowa i techniczna jest podejmowana z myślą o jednym: ile zapytań to wygeneruje. Nie, czy dobrze wygląda na Instagramie. Miernikiem sukcesu jest lead, nie zasięg.", accent: "#6B8AFF" },
+  { icon: Wrench, title: "Wdrażamy, nie tylko rekomendujemy", desc: "Nie dostajesz strategii w PDF do samodzielnej realizacji. Budujemy razem, od planu przez produkcję po uruchomienie i optymalizację. Jesteśmy przy tym na każdym etapie.", accent: "#A855F7" },
+  { icon: Shield, title: "Porządkujemy cały proces sprzedaży", desc: "Zajmujemy się nie tylko tym, jak pozyskać lead, ale też jak go właściwie obsłużyć. CRM, follow-up, kwalifikacja, domknięcie, to też jest nasz obszar pracy.", accent: "#00F0FF" },
+  { icon: ArrowRight, title: "Budujemy pod skalę", desc: "To, co tworzymy, ma działać nie tylko dziś, ale rosnąć razem z Tobą. System contentowy, automatyzacje i lejek zaprojektowane z myślą o przyszłości, nie jednorazowy sprint.", accent: "#6B8AFF" },
 ];
 
 const rgbaFromAccent = (accent: string) => accent === "#00F0FF" ? "0,240,255" : accent === "#6B8AFF" ? "107,138,255" : "168,85,247";
@@ -31,7 +31,7 @@ export default function WhySKALORASection() {
           <h2 className="reveal font-outfit font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter text-white mb-5">
             Nie jesteśmy kolejną{" "}<span className="gradient-text">agencją social media.</span>
           </h2>
-          <p className="reveal text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Pracujemy inaczej niż większość agencji. Oto konkretne powody, dla których nasi klienci wybierają partnerstwo — nie kolejnego wykonawcę postów.</p>
+          <p className="reveal text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Pracujemy inaczej niż większość agencji. Oto konkretne powody, dla których nasi klienci wybierają partnerstwo, nie kolejnego wykonawcę postów.</p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

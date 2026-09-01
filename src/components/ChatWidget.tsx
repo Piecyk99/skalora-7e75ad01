@@ -3,7 +3,7 @@ import { MessageCircle, X, Send, Bot, Loader } from "lucide-react";
 
 const WELCOME = {
   role: "assistant" as const,
-  text: "Cześć! Jestem asystentem SKALORA. Zanim skieruję Cię do właściwej osoby z naszego zespołu — jak mam się do Ciebie zwracać?",
+  text: "Cześć! Jestem asystentem SKALORA. Zanim skieruję Cię do właściwej osoby z naszego zespołu, jak mam się do Ciebie zwracać?",
 };
 
 interface Message {
@@ -42,7 +42,7 @@ export default function ChatWidget() {
 
     // Simulate response (no backend)
     setTimeout(() => {
-      setMessages((prev) => [...prev, { role: "assistant", text: "Dziękuję! Aby uzyskać pełną odpowiedź, wypełnij formularz konsultacji poniżej — odezwiemy się w ciągu 24 godzin." }]);
+      setMessages((prev) => [...prev, { role: "assistant", text: "Dziękuję! Aby uzyskać pełną odpowiedź, wypełnij formularz konsultacji poniżej, odezwiemy się w ciągu 24 godzin." }]);
       setLoading(false);
     }, 1200);
   };

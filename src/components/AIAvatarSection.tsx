@@ -4,14 +4,14 @@ import useScrollReveal from "../hooks/useScrollReveal";
 const WITHOUT = [
   "Brak czasu na regularne nagrywanie",
   "Nieregularne lub rzadkie publikacje",
-  "Chaos produkcyjny — nie wiesz, co nagrać",
+  "Chaos produkcyjny, nie wiesz, co nagrać",
   "Odkładanie wideo na później bez końca",
   "Niewidoczna marka w sieci",
 ];
 
 const WITH = [
   "Regularne treści wideo bez studia i kamery",
-  "Stała obecność online — nawet 12 filmów/mies.",
+  "Stała obecność online, nawet 12 filmów/mies.",
   "Gotowe skrypty i plany contentowe",
   "Awatar 4K odwzorowujący Twój wygląd i głos",
   "Spójna marka budowana automatycznie",
@@ -21,7 +21,7 @@ const FEATURES = [
   { title: "Realistyczny awatar 4K", desc: "Odwzorowuje Twój wygląd, mimikę i styl wypowiedzi z niespotykaną dokładnością." },
   { title: "Klonowanie głosu i tonu", desc: "AI uczy się Twojego sposobu mówienia. Widz nie odróżni awatara od Ciebie." },
   { title: "Pełna kontrola i bezpieczeństwo", desc: "Awatar tworzony wyłącznie na podstawie materiałów dostarczonych przez Ciebie i za Twoją pełną zgodą." },
-  { title: "Skalowalny content bez wysiłku", desc: "Raz się nagrywasz — AI produkuje dziesiątki materiałów. Ty akceptujesz, system publikuje." },
+  { title: "Skalowalny content bez wysiłku", desc: "Raz się nagrywasz, AI produkuje dziesiątki materiałów. Ty akceptujesz, system publikuje." },
 ];
 
 const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -37,7 +37,7 @@ export default function AIAvatarSection() {
         <div className="reveal text-center mb-4">
           <span className="inline-flex items-center gap-2 text-xs font-manrope font-bold uppercase tracking-widest px-4 py-2 rounded-full" style={{ background: "rgba(138,43,226,0.1)", border: "1px solid rgba(138,43,226,0.3)", color: "#b57dff" }}>
             <Bot size={14} />
-            Technologia AI Premium — wyróżnik SKALORA
+            Technologia AI Premium, wyróżnik SKALORA
           </span>
         </div>
 
@@ -45,7 +45,7 @@ export default function AIAvatarSection() {
           <h2 className="font-outfit font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter text-white mb-5">
             Twoja marka. Twoją twarzą.{" "}<span className="gradient-text">Bez studia.</span>
           </h2>
-          <p className="text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Tworzymy realistyczny awatar AI, który odwzorowuje Twój wygląd, głos i styl komunikacji. Regularny content — bez konieczności stawania przed kamerą.</p>
+          <p className="text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Tworzymy realistyczny awatar AI, który odwzorowuje Twój wygląd, głos i styl komunikacji. Regularny content, bez konieczności stawania przed kamerą.</p>
         </div>
 
         <div className="reveal grid md:grid-cols-2 gap-4 mb-12 max-w-3xl mx-auto">

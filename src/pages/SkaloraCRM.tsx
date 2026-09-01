@@ -71,11 +71,11 @@ const LEADS=[
   {id:8,name:"Ewa Kamińska",phone:"+48 600 800 900",model:"Mediolan",status:"wygrany",priority:"goracy",lead_score:97,next_step:"Realizacja proj.",next_action_date:null},
 ];
 const TASKS=[
-  {id:1,title:"Zadzwoń do Marcina — finalizacja umowy",lead:"Marcin Kowalski",type:"Telefon",due:"01.05.2026",overdue:true},
+  {id:1,title:"Zadzwoń do Marcina w sprawie finalizacji umowy",lead:"Marcin Kowalski",type:"Telefon",due:"01.05.2026",overdue:true},
   {id:2,title:"Wyślij wycenę Jakubowi Szymańskiemu",lead:"Jakub Szymański",type:"Email",due:"02.05.2026",overdue:false},
   {id:3,title:"Follow-up Annie Nowak po ofercie",lead:"Anna Nowak",type:"Telefon",due:"03.05.2026",overdue:false},
   {id:4,title:"Spotkanie z Tomaszem na działce",lead:"Tomasz Wiśniewski",type:"Spotkanie",due:"05.05.2026",overdue:false},
-  {id:5,title:"Sprawdź decyzję banku — Magdalena",lead:"Magdalena Dąbrowska",type:"Finansow.",due:"30.04.2026",overdue:true},
+  {id:5,title:"Sprawdź decyzję banku dla Magdaleny",lead:"Magdalena Dąbrowska",type:"Finansow.",due:"30.04.2026",overdue:true},
 ];
 const FUNNEL=[
   {color:"bg-blue-500",label:"Nowy",count:8},{color:"bg-teal-500",label:"Skontaktowany",count:11},
@@ -98,13 +98,13 @@ const FINANCING=[
   {id:4,lead:"Rafał Maj",model:"Wenecja",status:"decyzja_pozytywna",bank:"mBank",amount:"320 000 zł",deadline:"01.05.2026"},
 ];
 const REALIZACJA=[
-  {id:1,name:"Dom Wenecja — Kowalski",model:"Wenecja",location:"Kraków, ul. Polna 12",status:"w_trakcie",progress:65,team:"Ekipa A",deadline:"15.07.2026"},
-  {id:2,name:"Dom Siena — Kamińska",model:"Siena",location:"Gdańsk, ul. Leśna 5",status:"zakonczone",progress:100,team:"Ekipa B",deadline:"20.04.2026"},
-  {id:3,name:"Dom Mediolan — Nowak",model:"Mediolan",location:"Wrocław, ul. Różana 8",status:"przygotowanie",progress:15,team:"Ekipa C",deadline:"30.09.2026"},
+  {id:1,name:"Dom Wenecja dla Kowalskich",model:"Wenecja",location:"Kraków, ul. Polna 12",status:"w_trakcie",progress:65,team:"Ekipa A",deadline:"15.07.2026"},
+  {id:2,name:"Dom Siena dla Kamińskich",model:"Siena",location:"Gdańsk, ul. Leśna 5",status:"zakonczone",progress:100,team:"Ekipa B",deadline:"20.04.2026"},
+  {id:3,name:"Dom Mediolan dla Nowaków",model:"Mediolan",location:"Wrocław, ul. Różana 8",status:"przygotowanie",progress:15,team:"Ekipa C",deadline:"30.09.2026"},
 ];
 const EKIPY=[
   {id:1,name:"Ekipa A",leader:"Krzysztof Nowak",spec:"Konstrukcja + wykończenie",project:"Dom Wenecja",available:false,rating:4.8,members:6},
-  {id:2,name:"Ekipa B",leader:"Marek Zieliński",spec:"Konstrukcja",project:"—",available:true,rating:4.6,members:4},
+  {id:2,name:"Ekipa B",leader:"Marek Zieliński",spec:"Konstrukcja",project:"brak",available:true,rating:4.6,members:4},
   {id:3,name:"Ekipa C",leader:"Paweł Wiśniewski",spec:"Wykończenie + instalacje",project:"Dom Mediolan",available:false,rating:4.9,members:7},
 ];
 const BANKS=[
@@ -118,7 +118,7 @@ const BANKS=[
 const OFERTY=[
   {id:1,lead:"Marcin Kowalski",model:"Wenecja",value:"485 000 zł",sent:"28.04.2026",status:"odpowiedź",views:3,time:"4m 12s"},
   {id:2,lead:"Anna Nowak",model:"Siena",value:"412 000 zł",sent:"29.04.2026",status:"przeczytana",views:1,time:"2m 05s"},
-  {id:3,lead:"Jakub Szymański",model:"Siena",value:"398 000 zł",sent:"30.04.2026",status:"wysłana",views:0,time:"—"},
+  {id:3,lead:"Jakub Szymański",model:"Siena",value:"398 000 zł",sent:"30.04.2026",status:"wysłana",views:0,time:"brak"},
   {id:4,lead:"Karolina Zając",model:"Verona",value:"531 000 zł",sent:"25.04.2026",status:"wygasła",views:2,time:"1m 45s"},
 ];
 
@@ -231,7 +231,7 @@ function DashboardView(){
         <div className="rounded-xl p-4" style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)"}}>
           <div className="flex items-center gap-2 mb-3"><Clock size={12} className="text-[#00F0FF]"/><span className="text-[12px] font-semibold text-white">Dzisiaj</span></div>
           <div className="space-y-2">
-            {[{t:"Zadzwoń do Marcina K.",type:"Telefon",time:"10:00",overdue:true},{t:"Spotkanie — Tomasz W.",type:"Spotkanie",time:"13:00",overdue:false},{t:"Wyślij wycenę — Jakub S.",type:"Email",time:"15:00",overdue:false}].map(x=>(
+            {[{t:"Zadzwoń do Marcina K.",type:"Telefon",time:"10:00",overdue:true},{t:"Spotkanie z Tomaszem W.",type:"Spotkanie",time:"13:00",overdue:false},{t:"Wyślij wycenę dla Jakuba S.",type:"Email",time:"15:00",overdue:false}].map(x=>(
               <div key={x.t} className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-[11px] ${x.overdue?"bg-red-500/10 border border-red-500/20":""}`} style={!x.overdue?{background:"rgba(255,255,255,0.04)"}:{}}>
                 {x.overdue?<AlertTriangle size={10} className="text-red-400 flex-shrink-0"/>:<CheckSquare size={10} className="text-white/30 flex-shrink-0"/>}
                 <span className={`flex-1 truncate ${x.overdue?"text-red-300":"text-white/70"}`}>{x.t}</span>
@@ -244,7 +244,7 @@ function DashboardView(){
         <div className="rounded-xl p-4" style={{background:"rgba(138,43,226,0.06)",border:"1px solid rgba(138,43,226,0.15)"}}>
           <div className="flex items-center gap-2 mb-3"><Brain size={12} className="text-purple-400"/><span className="text-[12px] font-semibold text-white">AI Scoring</span></div>
           <div className="space-y-2.5">
-            {[{name:"Marcin Kowalski",score:92,note:"Negocjacje — gotowy",g:"bg-emerald-500"},{name:"Magdalena Dąbrowska",score:83,note:"Finansowanie w toku",g:"bg-lime-500"},{name:"Anna Nowak",score:78,note:"Follow-up wymagany",g:"bg-amber-500"}].map(a=>(
+            {[{name:"Marcin Kowalski",score:92,note:"Negocjacje, gotowy",g:"bg-emerald-500"},{name:"Magdalena Dąbrowska",score:83,note:"Finansowanie w toku",g:"bg-lime-500"},{name:"Anna Nowak",score:78,note:"Follow-up wymagany",g:"bg-amber-500"}].map(a=>(
               <div key={a.name} className="flex items-center gap-2.5">
                 <div className="text-[12px] font-black w-7 text-center text-white">{a.score}</div>
                 <div className="flex-1 min-w-0">
@@ -313,7 +313,7 @@ function LeadsView(){
                   <td className="px-3 py-2.5"><span className={`inline-flex px-2 py-0.5 rounded-full border text-[10px] font-medium ${PC[l.priority]??""}`}>{l.priority==="goracy"?"🔥 ":""}{PL[l.priority]}</span></td>
                   <td className="px-3 py-2.5"><ScoreBar v={l.lead_score} cls={l.lead_score>=80?"bg-emerald-500":l.lead_score>=60?"bg-amber-500":"bg-slate-500"}/></td>
                   <td className="px-3 py-2.5" style={{color:"rgba(255,255,255,0.5)"}}>{l.next_step}</td>
-                  <td className="px-3 py-2.5" style={{color:"rgba(255,255,255,0.3)"}}>{l.next_action_date??"—"}</td>
+                  <td className="px-3 py-2.5" style={{color:"rgba(255,255,255,0.3)"}}>{l.next_action_date??"brak"}</td>
                 </tr>
               ))}
             </tbody>
@@ -388,7 +388,7 @@ function KanbanView(){
   return(
     <div className="flex flex-col h-full overflow-hidden">
       <div className="px-4 py-3 flex items-center gap-2 flex-shrink-0" style={{borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-        <span className="text-[13px] font-bold text-white">Kanban — Pipeline</span>
+        <span className="text-[13px] font-bold text-white">Kanban: Pipeline</span>
         <span className="ml-auto text-[10px]" style={{color:"rgba(255,255,255,0.3)"}}>Kliknij kartę aby zobaczyć szczegóły</span>
       </div>
       <div className="flex-1 overflow-x-auto p-4">
@@ -602,7 +602,7 @@ function MonitorBankowView(){
                 <td className="px-3 py-3" style={{color:"rgba(255,255,255,0.5)"}}>{b.ltv}%</td>
                 <td className="px-3 py-3" style={{color:"rgba(255,255,255,0.5)"}}>{b.max}</td>
                 <td className="px-3 py-3">
-                  {b.alert?<div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"/><span className="text-[10px] text-amber-400 font-medium">{b.msg}</span></div>:<span style={{color:"rgba(255,255,255,0.2)"}}>—</span>}
+                  {b.alert?<div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"/><span className="text-[10px] text-amber-400 font-medium">{b.msg}</span></div>:<span style={{color:"rgba(255,255,255,0.2)"}}>brak</span>}
                 </td>
               </tr>
             ))}
@@ -618,7 +618,7 @@ function OfertyView(){
   return(
     <div className="flex flex-col h-full overflow-hidden">
       <div className="px-4 py-3 flex items-center gap-2 flex-shrink-0" style={{borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-        <span className="text-[13px] font-bold text-white">Oferty PDF — śledzenie</span>
+        <span className="text-[13px] font-bold text-white">Oferty PDF: śledzenie</span>
         <button className="ml-auto flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg" style={{background:"rgba(0,240,255,0.07)",border:"1px solid rgba(0,240,255,0.2)",color:"#00F0FF"}}><Plus size={11}/> Nowa oferta</button>
       </div>
       <div className="flex-1 overflow-auto">
@@ -699,22 +699,22 @@ function CRMPreview({fullScreen}:{fullScreen?:boolean}){
 
 // ── integrations & features data ─────────────────────────────────────────────
 const INTS=[
-  {title:"API & Techniczne",icon:Code,accent:"#00F0FF",items:[{n:"REST API",d:"Pełna integracja przez HTTP/JSON — własne ERP, bazy, dowolne zewnętrzne systemy."},{n:"Webhooks",d:"Real-time eventy przy każdej akcji — nowy lead, zmiana statusu, wygrany deal."},{n:"GraphQL",d:"Elastyczne zapytania dla zaawansowanych integracji i raportowania w czasie rzeczywistym."}]},
-  {title:"No-code Automatyzacje",icon:Zap,accent:"#F59E0B",items:[{n:"Zapier",d:"Połącz z 6000+ aplikacjami bez kodu — Gmail, Sheets, Trello, Notion i tysiące innych."},{n:"Make.com",d:"Zaawansowane scenariusze z warunkami, pętlami i transformacjami danych."},{n:"n8n",d:"Open-source automation z własnym hostingiem — pełna kontrola bez abonamentów."}]},
-  {title:"Komunikacja",icon:Mail,accent:"#A855F7",items:[{n:"Email SMTP/IMAP",d:"Dwukierunkowa synchronizacja — cała korespondencja w profilu leada."},{n:"WhatsApp Business",d:"Wysyłaj i odbieraj WhatsApp bezpośrednio z karty klienta w CRM."},{n:"SMS via Twilio",d:"Automatyczne SMS z szablonami, harmonogramem i śledzeniem dostarczenia."}]},
-  {title:"Marketing & Lead Gen",icon:TrendingUp,accent:"#10B981",items:[{n:"Facebook Lead Ads",d:"Leady z Meta trafiają do CRM w czasie rzeczywistym z auto-przypisaniem."},{n:"Google Ads / Forms",d:"Importuj leady i śledź ROI każdej kampanii w dashboardzie CRM."},{n:"Formularz embed",d:"Wstaw na stronę — każde zgłoszenie to nowy lead z pełnym tracking UTM."}]},
-  {title:"Workspace",icon:Bell,accent:"#6366F1",items:[{n:"Google Workspace",d:"Gmail, Calendar i Drive zsynchronizowane z CRM — spotkania i email w jednym."},{n:"Slack",d:"Powiadomienia o leadach i zadaniach zaległych bezpośrednio na kanale Slack."},{n:"Microsoft 365",d:"Outlook, Teams i OneDrive dla firm działających w ekosystemie Microsoft."}]},
-  {title:"Bazy danych",icon:Database,accent:"#EF4444",items:[{n:"PostgreSQL / MySQL",d:"Import historycznych danych i synchronizacja dwustronna z własną bazą."},{n:"Google Sheets",d:"Eksportuj raporty i synchronizuj dane z arkuszami — dla całego zespołu."},{n:"S3 / R2 Storage",d:"Dokumenty i oferty klientów w chmurze — dostęp z karty leada."}]},
+  {title:"API & Techniczne",icon:Code,accent:"#00F0FF",items:[{n:"REST API",d:"Pełna integracja przez HTTP/JSON, własne ERP, bazy, dowolne zewnętrzne systemy."},{n:"Webhooks",d:"Real-time eventy przy każdej akcji, nowy lead, zmiana statusu, wygrany deal."},{n:"GraphQL",d:"Elastyczne zapytania dla zaawansowanych integracji i raportowania w czasie rzeczywistym."}]},
+  {title:"No-code Automatyzacje",icon:Zap,accent:"#F59E0B",items:[{n:"Zapier",d:"Połącz z 6000+ aplikacjami bez kodu, Gmail, Sheets, Trello, Notion i tysiące innych."},{n:"Make.com",d:"Zaawansowane scenariusze z warunkami, pętlami i transformacjami danych."},{n:"n8n",d:"Open-source automation z własnym hostingiem, pełna kontrola bez abonamentów."}]},
+  {title:"Komunikacja",icon:Mail,accent:"#A855F7",items:[{n:"Email SMTP/IMAP",d:"Dwukierunkowa synchronizacja, cała korespondencja w profilu leada."},{n:"WhatsApp Business",d:"Wysyłaj i odbieraj WhatsApp bezpośrednio z karty klienta w CRM."},{n:"SMS via Twilio",d:"Automatyczne SMS z szablonami, harmonogramem i śledzeniem dostarczenia."}]},
+  {title:"Marketing & Lead Gen",icon:TrendingUp,accent:"#10B981",items:[{n:"Facebook Lead Ads",d:"Leady z Meta trafiają do CRM w czasie rzeczywistym z auto-przypisaniem."},{n:"Google Ads / Forms",d:"Importuj leady i śledź ROI każdej kampanii w dashboardzie CRM."},{n:"Formularz embed",d:"Wstaw na stronę, każde zgłoszenie to nowy lead z pełnym tracking UTM."}]},
+  {title:"Workspace",icon:Bell,accent:"#6366F1",items:[{n:"Google Workspace",d:"Gmail, Calendar i Drive zsynchronizowane z CRM, spotkania i email w jednym."},{n:"Slack",d:"Powiadomienia o leadach i zadaniach zaległych bezpośrednio na kanale Slack."},{n:"Microsoft 365",d:"Outlook, Teams i OneDrive dla firm działających w ekosystemie Microsoft."}]},
+  {title:"Bazy danych",icon:Database,accent:"#EF4444",items:[{n:"PostgreSQL / MySQL",d:"Import historycznych danych i synchronizacja dwustronna z własną bazą."},{n:"Google Sheets",d:"Eksportuj raporty i synchronizuj dane z arkuszami, dla całego zespołu."},{n:"S3 / R2 Storage",d:"Dokumenty i oferty klientów w chmurze, dostęp z karty leada."}]},
 ];
 const FEATS=[
-  {icon:ListChecks,title:"16-etapowy pipeline",d:"Od Do przypisania do Wygranego — każdy lead ma precyzyjny status, historię i właściciela."},
-  {icon:Brain,title:"AI Scoring",d:"Automatyczna ocena szansy zamknięcia — system wskazuje komu zadzwonić w pierwszej kolejności."},
+  {icon:ListChecks,title:"16-etapowy pipeline",d:"Od Do przypisania do Wygranego, każdy lead ma precyzyjny status, historię i właściciela."},
+  {icon:Brain,title:"AI Scoring",d:"Automatyczna ocena szansy zamknięcia, system wskazuje komu zadzwonić w pierwszej kolejności."},
   {icon:Banknote,title:"Moduł finansowania",d:"Śledzenie wniosków kredytowych, decyzji banku i dokumentów finansowych klienta."},
   {icon:Landmark,title:"Monitor banków live",d:"Bieżące oferty kredytowe 6 banków z automatycznym alertem o zmianie oprocentowania."},
   {icon:HardHat,title:"Realizacja & ekipy",d:"Zarządzanie projektami budowlanymi, zleceniami dla ekip, harmonogramem i postępem."},
-  {icon:Building2,title:"Katalog modeli domów",d:"Wenecja, Siena, Mediolan, Verona, Lazio — wyceny, konfigurator i generator ofert PDF."},
-  {icon:Users,title:"Multi-role & team",d:"Admin, manager, handlowiec, finansowanie, realizacja, ekipa — każda rola widzi to, co powinna."},
-  {icon:BarChart3,title:"Analytics real-time",d:"Konwersja wg modelu, handlowca, kampanii — wykresy eksportowalne do PDF/Excel."},
+  {icon:Building2,title:"Katalog modeli domów",d:"Wenecja, Siena, Mediolan, Verona, Lazio, wyceny, konfigurator i generator ofert PDF."},
+  {icon:Users,title:"Multi-role & team",d:"Admin, manager, handlowiec, finansowanie, realizacja, ekipa, każda rola widzi to, co powinna."},
+  {icon:BarChart3,title:"Analytics real-time",d:"Konwersja wg modelu, handlowca, kampanii, wykresy eksportowalne do PDF/Excel."},
   {icon:Shield,title:"Własna instancja",d:"Twoje dane na Twoim serwerze. Zero limitu użytkowników. Zero abonamentu od siedzenia."},
 ];
 
@@ -766,7 +766,7 @@ export default function SkaloraCRMPage(){
 
           <p className="text-xl mb-10 max-w-xl mx-auto" style={{color:"rgba(255,255,255,0.5)",lineHeight:"1.6"}}>
             16-etapowy pipeline, AI scoring leadów, moduł finansowania hipotecznego,
-            monitor banków i zarządzanie ekipami budowlanymi — w jednym systemie na Twoim serwerze.
+            monitor banków i zarządzanie ekipami budowlanymi, w jednym systemie na Twoim serwerze.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -801,7 +801,7 @@ export default function SkaloraCRMPage(){
           <div className="absolute -inset-4 rounded-3xl pointer-events-none" style={{background:"radial-gradient(ellipse at 50% 0%,rgba(0,240,255,0.12) 0%,transparent 70%)",filter:"blur(20px)"}} />
           <div className="relative rounded-2xl overflow-hidden" style={{border:"1px solid rgba(0,240,255,0.15)",boxShadow:"0 0 80px rgba(0,240,255,0.06),0 40px 80px rgba(0,0,0,0.6)"}}>
             <div className="text-center py-2" style={{background:"rgba(0,240,255,0.06)",borderBottom:"1px solid rgba(0,240,255,0.1)"}}>
-              <span className="text-[11px] font-medium" style={{color:"rgba(0,240,255,0.7)"}}>↙ Pełny, klikalny system — kliknij moduły, leady, oferty, kalendarz ↗</span>
+              <span className="text-[11px] font-medium" style={{color:"rgba(0,240,255,0.7)"}}>↙ Pełny, klikalny system, kliknij moduły, leady, oferty, kalendarz ↗</span>
             </div>
             <iframe
               src="https://crm.skalora.pl/demo.html"
@@ -852,7 +852,7 @@ export default function SkaloraCRMPage(){
       <section className="px-6 py-24" style={{borderTop:"1px solid rgba(255,255,255,0.05)"}}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="font-black tracking-tighter text-white mb-3" style={{fontSize:"clamp(28px,4vw,48px)"}}>Pipeline sprzedaży — 16 etapów</h2>
+            <h2 className="font-black tracking-tighter text-white mb-3" style={{fontSize:"clamp(28px,4vw,48px)"}}>Pipeline sprzedaży w 16 etapach</h2>
             <p style={{color:"rgba(255,255,255,0.4)"}}>Pełna kontrola nad każdym leadem od pierwszego kontaktu do podpisanej umowy.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
@@ -864,7 +864,7 @@ export default function SkaloraCRMPage(){
             ))}
           </div>
           <div className="mt-10 grid sm:grid-cols-3 gap-4">
-            {[{icon:Flame,t:"Priorytet gorący",d:"System oznacza leady wymagające natychmiastowej akcji na podstawie daty i statusu.",c:"text-red-400",bg:"rgba(239,68,68,0.08)",bc:"rgba(239,68,68,0.15)"},{icon:Brain,t:"AI Score 0–100",d:"Każdy lead dostaje ocenę szansy zamknięcia — algorytm uwzględnia aktywność i historię.",c:"text-purple-400",bg:"rgba(168,85,247,0.08)",bc:"rgba(168,85,247,0.15)"},{icon:Target,t:"Kontrola procesu",d:"Manager widzi w czasie rzeczywistym które leady stoją w miejscu i wymagają interwencji.",c:"text-[#00F0FF]",bg:"rgba(0,240,255,0.06)",bc:"rgba(0,240,255,0.12)"}].map(x=>(
+            {[{icon:Flame,t:"Priorytet gorący",d:"System oznacza leady wymagające natychmiastowej akcji na podstawie daty i statusu.",c:"text-red-400",bg:"rgba(239,68,68,0.08)",bc:"rgba(239,68,68,0.15)"},{icon:Brain,t:"AI Score 0-100",d:"Każdy lead dostaje ocenę szansy zamknięcia, algorytm uwzględnia aktywność i historię.",c:"text-purple-400",bg:"rgba(168,85,247,0.08)",bc:"rgba(168,85,247,0.15)"},{icon:Target,t:"Kontrola procesu",d:"Manager widzi w czasie rzeczywistym które leady stoją w miejscu i wymagają interwencji.",c:"text-[#00F0FF]",bg:"rgba(0,240,255,0.06)",bc:"rgba(0,240,255,0.12)"}].map(x=>(
               <div key={x.t} className="rounded-2xl p-5" style={{background:x.bg,border:`1px solid ${x.bc}`}}>
                 <x.icon size={20} className={`${x.c} mb-3`}/>
                 <div className="font-bold text-white mb-1.5">{x.t}</div>
@@ -963,7 +963,7 @@ export default function SkaloraCRMPage(){
           <div className="w-full max-w-6xl max-h-[92vh] overflow-hidden flex flex-col rounded-2xl" style={{background:"#030308",border:"1px solid rgba(0,240,255,0.15)",boxShadow:"0 0 80px rgba(0,240,255,0.08)"}}>
             <div className="flex items-center justify-between px-6 py-4" style={{borderBottom:"1px solid rgba(255,255,255,0.07)"}}>
               <div>
-                <span className="font-bold text-white">Demo — Panel CRM</span>
+                <span className="font-bold text-white">Demo: Panel CRM</span>
                 <p className="text-xs mt-0.5" style={{color:"rgba(255,255,255,0.3)"}}>Przykładowe dane, eksploruj wszystkie moduły</p>
               </div>
               <button onClick={()=>setDemo(false)} className="text-white/30 hover:text-white text-2xl transition-colors leading-none">×</button>

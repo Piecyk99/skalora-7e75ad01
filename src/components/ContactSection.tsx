@@ -68,8 +68,8 @@ export default function ContactSection() {
           <div className="reveal space-y-5">
             {[
               { n: "01", title: "Sprawdzimy, gdzie uciekają Ci klienci", desc: "Bezpłatna konsultacja diagnostyczna. Analizujemy Twój obecny proces i wskazujemy konkretne miejsca, w których tracisz potencjalnych klientów." },
-              { n: "02", title: "Indywidualny plan — nie szablon", desc: "Każda strategia budowana jest od nowa, dopasowana do Twojego biznesu, rynku i celów. Nie dostajesz ogólnej oferty." },
-              { n: "03", title: "Odpowiedź w ciągu 24 godzin", desc: "Skontaktujemy się z Tobą szybko — z konkretną propozycją, a nie kolejną prezentacją bez konkretów." },
+              { n: "02", title: "Indywidualny plan, nie szablon", desc: "Każda strategia budowana jest od nowa, dopasowana do Twojego biznesu, rynku i celów. Nie dostajesz ogólnej oferty." },
+              { n: "03", title: "Odpowiedź w ciągu 24 godzin", desc: "Skontaktujemy się z Tobą szybko, z konkretną propozycją, a nie kolejną prezentacją bez konkretów." },
             ].map((item, i) => (
               <div key={i} className="flex gap-4">
                 <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-outfit font-black text-xs" style={{ background: "linear-gradient(135deg, #00F0FF 0%, #8A2BE2 100%)", color: "#030305" }}>{item.n}</div>
@@ -91,7 +91,7 @@ export default function ContactSection() {
 
             <div className="mt-5 p-4 rounded-xl" style={{ background: "rgba(0,240,255,0.04)", border: "1px solid rgba(0,240,255,0.12)" }}>
               <p className="text-xs font-manrope text-zinc-400 leading-relaxed">
-                <span className="text-cyan-400 font-semibold">Uczciwie:</span> jesteśmy na początku drogi. Każdą współpracę traktujemy jako projekt referencyjny — dlatego Twój projekt dostanie pełną uwagę, nie obsługę z szablonu.
+                <span className="text-cyan-400 font-semibold">Uczciwie:</span> jesteśmy na początku drogi. Każdą współpracę traktujemy jako projekt referencyjny, dlatego Twój projekt dostanie pełną uwagę, nie obsługę z szablonu.
               </p>
             </div>
           </div>

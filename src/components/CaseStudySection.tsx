@@ -2,9 +2,9 @@ import { ArrowRight } from "lucide-react";
 import useScrollReveal from "../hooks/useScrollReveal";
 
 const ADVANTAGES = [
-  { n: "01", title: "Pełna uwaga — nie obsługa z szablonu", desc: "Na tym etapie każdy projekt jest dla nas najważniejszy. Twój system budujemy od podstaw, z pełnym zaangażowaniem — nie wrzucamy Cię na taśmę produkcyjną.", accent: "#00F0FF" },
+  { n: "01", title: "Pełna uwaga, nie obsługa z szablonu", desc: "Na tym etapie każdy projekt jest dla nas najważniejszy. Twój system budujemy od podstaw, z pełnym zaangażowaniem, nie wrzucamy Cię na taśmę produkcyjną.", accent: "#00F0FF" },
   { n: "02", title: "Bezpośredni kontakt z twórcami", desc: "Nie pracujesz z junior account managerem, który przekazuje zlecenia dalej. Masz kontakt z osobami, które faktycznie projektują, piszą i wdrażają.", accent: "#6B8AFF" },
-  { n: "03", title: "Elastyczność, której nie ma w dużych agencjach", desc: "Możemy dostosować zakres, tempo i priorytety do Twojej rzeczywistej sytuacji — bez korporacyjnych procedur, bez czekania na akceptacje piętra wyżej.", accent: "#A855F7" },
+  { n: "03", title: "Elastyczność, której nie ma w dużych agencjach", desc: "Możemy dostosować zakres, tempo i priorytety do Twojej rzeczywistej sytuacji, bez korporacyjnych procedur, bez czekania na akceptacje piętra wyżej.", accent: "#A855F7" },
 ];
 
 const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -22,7 +22,7 @@ export default function CaseStudySection() {
               Startujemy —{" "}<span className="gradient-text">i to jest właśnie dobry moment.</span>
             </h2>
             <p className="reveal text-base text-zinc-400 font-manrope leading-relaxed mb-6">
-              Nie mamy jeszcze długiej listy klientów. Mamy za to coś, co duże agencje dawno straciły: <strong className="text-zinc-200">pełne skupienie na Twoim projekcie</strong>, bezpośredni kontakt i przestrzeń, żeby zbudować coś realnego — nie zaliczyć kolejne zlecenie.
+              Nie mamy jeszcze długiej listy klientów. Mamy za to coś, co duże agencje dawno straciły: <strong className="text-zinc-200">pełne skupienie na Twoim projekcie</strong>, bezpośredni kontakt i przestrzeń, żeby zbudować coś realnego, nie zaliczyć kolejne zlecenie.
             </p>
             <p className="reveal text-base text-zinc-500 font-manrope leading-relaxed mb-8">
               Każdą współpracę traktujemy jako projekt referencyjny, który budujemy z myślą o tym, żeby mówił za nas. Dlatego zależy nam na Twoim wyniku bardziej niż na szybkim rozliczeniu.
