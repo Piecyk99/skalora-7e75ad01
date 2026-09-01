@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import CRM from "./pages/CRM.tsx";
 import Login from "./pages/Login.tsx";
-import SkaloraCRMPage from "./pages/SkaloraCRM.tsx";
+
 import NotFound from "./pages/NotFound.tsx";
 import RequireAuth from "@/components/RequireAuth";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -22,7 +22,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/skalora-crm" element={<SkaloraCRMPage />} />
+            
             <Route path="/login" element={<Login />} />
             <Route
               path="/crm"

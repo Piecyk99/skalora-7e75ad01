@@ -43,24 +43,6 @@ export default function Login() {
     navigate("/crm", { replace: true });
   };
 
-  const bootstrap = async () => {
-    setBusy(true);
-    const { data, error } = await supabase.rpc("bootstrap_first_admin");
-    if (error) {
-      setBusy(false);
-      toast.error(error.message);
-      return;
-    }
-    await refreshRoles();
-    setBusy(false);
-    if (data) {
-      toast.success("Nadano rolę administratora.");
-      navigate("/crm", { replace: true });
-    } else {
-      toast.error("Administrator już istnieje. Poproś go o nadanie dostępu.");
-    }
-  };
-
   const cardClass =
     "w-full max-w-sm rounded-2xl border border-white/10 bg-[#0A0A10] p-6";
 
@@ -70,19 +52,11 @@ export default function Login() {
         <div className={cardClass}>
           <h1 className="text-lg font-semibold text-white">Konto bez uprawnień</h1>
           <p className="mt-2 text-sm text-gray-400">
-            Jeśli to pierwsze uruchomienie systemu i nie ma jeszcze administratora, możesz nadać
-            sobie rolę administratora.
+            To konto nie ma dostępu do panelu. Poproś administratora o nadanie uprawnień.
           </p>
           <button
-            onClick={bootstrap}
-            disabled={busy}
-            className="mt-4 w-full rounded-lg bg-gradient-to-r from-[#00F0FF] to-[#8A2BE2] py-2.5 font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
-          >
-            Zostań pierwszym administratorem
-          </button>
-          <button
             onClick={signOut}
-            className="mt-2 w-full rounded-lg border border-white/10 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
+            className="mt-4 w-full rounded-lg border border-white/10 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
           >
             Wyloguj
           </button>
@@ -90,6 +64,7 @@ export default function Login() {
       </div>
     );
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#030305] px-4">
