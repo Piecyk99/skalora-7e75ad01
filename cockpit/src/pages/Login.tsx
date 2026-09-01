@@ -32,6 +32,19 @@ export default function Login() {
     toast.success("Konto utworzone. Jeśli włączona jest weryfikacja e-mail, potwierdź adres.");
   };
 
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) {
+      setBusy(false);
+      toast.error(error.message);
+    }
+  };
+
+
   const bootstrap = async () => {
     setBusy(true);
     try {
