@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { session, isStaff, loading, refreshRoles, signOut } = useAuth();
+  const { session, isStaff, loading, signOut } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
