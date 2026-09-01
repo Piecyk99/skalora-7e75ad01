@@ -11,15 +11,15 @@ const TRANSFORMATIONS = [
   },
   {
     label: "Ekspert / konsultant",
-    before: { title: "Widoczność bez sprzedaży", items: ["Treści wychodzą, zasięgi rosną — zapytań brak", "Brak systemu prowadzącego od treści do kontaktu", "Zapytania pojawiają się przypadkowo i nikt ich nie obsługuje", "Każdy klient pochodzi wyłącznie z polecenia"] },
-    after: { title: "Treści, które generują zapytania", items: ["Content plan zbudowany pod cel biznesowy", "Strona i CTA prowadzące do rezerwacji konsultacji", "Automatyczny follow-up po każdym zapytaniu", "Silna pozycja eksperta — klienci trafiają gotowi"] },
+    before: { title: "Widoczność bez sprzedaży", items: ["Treści wychodzą, zasięgi rosną, zapytań brak", "Brak systemu prowadzącego od treści do kontaktu", "Zapytania pojawiają się przypadkowo i nikt ich nie obsługuje", "Każdy klient pochodzi wyłącznie z polecenia"] },
+    after: { title: "Treści, które generują zapytania", items: ["Content plan zbudowany pod cel biznesowy", "Strona i CTA prowadzące do rezerwacji konsultacji", "Automatyczny follow-up po każdym zapytaniu", "Silna pozycja eksperta, klienci trafiają gotowi"] },
     effect: "Efekt: Lepsza jakość leadów, więcej zapytań i ugruntowana pozycja eksperta",
     accent: "#6B8AFF",
   },
   {
     label: "Marka osobista / edukator",
-    before: { title: "Brak czasu i regularności", items: ["Nagrywanie zajmuje zbyt dużo czasu", "Publikacje nieregularne — lub ich brak", "Wiedza nie zamienia się w stały przychód", "Brak lejka — brak skalowalnych zarobków"] },
-    after: { title: "Skalowalny system contentowy", items: ["AI Avatar produkuje treści bez codziennego nagrywania", "Regularna obecność — do 12 materiałów miesięcznie", "Lejek sprzedażowy od treści do zakupu", "Kurs lub produkt cyfrowy generuje dochód niezależnie"] },
+    before: { title: "Brak czasu i regularności", items: ["Nagrywanie zajmuje zbyt dużo czasu", "Publikacje nieregularne, lub ich brak", "Wiedza nie zamienia się w stały przychód", "Brak lejka, brak skalowalnych zarobków"] },
+    after: { title: "Skalowalny system contentowy", items: ["AI Avatar produkuje treści bez codziennego nagrywania", "Regularna obecność, do 12 materiałów miesięcznie", "Lejek sprzedażowy od treści do zakupu", "Kurs lub produkt cyfrowy generuje dochód niezależnie"] },
     effect: "Efekt: Regularna obecność i skala działań bez konieczności codziennego nagrywania",
     accent: "#8A2BE2",
   },
@@ -38,7 +38,7 @@ export default function TransformationSection() {
           <h2 className="reveal font-outfit font-black text-4xl sm:text-5xl tracking-tighter text-white mb-5">
             Jak wygląda wdrożenie{" "}<span className="gradient-text">w praktyce</span>
           </h2>
-          <p className="reveal text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Trzy realne scenariusze — od stanu obecnego do systemu, który generuje zapytania i porządkuje obsługę klientów.</p>
+          <p className="reveal text-base text-zinc-400 max-w-2xl mx-auto font-manrope">Trzy realne scenariusze, od stanu obecnego do systemu, który generuje zapytania i porządkuje obsługę klientów.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-5">
@@ -52,12 +52,12 @@ export default function TransformationSection() {
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "rgba(239,68,68,0.12)", color: "#f87171" }}>✕</div>
                       <span className="text-xs font-outfit font-bold uppercase tracking-wider text-zinc-500">Przed</span>
-                      <span className="text-xs font-manrope text-zinc-500 ml-1">— {t.before.title}</span>
+                      <span className="text-xs font-manrope text-zinc-500 ml-1">{t.before.title}</span>
                     </div>
                     <ul className="space-y-1.5">
                       {t.before.items.map((item, j) => (
                         <li key={j} className="text-xs text-zinc-600 font-manrope flex items-start gap-2">
-                          <span className="text-red-500/40 mt-0.5">—</span>{item}
+                          <span className="text-red-500/40 mt-0.5">brak</span>{item}
                         </li>
                       ))}
                     </ul>
@@ -71,7 +71,7 @@ export default function TransformationSection() {
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: `rgba(${rgba},0.12)`, color: t.accent }}>✓</div>
                       <span className="text-xs font-outfit font-bold uppercase tracking-wider" style={{ color: t.accent }}>Po</span>
-                      <span className="text-xs font-manrope text-zinc-400 ml-1">— {t.after.title}</span>
+                      <span className="text-xs font-manrope text-zinc-400 ml-1">{t.after.title}</span>
                     </div>
                     <ul className="space-y-1.5">
                       {t.after.items.map((item, j) => (

@@ -11,9 +11,9 @@ interface Step {
 
 const STEPS: Step[] = [
   { number: "01", icon: Search, title: "Analiza i Strategia", desc: "Zaczynamy od dogłębnej analizy Twojej firmy, pozycji na rynku i grupy docelowej. Budujemy strategię wzrostu dopasowaną do Twoich celów i zasobów.", accent: "#00F0FF" },
-  { number: "02", icon: Layers, title: "Budowa Systemu", desc: "Projektujemy i budujemy cały ekosystem: stronę, lejek sprzedażowy, system contentowy, automatyzacje i awatara AI — jako jeden spójny mechanizm.", accent: "#4FC3F7" },
+  { number: "02", icon: Layers, title: "Budowa Systemu", desc: "Projektujemy i budujemy cały ekosystem: stronę, lejek sprzedażowy, system contentowy, automatyzacje i awatara AI, jako jeden spójny mechanizm.", accent: "#4FC3F7" },
   { number: "03", icon: Rocket, title: "Produkcja i Wdrożenie", desc: "Tworzymy wszystkie materiały: wideo, grafiki, teksty, reklamy. Wdrażamy system i uruchamiamy kampanie. Wszystko spójne, przemyślane i gotowe na skalę.", accent: "#9C64FA" },
-  { number: "04", icon: TrendingUp, title: "Optymalizacja i Wzrost", desc: "Analizujemy dane, optymalizujemy to, co przynosi wyniki, i skalujemy skuteczne kanały. System stale się doskonali — Ty widzisz rosnące wyniki.", accent: "#8A2BE2" },
+  { number: "04", icon: TrendingUp, title: "Optymalizacja i Wzrost", desc: "Analizujemy dane, optymalizujemy to, co przynosi wyniki, i skalujemy skuteczne kanały. System stale się doskonali, Ty widzisz rosnące wyniki.", accent: "#8A2BE2" },
 ];
 
 const rgbaFromAccent = (accent: string) => {
@@ -34,7 +34,7 @@ export default function ProcessSection() {
           <h2 className="reveal font-outfit font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter text-white mb-6">
             Prosta droga od{" "}<span className="gradient-text">problemu do wyników</span>
           </h2>
-          <p className="reveal text-lg text-zinc-400 max-w-2xl mx-auto font-manrope">Jasny, sprawdzony proces — bez chaosu, bez zgadywania. Wiesz, co się dzieje na każdym etapie.</p>
+          <p className="reveal text-lg text-zinc-400 max-w-2xl mx-auto font-manrope">Jasny, sprawdzony proces, bez chaosu, bez zgadywania. Wiesz, co się dzieje na każdym etapie.</p>
         </div>
 
         <div className="relative grid md:grid-cols-4 gap-8 md:gap-0">

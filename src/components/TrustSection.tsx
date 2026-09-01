@@ -1,9 +1,9 @@
 import useScrollReveal from "../hooks/useScrollReveal";
 
 const STRIPS = [
-  { label: "Projektujemy systemy pod leady i wyniki — nie pod pozory działania" },
+  { label: "Projektujemy systemy pod leady i wyniki, nie pod pozory działania" },
   { label: "Pracujemy z firmami, które traktują wzrost poważnie" },
-  { label: "Stawiamy na wdrożenie i mierzalny efekt — nie pliki PDF ze strategią" },
+  { label: "Stawiamy na wdrożenie i mierzalny efekt, nie pliki PDF ze strategią" },
 ];
 
 const SECTORS = [

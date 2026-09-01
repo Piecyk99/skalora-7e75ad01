@@ -12,13 +12,13 @@ const CARDS = [
   {
     icon: Handshake,
     title: "Płacisz 1/3 ceny",
-    desc: "Wdrożenie za ułamek standardowej ceny — resztę rozliczamy współpracą i leadami kredytowymi.",
+    desc: "Wdrożenie za ułamek standardowej ceny, resztę rozliczamy współpracą i leadami kredytowymi.",
     points: ["Niski koszt wejścia", "Model barterowy / partnerski", "Rozliczenie dopasowane do Waszego modelu"],
   },
   {
     icon: Layers,
     title: "Wszystko w jednym systemie",
-    desc: "Sprzedaż → finansowanie → projekt → realizacja → montaż → rozliczenie — bez chaosu i wielu narzędzi.",
+    desc: "Sprzedaż → finansowanie → projekt → realizacja → montaż → rozliczenie, bez chaosu i wielu narzędzi.",
     points: ["Specjalizacja: sprzedaż domów szkieletowych i modułowych", "Działamy też w innych branżach", "Jedno źródło prawdy dla całego zespołu"],
   },
 ];
@@ -35,7 +35,7 @@ export default function OfferSection() {
             <span className="w-8 h-px bg-cyan-400" /> Jak współpracujemy
           </div>
           <h2 className="font-outfit font-black text-4xl sm:text-5xl tracking-tighter leading-tight text-white mb-5">
-            Wdrożenie CRM <span className="gradient-text">za 1/3 ceny</span> — w zamian za leady kredytowe i współpracę
+            Wdrożenie CRM <span className="gradient-text">za 1/3 ceny</span>, w zamian za leady kredytowe i współpracę
           </h2>
           <p className="text-lg text-zinc-300 font-manrope">
             Reklamy + CRM + automatyzacje w jednym systemie. Niski koszt wejścia, bo część rozliczamy

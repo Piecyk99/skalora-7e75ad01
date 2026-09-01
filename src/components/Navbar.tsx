@@ -115,7 +115,7 @@ export default function Navbar() {
           onClick={() => scrollTo("contact")}
           className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-manrope font-semibold py-4 rounded-full shadow-[0_0_30px_rgba(0,240,255,0.3)] text-sm"
         >
-          Umów konsultację — bezpłatnie
+          Umów konsultację bezpłatnie
         </button>
       </div>
     </>

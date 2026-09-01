@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           <div className="md:col-span-2">
             <div className="font-outfit font-black text-3xl tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 cursor-pointer" onClick={() => scrollTo("hero")}>SKALORA</div>
-            <p className="text-zinc-500 font-manrope text-sm leading-relaxed max-w-sm">Kompletny system wzrostu dla firm, które myślą poważnie o wynikach. Nie robimy marketingu dla wyglądu — robimy go dla zysku.</p>
+            <p className="text-zinc-500 font-manrope text-sm leading-relaxed max-w-sm">Kompletny system wzrostu dla firm, które myślą poważnie o wynikach. Nie robimy marketingu dla wyglądu, robimy go dla zysku.</p>
           </div>
           <div>
             <p className="text-xs font-manrope font-bold text-zinc-600 uppercase tracking-widest mb-4">Nawigacja</p>

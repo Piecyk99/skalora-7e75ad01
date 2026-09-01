@@ -10,18 +10,18 @@ interface Audience {
 }
 
 const AUDIENCES: Audience[] = [
-  { icon: Briefcase, title: "Firmy usługowe", desc: "Prawnicy, doradcy, agencje, firmy B2B — chcesz przewidywalnego napływu zapytań bez polegania wyłącznie na poleceniach.", tags: ["Leady", "Lejek", "Strona"], accent: "#00F0FF" },
+  { icon: Briefcase, title: "Firmy usługowe", desc: "Prawnicy, doradcy, agencje, firmy B2B, chcesz przewidywalnego napływu zapytań bez polegania wyłącznie na poleceniach.", tags: ["Leady", "Lejek", "Strona"], accent: "#00F0FF" },
   { icon: User, title: "Eksperci i konsultanci", desc: "Masz wiedzę i know-how, ale brakuje Ci systemu, który dowozi klientów regularnie i monetyzuje Twoją ekspertyzę na skalę.", tags: ["Autorytet", "Kurs", "Monetyzacja"], accent: "#8A2BE2" },
-  { icon: Mic, title: "Marki osobiste", desc: "Coach, influencer, lider branży — chcesz zbudować silną pozycję, zarabiać na wiedzy i nie musieć cały czas nagrywać.", tags: ["AI Avatar", "Content", "Zasięg"], accent: "#00F0FF" },
+  { icon: Mic, title: "Marki osobiste", desc: "Coach, influencer, lider branży, chcesz zbudować silną pozycję, zarabiać na wiedzy i nie musieć cały czas nagrywać.", tags: ["AI Avatar", "Content", "Zasięg"], accent: "#00F0FF" },
   { icon: GraduationCap, title: "Edukatorzy i trenerzy", desc: "Chcesz stworzyć kurs online lub program mentoringowy, który skaluje Twoje zarobki bez skalowania Twojego czasu pracy.", tags: ["Kurs", "Lejek", "Automatyzacja"], accent: "#8A2BE2" },
-  { icon: MapPin, title: "Firmy lokalne", desc: "Restauracja, klinika, salon — chcesz dominować online w swoim regionie i przyciągać lokalnych klientów przez content i stronę.", tags: ["Local SEO", "Social Media", "Leady"], accent: "#00F0FF" },
+  { icon: MapPin, title: "Firmy lokalne", desc: "Restauracja, klinika, salon, chcesz dominować online w swoim regionie i przyciągać lokalnych klientów przez content i stronę.", tags: ["Local SEO", "Social Media", "Leady"], accent: "#00F0FF" },
 ];
 
 const SENSE_ITEMS = [
   "Klient jest dla Ciebie wartościowy i zależy Ci na jakości zapytań, nie tylko ich liczbie",
   "Chcesz stałego napływu zapytań z internetu, a nie polegania wyłącznie na poleceniach",
   "Chcesz połączyć marketing, content i obsługę leada w jeden spójny system",
-  "Szukasz partnera, który myśli o Twoim wyniku — nie o liczbie postów",
+  "Szukasz partnera, który myśli o Twoim wyniku, nie o liczbie postów",
   "Chcesz skalować firmę bez proporcjonalnego wzrostu czasu pracy",
   "Masz już klientów i chcesz ich więcej, albo dopiero budujesz system pozyskiwania",
 ];
@@ -39,7 +39,7 @@ export default function ForWhomSection() {
           <h2 className="reveal font-outfit font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter text-white mb-5">
             SKALORA jest dla firm,{" "}<span className="gradient-text">które naprawdę chcą rosnąć</span>
           </h2>
-          <p className="reveal text-base text-zinc-400 max-w-xl mx-auto font-manrope">Nie pracujemy z każdym. Szukamy partnerów, którzy poważnie podchodzą do wzrostu i chcą zbudować system — nie tylko zaistnieć w mediach społecznościowych.</p>
+          <p className="reveal text-base text-zinc-400 max-w-xl mx-auto font-manrope">Nie pracujemy z każdym. Szukamy partnerów, którzy poważnie podchodzą do wzrostu i chcą zbudować system, nie tylko zaistnieć w mediach społecznościowych.</p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
