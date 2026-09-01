@@ -1,31 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 
-const CRM_PASSWORD = "sk_dpx_ed1b5c9149eaec8fad9e3091d74b1c7c";
-const TOKEN_KEY = "crm_authed";
-
-export function getToken(): string {
-  return localStorage.getItem(TOKEN_KEY) ?? "";
-}
-
-export function setToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
-}
-
-export function isAuthed(): boolean {
-  return localStorage.getItem(TOKEN_KEY) === CRM_PASSWORD;
-}
-
-export function login(password: string): boolean {
-  if (password === CRM_PASSWORD) {
-    setToken(password);
-    return true;
-  }
-  return false;
-}
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "proposal" | "won" | "lost";
 

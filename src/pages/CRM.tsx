@@ -1,31 +1,21 @@
-import { useState, useEffect } from "react";
-import { isAuthed, clearToken } from "@/lib/crm-api";
-import CRMLogin from "@/components/crm/CRMLogin";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import CRMDashboard from "@/components/crm/CRMDashboard";
 import LeadsList from "@/components/crm/LeadsList";
 
 type Tab = "dashboard" | "leads";
 
 export default function CRM() {
-  const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<Tab>("dashboard");
-  const [checking, setChecking] = useState(true);
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    setAuthed(isAuthed());
-    setChecking(false);
-  }, []);
-
-  function handleLogout() {
-    clearToken();
-    setAuthed(false);
+  async function handleLogout() {
+    await signOut();
+    navigate("/login", { replace: true });
   }
 
-  if (checking) return null;
-
-  if (!authed) {
-    return <CRMLogin onLogin={() => setAuthed(true)} />;
-  }
 
   return (
     <div className="min-h-screen bg-[#030305] text-white">
