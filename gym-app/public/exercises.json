@@ -1413,12 +1413,18 @@
     {
       "id": "gora_a_plecy",
       "name": "Góra A + mocne plecy",
-      "when": "dzień wolny od pracy, ok. 70 min",
+      "when": "dzień wolny od pracy, ok. 80 min",
       "items": [
         {
           "exercise_id": "db_bench",
           "sets": 4,
           "reps": "8–10"
+        },
+        {
+          "exercise_id": "incline_db_press",
+          "sets": 3,
+          "reps": "8–10",
+          "note": "górna część klatki, po płaskim wyciskaniu"
         },
         {
           "exercise_id": "bb_row",
@@ -1456,6 +1462,12 @@
           "sets": 3,
           "reps": "10–12",
           "superset_group": "A"
+        },
+        {
+          "exercise_id": "cable_fly",
+          "sets": 2,
+          "reps": "12–15",
+          "note": "rozciągnięcie klatki na koniec, pełny zakres"
         },
         {
           "exercise_id": "face_pull",

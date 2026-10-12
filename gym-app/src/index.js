@@ -116,7 +116,7 @@ async function api(request, env, url) {
   if (path === "/api/sets" && method === "GET") {
     const day = url.searchParams.get("day");
     if (!validDay(day)) return json({ error: "day" }, 400);
-    const { results } = await env.DB.prepare("SELECT id,exercise,weight,reps FROM sets WHERE day=? ORDER BY id").bind(day).all();
+    const { results } = await env.DB.prepare("SELECT id,exercise,weight,reps,warmup FROM sets WHERE day=? ORDER BY id").bind(day).all();
     return json(results);
   }
 
@@ -127,10 +127,11 @@ async function api(request, env, url) {
     const reps = Math.round(Number(b.reps));
     if (!validDay(b.day) || !exercise || !(weight >= 0 && weight <= 1000) || !(reps >= 1 && reps <= 200))
       return json({ error: "invalid" }, 400);
-    const r = await env.DB.prepare("INSERT INTO sets(day,exercise,weight,reps) VALUES(?,?,?,?)")
-      .bind(b.day, exercise, weight, reps)
+    const warmup = b.warmup ? 1 : 0;
+    const r = await env.DB.prepare("INSERT INTO sets(day,exercise,weight,reps,warmup) VALUES(?,?,?,?,?)")
+      .bind(b.day, exercise, weight, reps, warmup)
       .run();
-    return json({ id: r.meta.last_row_id, exercise, weight, reps });
+    return json({ id: r.meta.last_row_id, exercise, weight, reps, warmup });
   }
 
   let m = path.match(/^\/api\/sets\/(\d+)$/);
@@ -143,9 +144,9 @@ async function api(request, env, url) {
     const ex = url.searchParams.get("exercise");
     const before = url.searchParams.get("before");
     if (!ex || !validDay(before)) return json({ error: "invalid" }, 400);
-    const d = await env.DB.prepare("SELECT MAX(day) AS day FROM sets WHERE exercise=? AND day<?").bind(ex, before).first();
+    const d = await env.DB.prepare("SELECT MAX(day) AS day FROM sets WHERE exercise=? AND day<? AND warmup=0").bind(ex, before).first();
     if (!d || !d.day) return json({ day: null, sets: [] });
-    const { results } = await env.DB.prepare("SELECT weight,reps FROM sets WHERE exercise=? AND day=? ORDER BY id").bind(ex, d.day).all();
+    const { results } = await env.DB.prepare("SELECT weight,reps FROM sets WHERE exercise=? AND day=? AND warmup=0 ORDER BY id").bind(ex, d.day).all();
     return json({ day: d.day, sets: results });
   }
 
@@ -153,7 +154,7 @@ async function api(request, env, url) {
     const { results } = await env.DB.prepare(
       `SELECT s.exercise, s.weight AS last_weight, s.reps AS last_reps, c.cnt, c.last_day
        FROM sets s
-       JOIN (SELECT exercise, MAX(id) AS mid, COUNT(*) AS cnt, MAX(day) AS last_day FROM sets GROUP BY exercise) c
+       JOIN (SELECT exercise, MAX(id) AS mid, COUNT(*) AS cnt, MAX(day) AS last_day FROM sets WHERE warmup=0 GROUP BY exercise) c
          ON c.mid = s.id
        ORDER BY c.last_day DESC, c.mid DESC`,
     ).all();
@@ -163,7 +164,7 @@ async function api(request, env, url) {
   if (path === "/api/history" && method === "GET") {
     const ex = url.searchParams.get("exercise");
     if (!ex) return json({ error: "exercise" }, 400);
-    const { results } = await env.DB.prepare("SELECT day,weight,reps FROM sets WHERE exercise=? ORDER BY day,id").bind(ex).all();
+    const { results } = await env.DB.prepare("SELECT day,weight,reps FROM sets WHERE exercise=? AND warmup=0 ORDER BY day,id").bind(ex).all();
     const byDay = new Map();
     for (const r of results) {
       const d = byDay.get(r.day) || { day: r.day, best_e1rm: 0, top_weight: 0, volume: 0, sets: 0 };
@@ -199,7 +200,7 @@ async function api(request, env, url) {
 
   if (path === "/api/days" && method === "GET") {
     const { results } = await env.DB.prepare(
-      "SELECT day, COUNT(*) AS sets, SUM(weight*reps) AS volume FROM sets GROUP BY day ORDER BY day DESC LIMIT 60",
+      "SELECT day, COUNT(*) AS sets, SUM(weight*reps) AS volume FROM sets WHERE warmup=0 GROUP BY day ORDER BY day DESC LIMIT 60",
     ).all();
     return json(results);
   }
@@ -212,11 +213,11 @@ async function api(request, env, url) {
       return json({ error: "range" }, 400);
     const days = (
       await env.DB.prepare(
-        "SELECT day, COUNT(*) AS sets, SUM(weight*reps) AS volume FROM sets WHERE day BETWEEN ? AND ? GROUP BY day ORDER BY day",
+        "SELECT day, COUNT(*) AS sets, SUM(weight*reps) AS volume FROM sets WHERE day BETWEEN ? AND ? AND warmup=0 GROUP BY day ORDER BY day",
       ).bind(from, to).all()
     ).results;
     const sets = (
-      await env.DB.prepare("SELECT day,exercise,weight,reps FROM sets WHERE day BETWEEN ? AND ? ORDER BY day,id").bind(from, to).all()
+      await env.DB.prepare("SELECT day,exercise,weight,reps,warmup FROM sets WHERE day BETWEEN ? AND ? ORDER BY day,id").bind(from, to).all()
     ).results;
     const sessions = (
       await env.DB.prepare("SELECT day,plan_id,plan_name,started_at,finished_at,note FROM sessions WHERE day BETWEEN ? AND ?")
@@ -341,7 +342,7 @@ async function api(request, env, url) {
     const q = async (sql) => (await env.DB.prepare(sql).all()).results;
     const out = {
       exported_at: new Date().toISOString(),
-      sets: await q("SELECT day,exercise,weight,reps FROM sets ORDER BY id"),
+      sets: await q("SELECT day,exercise,weight,reps,warmup FROM sets ORDER BY id"),
       bodyweight: await q("SELECT day,kg FROM bodyweight ORDER BY day"),
       sessions: await q("SELECT day,plan_id,plan_name,started_at,finished_at,note FROM sessions ORDER BY day"),
       schedule: await q("SELECT dow,plan_id FROM schedule"),
@@ -364,11 +365,12 @@ async function api(request, env, url) {
     for (const s of arr(b.sets)) {
       if (validDay(s.day) && s.exercise && Number(s.weight) >= 0 && Number(s.reps) >= 1)
         stmts.push(
-          env.DB.prepare("INSERT INTO sets(day,exercise,weight,reps) VALUES(?,?,?,?)").bind(
+          env.DB.prepare("INSERT INTO sets(day,exercise,weight,reps,warmup) VALUES(?,?,?,?,?)").bind(
             s.day,
             String(s.exercise).slice(0, 80),
             Number(s.weight),
             Math.round(Number(s.reps)),
+            s.warmup ? 1 : 0,
           ),
         );
     }

@@ -252,6 +252,9 @@
       var rIn = el("input", { id: "rin", type: "number", inputmode: "numeric", step: "1", min: "1", placeholder: "0" });
       var hint = el("div", { class: "mut mt" });
       var info = el("div", {});
+      var warmIn = el("input", { type: "checkbox" });
+      warmIn.checked = !!state.todayWarm;
+      warmIn.addEventListener("change", function () { state.todayWarm = warmIn.checked; });
       function prefill() {
         var name = exIn.value.trim();
         var f = state.exercises.filter(function (e) { return e.exercise === name; })[0];
@@ -265,23 +268,27 @@
       var err = el("div", { class: "err" });
       var add = el("button", { class: "mt", text: "Dodaj serię", onclick: function () {
         err.textContent = "";
-        api("/api/sets", "POST", { day: state.day, exercise: exIn.value, weight: wIn.value, reps: rIn.value }).then(function () { state.prefillEx = exIn.value; viewToday(); }).catch(function () { err.textContent = "Uzupełnij ćwiczenie, ciężar i powtórzenia"; });
+        api("/api/sets", "POST", { day: state.day, exercise: exIn.value, weight: wIn.value, reps: rIn.value, warmup: warmIn.checked }).then(function () { state.prefillEx = exIn.value; viewToday(); }).catch(function () { err.textContent = "Uzupełnij ćwiczenie, ciężar i powtórzenia"; });
       } });
       var form = el("div", { class: "card" }, [
         el("label", { text: "Dzień" }), dayIn,
         el("label", { class: "mt", text: "Ćwiczenie" }), exIn, dl,
         el("div", { class: "row mt" }, [el("div", {}, [el("label", { text: "Ciężar (kg)" }), wIn]), el("div", {}, [el("label", { text: "Powtórzenia" }), rIn])]),
-        hint, info, add, err
+        hint, info,
+        el("label", { class: "chk" }, [warmIn, "Rozgrzewka (nie liczy się do statystyk)"]),
+        add, err
       ]);
       var groups = {}, order = [], vol = 0;
-      state.sets.forEach(function (s) { if (!groups[s.exercise]) { groups[s.exercise] = []; order.push(s.exercise); } groups[s.exercise].push(s); vol += s.weight * s.reps; });
+      state.sets.forEach(function (s) { if (!groups[s.exercise]) { groups[s.exercise] = []; order.push(s.exercise); } groups[s.exercise].push(s); if (!s.warmup) vol += s.weight * s.reps; });
       var list = el("div", {});
       if (!order.length) list.appendChild(el("p", { class: "mut", text: "Brak serii tego dnia." }));
       order.forEach(function (name) {
         var c = el("div", { class: "card" }, [el("div", { class: "ex", text: name })]);
-        groups[name].forEach(function (s, i) {
+        var wn = 0;
+        groups[name].forEach(function (s) {
+          if (!s.warmup) wn++;
           c.appendChild(el("div", { class: "set" }, [
-            el("div", { text: (i + 1) + ".  " + fmt(s.weight) + " kg × " + s.reps }),
+            el("div", { text: (s.warmup ? "R.  " : wn + ".  ") + fmt(s.weight) + " kg × " + s.reps + (s.warmup ? "  (rozgrzewka)" : "") }),
             el("button", { class: "mini", text: "Usuń", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewToday); } })
           ]));
         });
@@ -352,7 +359,7 @@
     }
     if (t) {
       var by = {}, ord = [];
-      sets.forEach(function (s) { if (!by[s.exercise]) { by[s.exercise] = []; ord.push(s.exercise); } by[s.exercise].push(fmt(s.weight) + "×" + s.reps); });
+      sets.forEach(function (s) { if (!by[s.exercise]) { by[s.exercise] = []; ord.push(s.exercise); } by[s.exercise].push((s.warmup ? "R " : "") + fmt(s.weight) + "×" + s.reps); });
       ord.forEach(function (n) { kids.push(el("div", { class: "set" }, [el("div", { text: n }), el("div", { class: "mut", text: by[n].join(", ") })])); });
       kids.push(el("div", { class: "mut mt", text: t.sets + " serii · objętość " + Math.round(t.volume) + " kg" }));
     } else {
@@ -513,7 +520,7 @@
     var plan = planById(planId);
     if (!plan) return;
     state.tab = "plan"; state.planId = planId; state.edit = null;
-    state.session = { planId: planId, day: day, last: {}, note: "" };
+    state.session = { planId: planId, day: day, last: {}, note: "", warm: {} };
     keepAwake();
     api("/api/sessions/start", "POST", { day: day, plan_id: planId, plan_name: plan.name }).then(function () {
       return Promise.all(planItems(plan).map(function (it) {
@@ -526,11 +533,14 @@
     var S = state.session, plan = planById(S.planId), y = window.scrollY;
     var items = planItems(plan);
     api("/api/sets?day=" + S.day).then(function (all) {
-      var cards = [], doneItems = 0, vol = 0, nsets = all.length;
-      all.forEach(function (s) { vol += s.weight * s.reps; });
+      var cards = [], doneItems = 0, vol = 0, nsets = 0;
+      all.forEach(function (s) { if (!s.warmup) { vol += s.weight * s.reps; nsets++; } });
       items.forEach(function (it, idx) {
         var ex = state.byId[it.exercise_id];
-        var mine = all.filter(function (s) { return s.exercise === ex.name_pl; });
+        var both = all.filter(function (s) { return s.exercise === ex.name_pl; });
+        var mine = both.filter(function (s) { return !s.warmup; });
+        var warmSets = both.filter(function (s) { return s.warmup; });
+        var isWarm = !!S.warm[it.exercise_id];
         var done = mine.length >= it.sets; if (done) doneItems++;
         var prevGroup = idx > 0 ? items[idx - 1].superset_group : null;
         var nextItem = items[idx + 1];
@@ -541,17 +551,22 @@
         var rIn = el("input", { type: "number", inputmode: "numeric", step: "1", min: "1", placeholder: "powt." });
         if (mine.length) { var ls = mine[mine.length - 1]; wIn.value = ls.weight; rIn.value = ls.reps; }
         else if (sug) { wIn.value = sug.weight; rIn.value = sug.reps; }
+        else if (warmSets.length) { var lw = warmSets[warmSets.length - 1]; wIn.value = lw.weight; rIn.value = lw.reps; }
         var restS = it.rest_s || ex.default.rest_s;
-        var btn = el("button", { text: "Zapisz serię " + (mine.length + 1) + "/" + it.sets });
+        var serText = "Zapisz serię " + (mine.length + 1) + "/" + it.sets;
+        var btn = el("button", { text: isWarm ? "Zapisz rozgrzewkę" : serText });
+        var warmCb = el("input", { type: "checkbox" });
+        warmCb.checked = isWarm;
+        warmCb.addEventListener("change", function () { S.warm[it.exercise_id] = warmCb.checked; btn.textContent = warmCb.checked ? "Zapisz rozgrzewkę" : serText; });
         btn.addEventListener("click", function () {
           btn.disabled = true;
-          api("/api/sets", "POST", { day: S.day, exercise: ex.name_pl, weight: wIn.value, reps: rIn.value }).then(function () {
-            if (isLastInGroup) startRest(restS, ex.name_pl); else stopRest();
+          api("/api/sets", "POST", { day: S.day, exercise: ex.name_pl, weight: wIn.value, reps: rIn.value, warmup: warmCb.checked }).then(function () {
+            if (isLastInGroup) startRest(warmCb.checked ? 60 : restS, ex.name_pl); else stopRest();
             viewSession();
           }).catch(function () { btn.disabled = false; btn.textContent = "Uzupełnij kg i powtórzenia"; });
         });
-        var chips = el("div", { class: "mb" }, mine.map(function (s) {
-          return el("span", { class: "setchip" }, [fmt(s.weight) + " × " + s.reps, el("button", { text: "×", "aria-label": "Usuń serię", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewSession); } })]);
+        var chips = el("div", { class: "mb" }, both.map(function (s) {
+          return el("span", { class: "setchip" + (s.warmup ? " warm" : "") }, [(s.warmup ? "R " : "") + fmt(s.weight) + " × " + s.reps, el("button", { text: "×", "aria-label": "Usuń serię", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewSession); } })]);
         }));
         cards.push(el("div", {}, [
           sg && sg !== prevGroup ? el("h2", { text: "Superseria " + sg + " (przerwa po ostatnim)" }) : null,
@@ -567,6 +582,7 @@
             sug ? el("div", { class: "hint", text: sug.text }) : el("div", { class: "note", text: "Pierwszy raz: zacznij lekko i dobierz ciężar tak, by zostało " + ex.default.rir + " powt. w zapasie." }),
             chips,
             el("div", { class: "row" }, [el("div", {}, [el("label", { text: "Ciężar (kg)" }), wIn]), el("div", {}, [el("label", { text: "Powtórzenia" }), rIn])]),
+            el("label", { class: "chk" }, [warmCb, "Rozgrzewka (nie liczy się do planu ani statystyk)"]),
             el("div", { class: "mt" }, [btn])
           ])
         ]));
