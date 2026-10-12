@@ -51,9 +51,12 @@
       ],
       "alternatives": [
         "incline_db_press",
-        "dips"
+        "dips",
+        "machine_chest_press",
+        "push_up"
       ],
-      "image": "img/db_bench.png"
+      "image": "img/db_bench.png",
+      "pattern": "horizontal_press"
     },
     {
       "id": "incline_db_press",
@@ -95,9 +98,11 @@
       ],
       "alternatives": [
         "db_bench",
-        "cable_fly"
+        "cable_fly",
+        "machine_chest_press"
       ],
-      "image": "img/incline_db_press.png"
+      "image": "img/incline_db_press.png",
+      "pattern": "incline_press"
     },
     {
       "id": "dips",
@@ -140,7 +145,9 @@
         "db_bench",
         "pushdown"
       ],
-      "image": "img/dips.png"
+      "image": "img/dips.png",
+      "pattern": "dip",
+      "suggest": false
     },
     {
       "id": "cable_fly",
@@ -179,9 +186,11 @@
         "Za duży ciężar i szarpanie."
       ],
       "alternatives": [
-        "incline_db_press"
+        "incline_db_press",
+        "pec_deck"
       ],
-      "image": "img/cable_fly.png"
+      "image": "img/cable_fly.png",
+      "pattern": "chest_fly"
     },
     {
       "id": "bb_row",
@@ -228,7 +237,8 @@
         "db_row",
         "plate_row"
       ],
-      "image": "img/bb_row.png"
+      "image": "img/bb_row.png",
+      "pattern": "horizontal_row"
     },
     {
       "id": "db_row",
@@ -273,7 +283,8 @@
         "cable_row",
         "plate_row"
       ],
-      "image": "img/db_row.png"
+      "image": "img/db_row.png",
+      "pattern": "horizontal_row"
     },
     {
       "id": "cable_row",
@@ -319,7 +330,8 @@
         "db_row",
         "plate_row"
       ],
-      "image": "img/cable_row.png"
+      "image": "img/cable_row.png",
+      "pattern": "horizontal_row"
     },
     {
       "id": "pulldown",
@@ -361,9 +373,11 @@
       ],
       "alternatives": [
         "pullup",
-        "db_row"
+        "db_row",
+        "straight_arm_pulldown"
       ],
-      "image": "img/pulldown.png"
+      "image": "img/pulldown.png",
+      "pattern": "vertical_pull"
     },
     {
       "id": "pullup",
@@ -404,9 +418,11 @@
         "Kipping (bujanie)."
       ],
       "alternatives": [
-        "pulldown"
+        "pulldown",
+        "straight_arm_pulldown"
       ],
-      "image": "img/pullup.png"
+      "image": "img/pullup.png",
+      "pattern": "vertical_pull"
     },
     {
       "id": "face_pull",
@@ -447,9 +463,11 @@
         "Opuszczanie łokci."
       ],
       "alternatives": [
-        "lateral_raise"
+        "lateral_raise",
+        "rear_delt_machine"
       ],
-      "image": "img/face_pull.png"
+      "image": "img/face_pull.png",
+      "pattern": "rear_delt"
     },
     {
       "id": "back_ext",
@@ -489,9 +507,12 @@
         "Szarpanie."
       ],
       "alternatives": [
-        "rdl"
+        "rdl",
+        "hip_thrust"
       ],
-      "image": "img/back_ext.png"
+      "image": "img/back_ext.png",
+      "pattern": "hinge",
+      "suggest": false
     },
     {
       "id": "db_ohp",
@@ -531,9 +552,11 @@
         "Opuszczanie za nisko (barki)."
       ],
       "alternatives": [
-        "lateral_raise"
+        "lateral_raise",
+        "machine_shoulder_press"
       ],
-      "image": "img/db_ohp.png"
+      "image": "img/db_ohp.png",
+      "pattern": "overhead_press"
     },
     {
       "id": "lateral_raise",
@@ -572,9 +595,11 @@
         "Unoszenie powyżej barków i podciąganie barków do uszu."
       ],
       "alternatives": [
-        "face_pull"
+        "face_pull",
+        "cable_lateral_raise"
       ],
-      "image": "img/lateral_raise.png"
+      "image": "img/lateral_raise.png",
+      "pattern": "lateral_raise"
     },
     {
       "id": "ez_curl",
@@ -614,9 +639,12 @@
       ],
       "alternatives": [
         "cable_curl",
-        "hammer_curl"
+        "hammer_curl",
+        "preacher_curl",
+        "db_curl"
       ],
-      "image": "img/ez_curl.png"
+      "image": "img/ez_curl.png",
+      "pattern": "biceps_curl"
     },
     {
       "id": "cable_curl",
@@ -657,9 +685,12 @@
       ],
       "alternatives": [
         "ez_curl",
-        "incline_curl"
+        "incline_curl",
+        "preacher_curl",
+        "db_curl"
       ],
-      "image": "img/cable_curl.png"
+      "image": "img/cable_curl.png",
+      "pattern": "biceps_curl"
     },
     {
       "id": "incline_curl",
@@ -698,9 +729,12 @@
       ],
       "alternatives": [
         "ez_curl",
-        "cable_curl"
+        "cable_curl",
+        "preacher_curl",
+        "db_curl"
       ],
-      "image": "img/incline_curl.png"
+      "image": "img/incline_curl.png",
+      "pattern": "biceps_curl"
     },
     {
       "id": "hammer_curl",
@@ -740,9 +774,11 @@
         "Obracanie nadgarstka."
       ],
       "alternatives": [
-        "ez_curl"
+        "ez_curl",
+        "db_curl"
       ],
-      "image": "img/hammer_curl.png"
+      "image": "img/hammer_curl.png",
+      "pattern": "biceps_curl"
     },
     {
       "id": "skull",
@@ -783,7 +819,8 @@
         "overhead_ext",
         "pushdown"
       ],
-      "image": "img/skull.png"
+      "image": "img/skull.png",
+      "pattern": "triceps"
     },
     {
       "id": "pushdown",
@@ -824,7 +861,8 @@
         "skull",
         "overhead_ext"
       ],
-      "image": "img/pushdown.png"
+      "image": "img/pushdown.png",
+      "pattern": "triceps"
     },
     {
       "id": "overhead_ext",
@@ -865,7 +903,8 @@
         "skull",
         "pushdown"
       ],
-      "image": "img/overhead_ext.png"
+      "image": "img/overhead_ext.png",
+      "pattern": "triceps"
     },
     {
       "id": "squat",
@@ -912,9 +951,11 @@
       "alternatives": [
         "front_squat",
         "legpress",
-        "bulgarian_split"
+        "bulgarian_split",
+        "goblet_squat"
       ],
-      "image": "img/squat.png"
+      "image": "img/squat.png",
+      "pattern": "squat"
     },
     {
       "id": "front_squat",
@@ -955,9 +996,11 @@
       ],
       "alternatives": [
         "squat",
-        "legpress"
+        "legpress",
+        "goblet_squat"
       ],
-      "image": "img/front_squat.png"
+      "image": "img/front_squat.png",
+      "pattern": "squat"
     },
     {
       "id": "legpress",
@@ -998,9 +1041,12 @@
       ],
       "alternatives": [
         "squat",
-        "bulgarian_split"
+        "bulgarian_split",
+        "goblet_squat",
+        "lunge"
       ],
-      "image": "img/legpress.png"
+      "image": "img/legpress.png",
+      "pattern": "squat"
     },
     {
       "id": "bulgarian_split",
@@ -1042,9 +1088,12 @@
       ],
       "alternatives": [
         "legpress",
-        "squat"
+        "squat",
+        "lunge",
+        "goblet_squat"
       ],
-      "image": "img/bulgarian_split.png"
+      "image": "img/bulgarian_split.png",
+      "pattern": "squat"
     },
     {
       "id": "rdl",
@@ -1087,9 +1136,11 @@
       ],
       "alternatives": [
         "back_ext",
-        "lying_curl"
+        "lying_curl",
+        "hip_thrust"
       ],
-      "image": "img/rdl.png"
+      "image": "img/rdl.png",
+      "pattern": "hinge"
     },
     {
       "id": "lying_curl",
@@ -1131,7 +1182,8 @@
         "seated_curl",
         "rdl"
       ],
-      "image": "img/lying_curl.png"
+      "image": "img/lying_curl.png",
+      "pattern": "ham_curl"
     },
     {
       "id": "seated_curl",
@@ -1170,7 +1222,8 @@
       "alternatives": [
         "lying_curl"
       ],
-      "image": "img/seated_curl.png"
+      "image": "img/seated_curl.png",
+      "pattern": "ham_curl"
     },
     {
       "id": "leg_ext",
@@ -1209,7 +1262,8 @@
       "alternatives": [
         "legpress"
       ],
-      "image": "img/leg_ext.png"
+      "image": "img/leg_ext.png",
+      "pattern": "quad_iso"
     },
     {
       "id": "calf_stand",
@@ -1248,7 +1302,8 @@
       "alternatives": [
         "calf_seated"
       ],
-      "image": "img/calf_stand.png"
+      "image": "img/calf_stand.png",
+      "pattern": "calf"
     },
     {
       "id": "calf_seated",
@@ -1286,7 +1341,8 @@
       "alternatives": [
         "calf_stand"
       ],
-      "image": "img/calf_seated.png"
+      "image": "img/calf_seated.png",
+      "pattern": "calf"
     },
     {
       "id": "hang_raise",
@@ -1327,7 +1383,8 @@
       "alternatives": [
         "cable_crunch"
       ],
-      "image": "img/hang_raise.png"
+      "image": "img/hang_raise.png",
+      "pattern": "core"
     },
     {
       "id": "cable_crunch",
@@ -1369,7 +1426,8 @@
       "alternatives": [
         "hang_raise"
       ],
-      "image": "img/cable_crunch.png"
+      "image": "img/cable_crunch.png",
+      "pattern": "core"
     },
     {
       "id": "plate_row",
@@ -1417,7 +1475,558 @@
         "cable_row",
         "bb_row"
       ],
-      "image": "img/plate_row.png"
+      "image": "img/plate_row.png",
+      "pattern": "horizontal_row"
+    },
+    {
+      "id": "machine_chest_press",
+      "name_pl": "Wyciskanie na maszynie (prasa na klatkę)",
+      "name_en": "Machine chest press",
+      "category": "klatka",
+      "muscles_primary": [
+        "klatka piersiowa"
+      ],
+      "muscles_secondary": [
+        "przednie barki",
+        "triceps"
+      ],
+      "equipment": [
+        "maszyna do wyciskania na klatkę"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo: tor ruchu jest prowadzony, przy upadku serii po prostu odkładasz uchwyty.",
+      "default": {
+        "sets": 3,
+        "reps": "8–12",
+        "rest_s": 120,
+        "rir": "1"
+      },
+      "steps": [
+        "Ustaw siedzisko tak, by uchwyty były na wysokości środka klatki.",
+        "Plecy oparte, łopatki ściągnięte i wbite w oparcie, stopy pewnie na podłodze.",
+        "Wypychaj uchwyty przed siebie do prawie pełnego wyprostu rąk.",
+        "Wracaj w 2–3 s, aż poczujesz rozciągnięcie klatki, bez odbijania."
+      ],
+      "tips": [
+        "Łokcie ok. 45° od tułowia.",
+        "Barki nisko, nie wciągaj ich do uszu."
+      ],
+      "mistakes": [
+        "Odrywanie pleców od oparcia.",
+        "Pełny wyprost ze zblokowanymi łokciami.",
+        "Zbyt wysoko ustawione siedzisko (obciążone barki)."
+      ],
+      "alternatives": [
+        "db_bench",
+        "incline_db_press",
+        "push_up"
+      ],
+      "pattern": "horizontal_press",
+      "image": "img/machine_chest_press.png"
+    },
+    {
+      "id": "pec_deck",
+      "name_pl": "Rozpiętki na maszynie (butterfly)",
+      "name_en": "Pec deck fly",
+      "category": "klatka",
+      "muscles_primary": [
+        "klatka piersiowa"
+      ],
+      "muscles_secondary": [
+        "przednie barki"
+      ],
+      "equipment": [
+        "maszyna butterfly"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo: ruch prowadzony, można iść do upadku mięśniowego.",
+      "default": {
+        "sets": 3,
+        "reps": "12–15",
+        "rest_s": 75,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Ustaw siedzisko tak, by łokcie lub uchwyty były na wysokości klatki.",
+        "Plecy oparte, łopatki ściągnięte.",
+        "Zbliżaj ramiona przed sobą, jakbyś obejmował dużą beczkę.",
+        "Wracaj powoli do rozciągnięcia, nie dalej niż linia barków."
+      ],
+      "tips": [
+        "Ściśnij klatkę na 1 s na końcu ruchu.",
+        "Lekko ugięte łokcie przez całą serię."
+      ],
+      "mistakes": [
+        "Zbyt duży ciężar i wciąganie barków do przodu.",
+        "Zbyt głębokie rozciągnięcie za linię barków."
+      ],
+      "alternatives": [
+        "cable_fly",
+        "push_up"
+      ],
+      "pattern": "chest_fly",
+      "image": "img/pec_deck.png"
+    },
+    {
+      "id": "push_up",
+      "name_pl": "Pompki",
+      "name_en": "Push-up",
+      "category": "klatka",
+      "muscles_primary": [
+        "klatka piersiowa"
+      ],
+      "muscles_secondary": [
+        "przednie barki",
+        "triceps",
+        "brzuch"
+      ],
+      "equipment": [
+        "masa ciała"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo, nie wymaga sprzętu.",
+      "default": {
+        "sets": 3,
+        "reps": "10–15",
+        "rest_s": 90,
+        "rir": "1–2"
+      },
+      "steps": [
+        "Dłonie nieco szerzej niż barki, ciało w jednej linii od głowy do pięt.",
+        "Napnij brzuch i pośladki.",
+        "Opuszczaj klatkę w 2–3 s, łokcie ok. 45° od tułowia.",
+        "Wypchnij się do pełnego wyprostu."
+      ],
+      "tips": [
+        "Zbyt trudne: ręce na podwyższeniu (ławka). Zbyt łatwe: nogi na podwyższeniu lub plecak.",
+        "Ściągnij łopatki, nie zapadaj się między nimi."
+      ],
+      "mistakes": [
+        "Opadające biodra (wygięte lędźwie).",
+        "Łokcie rozstawione na boki pod 90°.",
+        "Niepełny zakres ruchu."
+      ],
+      "alternatives": [
+        "db_bench",
+        "machine_chest_press",
+        "dips"
+      ],
+      "pattern": "horizontal_press",
+      "image": "img/push_up.png"
+    },
+    {
+      "id": "machine_shoulder_press",
+      "name_pl": "Wyciskanie nad głowę na maszynie",
+      "name_en": "Machine shoulder press",
+      "category": "barki",
+      "muscles_primary": [
+        "przednie i boczne barki"
+      ],
+      "muscles_secondary": [
+        "triceps",
+        "górna klatka"
+      ],
+      "equipment": [
+        "maszyna do wyciskania nad głowę"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo: tor ruchu jest prowadzony.",
+      "default": {
+        "sets": 3,
+        "reps": "8–12",
+        "rest_s": 120,
+        "rir": "1"
+      },
+      "steps": [
+        "Ustaw siedzisko tak, by uchwyty startowały na wysokości uszu lub barków.",
+        "Plecy oparte, brzuch napięty.",
+        "Wypychaj uchwyty w górę do prawie pełnego wyprostu.",
+        "Opuszczaj w 2–3 s do wysokości barków."
+      ],
+      "tips": [
+        "Nie wyginaj lędźwi, żeby wypchnąć więcej.",
+        "Barki z dala od uszu."
+      ],
+      "mistakes": [
+        "Odginanie pleców w łuk.",
+        "Zbyt szybki powrót w dół."
+      ],
+      "alternatives": [
+        "db_ohp",
+        "lateral_raise"
+      ],
+      "pattern": "overhead_press",
+      "image": "img/machine_shoulder_press.png"
+    },
+    {
+      "id": "rear_delt_machine",
+      "name_pl": "Odwrotne rozpiętki na maszynie (tył barków)",
+      "name_en": "Reverse pec deck",
+      "category": "barki",
+      "muscles_primary": [
+        "tył barków"
+      ],
+      "muscles_secondary": [
+        "środek pleców"
+      ],
+      "equipment": [
+        "maszyna butterfly (odwrotnie)",
+        "oparcie na klatkę"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo, ciężar prowadzony.",
+      "default": {
+        "sets": 3,
+        "reps": "12–15",
+        "rest_s": 60,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Usiądź przodem do oparcia, klatka przy podparciu, uchwyty na wysokości barków.",
+        "Lekko ugięte łokcie.",
+        "Rozchylaj ramiona na boki i do tyłu, ściągając łopatki.",
+        "Wracaj powoli, bez opierania ciężaru na stosie."
+      ],
+      "tips": [
+        "Lekki ciężar i pełna kontrola.",
+        "Myśl o łokciach, nie o dłoniach."
+      ],
+      "mistakes": [
+        "Bujanie tułowiem.",
+        "Zbyt duży ciężar i ciągnięcie plecami zamiast tyłem barków."
+      ],
+      "alternatives": [
+        "face_pull",
+        "lateral_raise"
+      ],
+      "pattern": "rear_delt",
+      "image": "img/rear_delt_machine.png"
+    },
+    {
+      "id": "cable_lateral_raise",
+      "name_pl": "Wznosy bokiem na wyciągu",
+      "name_en": "Cable lateral raise",
+      "category": "barki",
+      "muscles_primary": [
+        "boczne barki"
+      ],
+      "muscles_secondary": [
+        "przednie barki"
+      ],
+      "equipment": [
+        "wyciąg dolny",
+        "rączka"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo.",
+      "default": {
+        "sets": 3,
+        "reps": "12–15 / ręka",
+        "rest_s": 60,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Stań bokiem do wyciągu, rączka w dłoni dalszej od stosu.",
+        "Lekko ugięty łokieć.",
+        "Unoś ramię na bok do wysokości barku.",
+        "Opuszczaj w 2–3 s, naprężenie liny utrzymane przez cały ruch."
+      ],
+      "tips": [
+        "Prowadź łokciem, dłoń nieco niżej niż łokieć.",
+        "Wyciąg trzyma napięcie na dole ruchu, w przeciwieństwie do hantli."
+      ],
+      "mistakes": [
+        "Bujanie tułowiem.",
+        "Unoszenie barku do ucha.",
+        "Podnoszenie powyżej linii barków."
+      ],
+      "alternatives": [
+        "lateral_raise",
+        "rear_delt_machine"
+      ],
+      "pattern": "lateral_raise",
+      "image": "img/cable_lateral_raise.png"
+    },
+    {
+      "id": "db_curl",
+      "name_pl": "Uginanie ramion z hantlami",
+      "name_en": "Dumbbell curl",
+      "category": "ramiona",
+      "muscles_primary": [
+        "biceps"
+      ],
+      "muscles_secondary": [
+        "przedramiona"
+      ],
+      "equipment": [
+        "hantle"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo.",
+      "default": {
+        "sets": 3,
+        "reps": "10–12",
+        "rest_s": 60,
+        "rir": "1"
+      },
+      "steps": [
+        "Stań prosto, hantle z boków, dłonie do przodu.",
+        "Łokcie blisko tułowia i nieruchome.",
+        "Ugnij ramiona do pełnego skurczu.",
+        "Opuszczaj w 2–3 s do pełnego wyprostu."
+      ],
+      "tips": [
+        "Możesz zmieniać ręce lub ćwiczyć obie naraz.",
+        "Na końcu lekko skręć nadgarstki na zewnątrz."
+      ],
+      "mistakes": [
+        "Bujanie tułowiem.",
+        "Wysuwanie łokci do przodu.",
+        "Niepełny wyprost na dole."
+      ],
+      "alternatives": [
+        "hammer_curl",
+        "ez_curl",
+        "cable_curl",
+        "incline_curl"
+      ],
+      "pattern": "biceps_curl",
+      "image": "img/db_curl.png"
+    },
+    {
+      "id": "preacher_curl",
+      "name_pl": "Uginanie na modlitewniku",
+      "name_en": "Preacher curl",
+      "category": "ramiona",
+      "muscles_primary": [
+        "biceps (dolna część)",
+        "ramienny"
+      ],
+      "muscles_secondary": [
+        "przedramiona"
+      ],
+      "equipment": [
+        "ławka Scotta albo maszyna do bicepsa"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo, przy maszynie lub hantlu.",
+      "default": {
+        "sets": 3,
+        "reps": "10–12",
+        "rest_s": 60,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Ustaw siedzisko tak, by pachy opierały się o górę podpórki.",
+        "Ramiona na podpórce, chwyt pod spodem.",
+        "Ugnij ramiona do pełnego skurczu.",
+        "Opuszczaj w 3 s, nie wyprostowuj do końca (uwaga na łokcie)."
+      ],
+      "tips": [
+        "Ruch kontrolowany, bez szarpnięć na dole.",
+        "Obie ręce razem albo po jednej."
+      ],
+      "mistakes": [
+        "Podrywanie ciężaru z dolnej pozycji.",
+        "Odrywanie ramion od podpórki.",
+        "Pełna blokada łokci z dużym ciężarem."
+      ],
+      "alternatives": [
+        "ez_curl",
+        "incline_curl",
+        "cable_curl"
+      ],
+      "pattern": "biceps_curl",
+      "image": "img/preacher_curl.png"
+    },
+    {
+      "id": "goblet_squat",
+      "name_pl": "Przysiad z hantlem przy klatce (goblet)",
+      "name_en": "Goblet squat",
+      "category": "nogi",
+      "muscles_primary": [
+        "czworogłowy uda",
+        "pośladki"
+      ],
+      "muscles_secondary": [
+        "brzuch",
+        "prostowniki grzbietu"
+      ],
+      "equipment": [
+        "hantel lub odważnik"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bardzo bezpieczne solo: przy upadku po prostu odstawiasz ciężar.",
+      "default": {
+        "sets": 3,
+        "reps": "10–12",
+        "rest_s": 90,
+        "rir": "1–2"
+      },
+      "steps": [
+        "Trzymaj hantel pionowo przy klatce, łokcie pod nim.",
+        "Stopy nieco szerzej niż barki, palce lekko na zewnątrz.",
+        "Schodź w dół z prostymi plecami, kolana w linii stóp.",
+        "Wstań, dociskając całe stopy do podłogi."
+      ],
+      "tips": [
+        "Dobra opcja zamiast sztangi, gdy nie ma wolnej klatki albo brak asekuracji.",
+        "Łokcie delikatnie wypychają kolana na zewnątrz na dole."
+      ],
+      "mistakes": [
+        "Zaokrąglanie pleców na dole.",
+        "Kolana zapadające się do środka.",
+        "Odrywanie pięt."
+      ],
+      "alternatives": [
+        "squat",
+        "front_squat",
+        "legpress",
+        "bulgarian_split"
+      ],
+      "pattern": "squat",
+      "image": "img/goblet_squat.png"
+    },
+    {
+      "id": "lunge",
+      "name_pl": "Wykroki z hantlami",
+      "name_en": "Dumbbell lunge",
+      "category": "nogi",
+      "muscles_primary": [
+        "czworogłowy uda",
+        "pośladki"
+      ],
+      "muscles_secondary": [
+        "dwugłowy uda",
+        "brzuch"
+      ],
+      "equipment": [
+        "hantle"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo, hantle można upuścić na boki.",
+      "default": {
+        "sets": 3,
+        "reps": "10 / noga",
+        "rest_s": 90,
+        "rir": "1–2"
+      },
+      "steps": [
+        "Hantle w dłoniach z boków, tułów prosto.",
+        "Zrób długi krok do przodu.",
+        "Opuść tylne kolano blisko podłogi, przednie kolano nad stopą.",
+        "Odepchnij się przednią nogą do pozycji wyjściowej."
+      ],
+      "tips": [
+        "Możesz robić w miejscu (cofanie lub krok w przód) albo chodząc.",
+        "Zacznij słabszą nogą."
+      ],
+      "mistakes": [
+        "Zbyt krótki krok i kolano daleko za palce.",
+        "Pochylanie tułowia do przodu.",
+        "Kolano uciekające do środka."
+      ],
+      "alternatives": [
+        "bulgarian_split",
+        "goblet_squat",
+        "legpress"
+      ],
+      "pattern": "squat",
+      "image": "img/lunge.png"
+    },
+    {
+      "id": "hip_thrust",
+      "name_pl": "Hip thrust",
+      "name_en": "Hip thrust",
+      "category": "nogi",
+      "muscles_primary": [
+        "pośladki"
+      ],
+      "muscles_secondary": [
+        "dwugłowy uda",
+        "prostowniki grzbietu"
+      ],
+      "equipment": [
+        "sztanga lub hantel",
+        "ławka"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo: ciężar leży na biodrach, przy upadku zsuwasz go z siebie.",
+      "default": {
+        "sets": 3,
+        "reps": "8–12",
+        "rest_s": 90,
+        "rir": "1"
+      },
+      "steps": [
+        "Łopatki oparte o brzeg ławki, stopy na podłodze, kolana ugięte.",
+        "Ciężar na biodrach (podkładka pod sztangę).",
+        "Wypchnij biodra w górę do linii tułów–udo.",
+        "Przytrzymaj 1 s, opuść biodra pod kontrolą."
+      ],
+      "tips": [
+        "Broda lekko do klatki, wzrok przed siebie.",
+        "Na górze żebra w dół, nie wyginaj lędźwi."
+      ],
+      "mistakes": [
+        "Wyginanie lędźwi zamiast pracy pośladków.",
+        "Stopy za blisko lub za daleko od ławki.",
+        "Niepełny wyprost bioder."
+      ],
+      "alternatives": [
+        "rdl",
+        "back_ext",
+        "bulgarian_split"
+      ],
+      "pattern": "hinge",
+      "image": "img/hip_thrust.png"
+    },
+    {
+      "id": "straight_arm_pulldown",
+      "name_pl": "Prostowanie ramion na wyciągu górnym",
+      "name_en": "Straight-arm pulldown",
+      "category": "plecy",
+      "muscles_primary": [
+        "najszerszy grzbietu"
+      ],
+      "muscles_secondary": [
+        "triceps (głowa długa)",
+        "tył barków"
+      ],
+      "equipment": [
+        "wyciąg górny",
+        "drążek lub lina"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo.",
+      "default": {
+        "sets": 3,
+        "reps": "12–15",
+        "rest_s": 60,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Stań przodem do wyciągu, lekki skłon, ręce proste przed sobą.",
+        "Brzuch napięty, łopatki lekko w dół.",
+        "Ściągaj proste ramiona łukiem do ud.",
+        "Wracaj powoli do pełnego rozciągnięcia pod kontrolą."
+      ],
+      "tips": [
+        "Dobre ćwiczenie dokładające izolację lat po wiosłowaniu i ściąganiu.",
+        "Czuj plecy, nie triceps."
+      ],
+      "mistakes": [
+        "Zginanie łokci i zamiana w prostowanie ramion.",
+        "Bujanie tułowiem.",
+        "Zbyt duży ciężar."
+      ],
+      "alternatives": [
+        "pulldown",
+        "pullup",
+        "cable_row"
+      ],
+      "pattern": "lat_isolation",
+      "image": "img/straight_arm_pulldown.png"
     }
   ],
   "plans": [

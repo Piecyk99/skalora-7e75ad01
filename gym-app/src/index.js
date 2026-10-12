@@ -66,7 +66,14 @@ async function readBody(request) {
   }
 }
 
+let layoutReady;
+function ensureSchema(env) {
+  if (!layoutReady) layoutReady = env.DB.prepare("ALTER TABLE sessions ADD COLUMN layout TEXT").run().catch(() => {});
+  return layoutReady;
+}
+
 async function api(request, env, url) {
+  await ensureSchema(env);
   const path = url.pathname;
   const method = request.method;
 
@@ -226,7 +233,7 @@ async function api(request, env, url) {
       await env.DB.prepare("SELECT day,exercise,weight,reps,warmup FROM sets WHERE day BETWEEN ? AND ? ORDER BY day,id").bind(from, to).all()
     ).results;
     const sessions = (
-      await env.DB.prepare("SELECT day,plan_id,plan_name,started_at,finished_at,note FROM sessions WHERE day BETWEEN ? AND ?")
+      await env.DB.prepare("SELECT day,plan_id,plan_name,started_at,finished_at,note,layout FROM sessions WHERE day BETWEEN ? AND ?")
         .bind(from, to)
         .all()
     ).results;
@@ -279,10 +286,24 @@ async function api(request, env, url) {
     const name = String(b.plan_name || "").slice(0, 80);
     await env.DB.prepare(
       `INSERT INTO sessions(day,plan_id,plan_name,started_at) VALUES(?,?,?,?)
-       ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id, plan_name=excluded.plan_name, finished_at=NULL`,
+       ON CONFLICT(day) DO UPDATE SET layout=CASE WHEN sessions.plan_id=excluded.plan_id THEN sessions.layout ELSE NULL END,
+         plan_id=excluded.plan_id, plan_name=excluded.plan_name, finished_at=NULL`,
     )
       .bind(b.day, b.plan_id, name, new Date().toISOString())
       .run();
+    return json({ ok: true });
+  }
+
+  if (path === "/api/sessions/layout" && method === "POST") {
+    const b = await readBody(request);
+    if (!validDay(b.day) || !b.layout || typeof b.layout !== "object") return json({ error: "invalid" }, 400);
+    const id = /^[a-z0-9_]{1,40}$/;
+    const swap = {};
+    for (const [k, v] of Object.entries(b.layout.swap && typeof b.layout.swap === "object" ? b.layout.swap : {})) {
+      if (id.test(k) && id.test(String(v)) && Object.keys(swap).length < 60) swap[k] = String(v);
+    }
+    const extra = (Array.isArray(b.layout.extra) ? b.layout.extra : []).filter((x) => id.test(String(x))).slice(0, 30).map(String);
+    await env.DB.prepare("UPDATE sessions SET layout=? WHERE day=?").bind(JSON.stringify({ swap, extra }), b.day).run();
     return json({ ok: true });
   }
 
@@ -350,7 +371,7 @@ async function api(request, env, url) {
       exported_at: new Date().toISOString(),
       sets: await q("SELECT day,exercise,weight,reps,warmup FROM sets ORDER BY id"),
       bodyweight: await q("SELECT day,kg FROM bodyweight ORDER BY day"),
-      sessions: await q("SELECT day,plan_id,plan_name,started_at,finished_at,note FROM sessions ORDER BY day"),
+      sessions: await q("SELECT day,plan_id,plan_name,started_at,finished_at,note,layout FROM sessions ORDER BY day"),
       schedule: await q("SELECT dow,plan_id FROM schedule"),
       planned: await q("SELECT day,plan_id FROM planned ORDER BY day"),
       plans: (await q("SELECT id,name,when_text,items FROM user_plans")).map((r) => ({ id: r.id, name: r.name, when: r.when_text || "", items: JSON.parse(r.items) })),
@@ -390,9 +411,9 @@ async function api(request, env, url) {
       if (validDay(x.day) && validPlanId(x.plan_id))
         stmts.push(
           env.DB.prepare(
-            `INSERT INTO sessions(day,plan_id,plan_name,started_at,finished_at,note) VALUES(?,?,?,?,?,?)
-             ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id, plan_name=excluded.plan_name, started_at=excluded.started_at, finished_at=excluded.finished_at, note=excluded.note`,
-          ).bind(x.day, x.plan_id, String(x.plan_name || "").slice(0, 80), x.started_at || null, x.finished_at || null, String(x.note || "").slice(0, 500)),
+            `INSERT INTO sessions(day,plan_id,plan_name,started_at,finished_at,note,layout) VALUES(?,?,?,?,?,?,?)
+             ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id, plan_name=excluded.plan_name, started_at=excluded.started_at, finished_at=excluded.finished_at, note=excluded.note, layout=excluded.layout`,
+          ).bind(x.day, x.plan_id, String(x.plan_name || "").slice(0, 80), x.started_at || null, x.finished_at || null, String(x.note || "").slice(0, 500), typeof x.layout === "string" ? x.layout.slice(0, 4000) : null),
         );
     }
     for (const x of arr(b.schedule)) {
