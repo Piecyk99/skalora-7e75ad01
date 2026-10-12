@@ -1,0 +1,19 @@
+name = "skalora-gym"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+account_id = "75bcda4af452221f9e0b085605e562ef"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "skalora-gym"
+database_id = "bc1789ad-eada-487f-829d-6c787f8e3af2"
+
+# Własna domena (strefa skalora.pl musi być na tym koncie Cloudflare).
+[[routes]]
+pattern = "gym.skalora.pl"
+custom_domain = true
+
+# Interfejs, katalog ćwiczeń i obrazki: statyczne pliki z public/. Worker tylko dla /api/*.
+[assets]
+directory = "./public"
+run_worker_first = ["/api/*"]
