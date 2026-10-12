@@ -55,6 +55,7 @@ async function isAuthed(request, env) {
 }
 
 const validDay = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d || "");
+const validPlanId = (p) => typeof p === "string" && /^(rest|[a-z0-9_]{1,40})$/.test(p);
 const e1rm = (w, r) => (r <= 1 ? w : w * (1 + r / 30));
 
 async function readBody(request) {
@@ -203,10 +204,151 @@ async function api(request, env, url) {
     return json(results);
   }
 
+  // ---------- kalendarz ----------
+  if (path === "/api/calendar" && method === "GET") {
+    const from = url.searchParams.get("from");
+    const to = url.searchParams.get("to");
+    if (!validDay(from) || !validDay(to) || to < from || (Date.parse(to) - Date.parse(from)) / 86400000 > 62)
+      return json({ error: "range" }, 400);
+    const days = (
+      await env.DB.prepare(
+        "SELECT day, COUNT(*) AS sets, SUM(weight*reps) AS volume FROM sets WHERE day BETWEEN ? AND ? GROUP BY day ORDER BY day",
+      ).bind(from, to).all()
+    ).results;
+    const sets = (
+      await env.DB.prepare("SELECT day,exercise,weight,reps FROM sets WHERE day BETWEEN ? AND ? ORDER BY day,id").bind(from, to).all()
+    ).results;
+    const sessions = (
+      await env.DB.prepare("SELECT day,plan_id,plan_name,started_at,finished_at,note FROM sessions WHERE day BETWEEN ? AND ?")
+        .bind(from, to)
+        .all()
+    ).results;
+    const overrides = (await env.DB.prepare("SELECT day,plan_id FROM planned WHERE day BETWEEN ? AND ?").bind(from, to).all()).results;
+    return json({ days, sets, sessions, overrides });
+  }
+
+  // ---------- harmonogram tygodnia (0 = niedziela ... 6 = sobota) ----------
+  if (path === "/api/schedule" && method === "GET") {
+    const { results } = await env.DB.prepare("SELECT dow,plan_id FROM schedule").all();
+    const schedule = {};
+    for (const r of results) schedule[r.dow] = r.plan_id;
+    return json({ schedule });
+  }
+
+  if (path === "/api/schedule" && method === "POST") {
+    const b = await readBody(request);
+    const dow = Number(b.dow);
+    if (!Number.isInteger(dow) || dow < 0 || dow > 6) return json({ error: "dow" }, 400);
+    if (b.plan_id == null || b.plan_id === "") {
+      await env.DB.prepare("DELETE FROM schedule WHERE dow=?").bind(dow).run();
+    } else {
+      if (!validPlanId(b.plan_id)) return json({ error: "plan_id" }, 400);
+      await env.DB.prepare("INSERT INTO schedule(dow,plan_id) VALUES(?,?) ON CONFLICT(dow) DO UPDATE SET plan_id=excluded.plan_id")
+        .bind(dow, b.plan_id)
+        .run();
+    }
+    return json({ ok: true });
+  }
+
+  // ---------- plan na konkretny dzień (nadpisuje harmonogram; "rest" = dzień wolny) ----------
+  if (path === "/api/planned" && method === "POST") {
+    const b = await readBody(request);
+    if (!validDay(b.day)) return json({ error: "day" }, 400);
+    if (b.plan_id == null || b.plan_id === "") {
+      await env.DB.prepare("DELETE FROM planned WHERE day=?").bind(b.day).run();
+    } else {
+      if (!validPlanId(b.plan_id)) return json({ error: "plan_id" }, 400);
+      await env.DB.prepare("INSERT INTO planned(day,plan_id) VALUES(?,?) ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id")
+        .bind(b.day, b.plan_id)
+        .run();
+    }
+    return json({ ok: true });
+  }
+
+  // ---------- sesje treningowe ----------
+  if (path === "/api/sessions/start" && method === "POST") {
+    const b = await readBody(request);
+    if (!validDay(b.day) || !validPlanId(b.plan_id)) return json({ error: "invalid" }, 400);
+    const name = String(b.plan_name || "").slice(0, 80);
+    await env.DB.prepare(
+      `INSERT INTO sessions(day,plan_id,plan_name,started_at) VALUES(?,?,?,?)
+       ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id, plan_name=excluded.plan_name, finished_at=NULL`,
+    )
+      .bind(b.day, b.plan_id, name, new Date().toISOString())
+      .run();
+    return json({ ok: true });
+  }
+
+  if (path === "/api/sessions/finish" && method === "POST") {
+    const b = await readBody(request);
+    if (!validDay(b.day)) return json({ error: "day" }, 400);
+    const note = String(b.note || "").slice(0, 500);
+    await env.DB.prepare("UPDATE sessions SET finished_at=?, note=? WHERE day=?").bind(new Date().toISOString(), note, b.day).run();
+    return json({ ok: true });
+  }
+
+  m = path.match(/^\/api\/sessions\/(\d{4}-\d{2}-\d{2})$/);
+  if (m && method === "DELETE") {
+    await env.DB.prepare("DELETE FROM sessions WHERE day=?").bind(m[1]).run();
+    return json({ ok: true });
+  }
+
+  // ---------- własne plany ----------
+  if (path === "/api/plans" && method === "GET") {
+    const { results } = await env.DB.prepare("SELECT id,name,when_text,items FROM user_plans ORDER BY updated_at DESC").all();
+    return json(results.map((r) => ({ id: r.id, name: r.name, when: r.when_text || "", items: JSON.parse(r.items), custom: true })));
+  }
+
+  if (path === "/api/plans" && method === "POST") {
+    const b = await readBody(request);
+    const name = String(b.name || "").trim().slice(0, 60);
+    if (!name || !Array.isArray(b.items) || b.items.length < 1 || b.items.length > 40) return json({ error: "invalid" }, 400);
+    const items = [];
+    for (const it of b.items) {
+      const sets = Math.round(Number(it && it.sets));
+      const reps = String((it && it.reps) || "").trim().slice(0, 20);
+      if (!it || !/^[a-z0-9_]{1,40}$/.test(String(it.exercise_id)) || !(sets >= 1 && sets <= 20) || !reps) return json({ error: "item" }, 400);
+      const o = { exercise_id: it.exercise_id, sets, reps };
+      if (Number(it.rest_s) > 0 && Number(it.rest_s) <= 900) o.rest_s = Math.round(Number(it.rest_s));
+      if (it.note) o.note = String(it.note).slice(0, 120);
+      if (it.superset_group) o.superset_group = String(it.superset_group).slice(0, 2);
+      items.push(o);
+    }
+    let id = b.id;
+    if (id != null && !/^u_[a-f0-9]{8,32}$/.test(String(id))) return json({ error: "id" }, 400);
+    if (!id) id = "u_" + [...crypto.getRandomValues(new Uint8Array(6))].map((x) => x.toString(16).padStart(2, "0")).join("");
+    await env.DB.prepare(
+      `INSERT INTO user_plans(id,name,when_text,items,updated_at) VALUES(?,?,?,?,datetime('now'))
+       ON CONFLICT(id) DO UPDATE SET name=excluded.name, when_text=excluded.when_text, items=excluded.items, updated_at=datetime('now')`,
+    )
+      .bind(id, name, String(b.when || "").slice(0, 80), JSON.stringify(items))
+      .run();
+    return json({ id, name, when: String(b.when || "").slice(0, 80), items, custom: true });
+  }
+
+  m = path.match(/^\/api\/plans\/(u_[a-f0-9]{8,32})$/);
+  if (m && method === "DELETE") {
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM user_plans WHERE id=?").bind(m[1]),
+      env.DB.prepare("DELETE FROM schedule WHERE plan_id=?").bind(m[1]),
+      env.DB.prepare("DELETE FROM planned WHERE plan_id=?").bind(m[1]),
+    ]);
+    return json({ ok: true });
+  }
+
+  // ---------- eksport / import ----------
   if (path === "/api/export" && method === "GET") {
-    const sets = (await env.DB.prepare("SELECT day,exercise,weight,reps FROM sets ORDER BY id").all()).results;
-    const bodyweight = (await env.DB.prepare("SELECT day,kg FROM bodyweight ORDER BY day").all()).results;
-    return new Response(JSON.stringify({ exported_at: new Date().toISOString(), sets, bodyweight }, null, 2), {
+    const q = async (sql) => (await env.DB.prepare(sql).all()).results;
+    const out = {
+      exported_at: new Date().toISOString(),
+      sets: await q("SELECT day,exercise,weight,reps FROM sets ORDER BY id"),
+      bodyweight: await q("SELECT day,kg FROM bodyweight ORDER BY day"),
+      sessions: await q("SELECT day,plan_id,plan_name,started_at,finished_at,note FROM sessions ORDER BY day"),
+      schedule: await q("SELECT dow,plan_id FROM schedule"),
+      planned: await q("SELECT day,plan_id FROM planned ORDER BY day"),
+      plans: (await q("SELECT id,name,when_text,items FROM user_plans")).map((r) => ({ id: r.id, name: r.name, when: r.when_text || "", items: JSON.parse(r.items) })),
+    };
+    return new Response(JSON.stringify(out, null, 2), {
       headers: {
         "content-type": "application/json",
         "content-disposition": 'attachment; filename="gym-export.json"',
@@ -217,8 +359,9 @@ async function api(request, env, url) {
 
   if (path === "/api/import" && method === "POST") {
     const b = await readBody(request);
+    const arr = (x) => (Array.isArray(x) ? x : []);
     const stmts = [];
-    for (const s of Array.isArray(b.sets) ? b.sets : []) {
+    for (const s of arr(b.sets)) {
       if (validDay(s.day) && s.exercise && Number(s.weight) >= 0 && Number(s.reps) >= 1)
         stmts.push(
           env.DB.prepare("INSERT INTO sets(day,exercise,weight,reps) VALUES(?,?,?,?)").bind(
@@ -229,13 +372,38 @@ async function api(request, env, url) {
           ),
         );
     }
-    for (const w of Array.isArray(b.bodyweight) ? b.bodyweight : []) {
+    for (const w of arr(b.bodyweight)) {
       if (validDay(w.day) && Number(w.kg) > 20)
         stmts.push(
-          env.DB.prepare("INSERT INTO bodyweight(day,kg) VALUES(?,?) ON CONFLICT(day) DO UPDATE SET kg=excluded.kg").bind(
-            w.day,
-            Number(w.kg),
-          ),
+          env.DB.prepare("INSERT INTO bodyweight(day,kg) VALUES(?,?) ON CONFLICT(day) DO UPDATE SET kg=excluded.kg").bind(w.day, Number(w.kg)),
+        );
+    }
+    for (const x of arr(b.sessions)) {
+      if (validDay(x.day) && validPlanId(x.plan_id))
+        stmts.push(
+          env.DB.prepare(
+            `INSERT INTO sessions(day,plan_id,plan_name,started_at,finished_at,note) VALUES(?,?,?,?,?,?)
+             ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id, plan_name=excluded.plan_name, started_at=excluded.started_at, finished_at=excluded.finished_at, note=excluded.note`,
+          ).bind(x.day, x.plan_id, String(x.plan_name || "").slice(0, 80), x.started_at || null, x.finished_at || null, String(x.note || "").slice(0, 500)),
+        );
+    }
+    for (const x of arr(b.schedule)) {
+      if (Number.isInteger(Number(x.dow)) && Number(x.dow) >= 0 && Number(x.dow) <= 6 && validPlanId(x.plan_id))
+        stmts.push(
+          env.DB.prepare("INSERT INTO schedule(dow,plan_id) VALUES(?,?) ON CONFLICT(dow) DO UPDATE SET plan_id=excluded.plan_id").bind(Number(x.dow), x.plan_id),
+        );
+    }
+    for (const x of arr(b.planned)) {
+      if (validDay(x.day) && validPlanId(x.plan_id))
+        stmts.push(env.DB.prepare("INSERT INTO planned(day,plan_id) VALUES(?,?) ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id").bind(x.day, x.plan_id));
+    }
+    for (const x of arr(b.plans)) {
+      if (/^u_[a-f0-9]{8,32}$/.test(String(x.id)) && x.name && Array.isArray(x.items) && x.items.length <= 40)
+        stmts.push(
+          env.DB.prepare(
+            `INSERT INTO user_plans(id,name,when_text,items) VALUES(?,?,?,?)
+             ON CONFLICT(id) DO UPDATE SET name=excluded.name, when_text=excluded.when_text, items=excluded.items`,
+          ).bind(x.id, String(x.name).slice(0, 60), String(x.when || "").slice(0, 80), JSON.stringify(x.items)),
         );
     }
     for (let i = 0; i < stmts.length; i += 50) await env.DB.batch(stmts.slice(i, i + 50));
