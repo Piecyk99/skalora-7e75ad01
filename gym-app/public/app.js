@@ -84,6 +84,22 @@
     return n ? { lo: +n[0], hi: +n[0] } : { lo: 0, hi: 0 };
   }
   function increment(ex) { return ex.equipment.join(" ").toLowerCase().indexOf("hantl") >= 0 ? 2 : 2.5; }
+  // Rozgrzewka wg zasad katalogu: pierwsze wielostawowe 50%x10, 70%x5, 85%x2; kolejne wielostawowe 1 seria 70%x5; izolacje bez.
+  function warmupPlan(ex, firstMulti, workW) {
+    if (!(workW > 0) || ex.type !== "wielostawowe") return [];
+    var scheme = firstMulti ? [[0.5, 10], [0.7, 5], [0.85, 2]] : [[0.7, 5]];
+    var eq = ex.equipment;
+    var step = eq.join(" ").toLowerCase().indexOf("hantl") >= 0 ? 1 : 2.5;
+    var bar = eq.some(function (e) { return e === "sztanga" || e.indexOf("sztanga +") === 0; });
+    var out = [];
+    scheme.forEach(function (sc) {
+      var w = Math.round(workW * sc[0] / step) * step;
+      if (bar) w = Math.max(w, 20);
+      if (w >= workW || (out.length && out[out.length - 1].w >= w)) return;
+      out.push({ w: w, r: sc[1] });
+    });
+    return out;
+  }
   // Progresja podwójna z katalogu: wszystkie serie na górze zakresu => dołóż ciężar.
   function suggestion(item, ex, last) {
     if (!last || !last.sets || !last.sets.length) return null;
@@ -561,6 +577,22 @@
         var warmCb = el("input", { type: "checkbox" });
         warmCb.checked = isWarm;
         warmCb.addEventListener("change", function () { S.warm[it.exercise_id] = warmCb.checked; btn.textContent = warmCb.checked ? "Zapisz rozgrzewkę" : serText; });
+        var lastS = S.last[it.exercise_id];
+        var baseW = sug ? sug.weight : (lastS && lastS.sets.length ? Math.max.apply(null, lastS.sets.map(function (s) { return s.weight; })) : 0);
+        var firstMulti = items.findIndex(function (x) { return state.byId[x.exercise_id].type === "wielostawowe"; }) === idx;
+        var wu = warmupPlan(ex, firstMulti, baseW);
+        var wuBox = null;
+        if (wu.length) {
+          if (warmSets.length >= wu.length) wuBox = el("div", { class: "note", text: "✓ Rozgrzewka zrobiona" });
+          else wuBox = el("div", {}, [
+            el("div", { class: "note", text: "Rozgrzewka wg zasad (dotknij, aby wpisać):" }),
+            el("div", { class: "chips" }, wu.slice(warmSets.length).map(function (x) {
+              return el("button", { class: "chip", text: fmt(x.w) + " × " + x.r, onclick: function () {
+                wIn.value = x.w; rIn.value = x.r; warmCb.checked = true; S.warm[it.exercise_id] = true; btn.textContent = "Zapisz rozgrzewkę";
+              } });
+            }))
+          ]);
+        } else if (ex.type === "izolacja") wuBox = el("div", { class: "note", text: "Izolacja: bez osobnej rozgrzewki." });
         btn.addEventListener("click", function () {
           btn.disabled = true;
           api("/api/sets", "POST", { day: S.day, exercise: ex.name_pl, weight: wIn.value, reps: rIn.value, warmup: warmCb.checked }).then(function () {
@@ -583,6 +615,7 @@
             ]),
             it.note ? el("div", { class: "note", text: it.note }) : null,
             sug ? el("div", { class: "hint", text: sug.text }) : el("div", { class: "note", text: "Pierwszy raz: zacznij lekko i dobierz ciężar tak, by zostało " + ex.default.rir + " powt. w zapasie." }),
+            wuBox,
             chips,
             both.length ? el("div", { class: "note", text: "Dotknij serii, aby zmienić ją na rozgrzewkę lub z powrotem." }) : null,
             el("div", { class: "row" }, [el("div", {}, [el("label", { text: "Ciężar (kg)" }), wIn]), el("div", {}, [el("label", { text: "Powtórzenia" }), rIn])]),
