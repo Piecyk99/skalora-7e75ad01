@@ -135,6 +135,12 @@ async function api(request, env, url) {
   }
 
   let m = path.match(/^\/api\/sets\/(\d+)$/);
+  if (m && method === "PATCH") {
+    const b = await readBody(request);
+    if (typeof b.warmup !== "boolean") return json({ error: "warmup" }, 400);
+    await env.DB.prepare("UPDATE sets SET warmup=? WHERE id=?").bind(b.warmup ? 1 : 0, Number(m[1])).run();
+    return json({ ok: true });
+  }
   if (m && method === "DELETE") {
     await env.DB.prepare("DELETE FROM sets WHERE id=?").bind(Number(m[1])).run();
     return json({ ok: true });

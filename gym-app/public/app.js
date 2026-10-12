@@ -289,7 +289,10 @@
           if (!s.warmup) wn++;
           c.appendChild(el("div", { class: "set" }, [
             el("div", { text: (s.warmup ? "R.  " : wn + ".  ") + fmt(s.weight) + " kg × " + s.reps + (s.warmup ? "  (rozgrzewka)" : "") }),
-            el("button", { class: "mini", text: "Usuń", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewToday); } })
+            el("div", { class: "row", style: "flex:none;gap:6px" }, [
+              el("button", { class: "mini", text: s.warmup ? "Roboczą" : "Rozgrzewka", onclick: function () { api("/api/sets/" + s.id, "PATCH", { warmup: !s.warmup }).then(viewToday).catch(handleErr); } }),
+              el("button", { class: "mini", text: "Usuń", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewToday); } })
+            ])
           ]));
         });
         list.appendChild(c);
@@ -566,7 +569,7 @@
           }).catch(function () { btn.disabled = false; btn.textContent = "Uzupełnij kg i powtórzenia"; });
         });
         var chips = el("div", { class: "mb" }, both.map(function (s) {
-          return el("span", { class: "setchip" + (s.warmup ? " warm" : "") }, [(s.warmup ? "R " : "") + fmt(s.weight) + " × " + s.reps, el("button", { text: "×", "aria-label": "Usuń serię", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewSession); } })]);
+          return el("span", { class: "setchip" + (s.warmup ? " warm" : "") }, [el("button", { class: "tg", title: s.warmup ? "Zmień na serię roboczą" : "Zmień na rozgrzewkę", text: (s.warmup ? "R " : "") + fmt(s.weight) + " × " + s.reps, onclick: function () { api("/api/sets/" + s.id, "PATCH", { warmup: !s.warmup }).then(viewSession).catch(handleErr); } }), el("button", { text: "×", "aria-label": "Usuń serię", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewSession); } })]);
         }));
         cards.push(el("div", {}, [
           sg && sg !== prevGroup ? el("h2", { text: "Superseria " + sg + " (przerwa po ostatnim)" }) : null,
@@ -581,6 +584,7 @@
             it.note ? el("div", { class: "note", text: it.note }) : null,
             sug ? el("div", { class: "hint", text: sug.text }) : el("div", { class: "note", text: "Pierwszy raz: zacznij lekko i dobierz ciężar tak, by zostało " + ex.default.rir + " powt. w zapasie." }),
             chips,
+            both.length ? el("div", { class: "note", text: "Dotknij serii, aby zmienić ją na rozgrzewkę lub z powrotem." }) : null,
             el("div", { class: "row" }, [el("div", {}, [el("label", { text: "Ciężar (kg)" }), wIn]), el("div", {}, [el("label", { text: "Powtórzenia" }), rIn])]),
             el("label", { class: "chk" }, [warmCb, "Rozgrzewka (nie liczy się do planu ani statystyk)"]),
             el("div", { class: "mt" }, [btn])
