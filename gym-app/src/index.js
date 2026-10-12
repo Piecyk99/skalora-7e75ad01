@@ -1,6 +1,3 @@
-import { ICON192, ICON512 } from "./icons.js";
-import { HTML, MANIFEST, SW } from "./ui.js";
-
 const enc = new TextEncoder();
 const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -141,6 +138,16 @@ async function api(request, env, url) {
     return json({ ok: true });
   }
 
+  if (path === "/api/last" && method === "GET") {
+    const ex = url.searchParams.get("exercise");
+    const before = url.searchParams.get("before");
+    if (!ex || !validDay(before)) return json({ error: "invalid" }, 400);
+    const d = await env.DB.prepare("SELECT MAX(day) AS day FROM sets WHERE exercise=? AND day<?").bind(ex, before).first();
+    if (!d || !d.day) return json({ day: null, sets: [] });
+    const { results } = await env.DB.prepare("SELECT weight,reps FROM sets WHERE exercise=? AND day=? ORDER BY id").bind(ex, d.day).all();
+    return json({ day: d.day, sets: results });
+  }
+
   if (path === "/api/exercises" && method === "GET") {
     const { results } = await env.DB.prepare(
       `SELECT s.exercise, s.weight AS last_weight, s.reps AS last_reps, c.cnt, c.last_day
@@ -239,38 +246,19 @@ async function api(request, env, url) {
 }
 
 export default {
+  // Pliki statyczne (interfejs, katalog, obrazki) serwuje Workers Assets; tu trafia tylko /api/*.
   async fetch(request, env) {
     const url = new URL(request.url);
-    const p = url.pathname;
-    if (p.startsWith("/api/")) {
-      // Chroni przed CSRF: zapisy tylko z tego samego originu.
-      if (request.method !== "GET") {
-        const origin = request.headers.get("origin");
-        if (origin && origin !== url.origin) return json({ error: "forbidden" }, 403);
-      }
-      try {
-        return await api(request, env, url);
-      } catch (e) {
-        return json({ error: "server", message: String(e && e.message) }, 500);
-      }
+    if (!url.pathname.startsWith("/api/")) return json({ error: "not_found" }, 404);
+    // Chroni przed CSRF: zapisy tylko z tego samego originu.
+    if (request.method !== "GET") {
+      const origin = request.headers.get("origin");
+      if (origin && origin !== url.origin) return json({ error: "forbidden" }, 403);
     }
-    if (p === "/manifest.webmanifest")
-      return new Response(MANIFEST, { headers: { "content-type": "application/manifest+json" } });
-    if (p === "/sw.js")
-      return new Response(SW, { headers: { "content-type": "text/javascript", "cache-control": "no-cache" } });
-    if (p === "/icon-192.png" || p === "/apple-touch-icon.png")
-      return new Response(unb64(p === "/icon-192.png" ? ICON192 : ICON512), {
-        headers: { "content-type": "image/png", "cache-control": "public, max-age=86400" },
-      });
-    if (p === "/icon-512.png")
-      return new Response(unb64(ICON512), { headers: { "content-type": "image/png", "cache-control": "public, max-age=86400" } });
-    return new Response(HTML, {
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "no-cache",
-        "x-content-type-options": "nosniff",
-        "referrer-policy": "no-referrer",
-      },
-    });
+    try {
+      return await api(request, env, url);
+    } catch (e) {
+      return json({ error: "server", message: String(e && e.message) }, 500);
+    }
   },
 };
