@@ -225,7 +225,8 @@
       ],
       "alternatives": [
         "cable_row",
-        "db_row"
+        "db_row",
+        "plate_row"
       ],
       "image": "img/bb_row.png"
     },
@@ -269,7 +270,8 @@
       ],
       "alternatives": [
         "bb_row",
-        "cable_row"
+        "cable_row",
+        "plate_row"
       ],
       "image": "img/db_row.png"
     },
@@ -314,7 +316,8 @@
       ],
       "alternatives": [
         "bb_row",
-        "db_row"
+        "db_row",
+        "plate_row"
       ],
       "image": "img/cable_row.png"
     },
@@ -1367,6 +1370,54 @@
         "hang_raise"
       ],
       "image": "img/cable_crunch.png"
+    },
+    {
+      "id": "plate_row",
+      "name_pl": "Wiosłowanie na maszynie z płytami (podparcie klatki)",
+      "name_en": "Chest-supported plate-loaded row",
+      "category": "plecy",
+      "muscles_primary": [
+        "środek pleców",
+        "najszerszy grzbietu"
+      ],
+      "muscles_secondary": [
+        "tył barków",
+        "biceps"
+      ],
+      "equipment": [
+        "maszyna do wiosłowania na płyty",
+        "podparcie klatki"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo: klatka jest podparta, a przy upadku serii po prostu puszczasz uchwyty. Płyty ładuj tak samo po obu stronach.",
+      "default": {
+        "sets": 3,
+        "reps": "10–12",
+        "rest_s": 90,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Ustaw siedzisko tak, by uchwyty były na wysokości dolnych żeber, a klatka opierała się o podparcie.",
+        "Stopy na podeście, złap uchwyty, na starcie pełne rozciągnięcie rąk.",
+        "Najpierw ściągnij łopatki, potem pociągnij łokcie do tyłu, blisko tułowia (ok. 45°).",
+        "Na końcu przytrzymaj 1 s i opuszczaj w 2–3 s do pełnego rozciągnięcia."
+      ],
+      "tips": [
+        "Ramiona są niezależne: możesz ćwiczyć jedną rękę naraz, jak w wiosłowaniu hantlem (10–12 na rękę).",
+        "Zacznij lżej niż przy hantlach. Ciężar z płyt na maszynie nie jest wprost porównywalny z hantlem.",
+        "Myśl o łokciach, nie o dłoniach."
+      ],
+      "mistakes": [
+        "Odrywanie klatki od podparcia i bujanie tułowiem.",
+        "Szarpanie ciężaru i skracanie rozciągnięcia na dole.",
+        "Unoszenie barków do uszu zamiast ściągania łopatek."
+      ],
+      "alternatives": [
+        "db_row",
+        "cable_row",
+        "bb_row"
+      ],
+      "image": "img/plate_row.png"
     }
   ],
   "plans": [

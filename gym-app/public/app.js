@@ -539,7 +539,7 @@
     var plan = planById(planId);
     if (!plan) return;
     state.tab = "plan"; state.planId = planId; state.edit = null;
-    state.session = { planId: planId, day: day, last: {}, note: "", warm: {} };
+    state.session = { planId: planId, day: day, last: {}, note: "", warm: {}, swap: {} };
     keepAwake();
     api("/api/sessions/start", "POST", { day: day, plan_id: planId, plan_name: plan.name }).then(function () {
       return Promise.all(planItems(plan).map(function (it) {
@@ -548,14 +548,63 @@
       }));
     }).then(function () { viewSession(); scrollTop(); }).catch(handleErr);
   }
+  // Ćwiczenie faktycznie wykonywane w danym miejscu planu: wybrany zamiennik albo, po wznowieniu treningu,
+  // zamiennik, który ma dziś serie (o ile nie jest osobną pozycją tego planu).
+  function effId(it, all, items) {
+    var S = state.session, orig = state.byId[it.exercise_id];
+    var chosen = S.swap[it.exercise_id];
+    if (chosen && state.byId[chosen]) return chosen;
+    if (all.some(function (s) { return s.exercise === orig.name_pl; })) return it.exercise_id;
+    for (var i = 0; i < orig.alternatives.length; i++) {
+      var alt = state.byId[orig.alternatives[i]];
+      if (!alt || items.some(function (x) { return x.exercise_id === alt.id; })) continue;
+      if (all.some(function (s) { return s.exercise === alt.name_pl; })) return alt.id;
+    }
+    return it.exercise_id;
+  }
+  function openSwap(it, currentId, items) {
+    var S = state.session, orig = state.byId[it.exercise_id], cur = state.byId[currentId];
+    var ids = [orig.id].concat(orig.alternatives, cur.alternatives).filter(function (id, i, arr) {
+      return state.byId[id] && id !== currentId && arr.indexOf(id) === i && (id === orig.id || !items.some(function (x) { return x.exercise_id === id; }));
+    });
+    closeModal();
+    var sheet = el("div", { class: "sheet", onclick: function (e) { e.stopPropagation(); } }, [
+      el("div", { class: "bar" }, [el("button", { class: "mini", text: "Zamknij ✕", onclick: closeModal })]),
+      el("h1", { text: "Zamień ćwiczenie" }),
+      el("div", { class: "mut mb", text: "Teraz: " + cur.name_pl + ". Serie zapiszą się pod nazwą wybranego ćwiczenia, więc historia i rekordy nie mieszają się z oryginałem." }),
+      el("div", { class: "card" }, ids.map(function (id) {
+        var e = state.byId[id];
+        return el("div", { class: "planitem" }, [
+          el("img", { class: "th", src: "/" + e.image, alt: "", loading: "lazy" }),
+          el("div", { style: "flex:1" }, [
+            el("button", { class: "link", text: e.name_pl, onclick: function () {
+              S.swap[it.exercise_id] = id;
+              closeModal(); viewSession();
+            } }),
+            el("div", { class: "mut", text: (id === orig.id ? "oryginał z planu · " : "") + e.equipment.join(", ") })
+          ])
+        ]);
+      }))
+    ]);
+    document.body.appendChild(el("div", { class: "modal", id: "modal", onclick: closeModal }, [sheet]));
+    document.body.classList.add("lock");
+  }
   function viewSession() {
     var S = state.session, plan = planById(S.planId), y = window.scrollY;
     var items = planItems(plan);
     api("/api/sets?day=" + S.day).then(function (all) {
+      var need = [];
+      items.forEach(function (it) { var id = effId(it, all, items); if (S.last[id] === undefined && need.indexOf(id) < 0) need.push(id); });
+      return Promise.all(need.map(function (id) {
+        return api("/api/last?exercise=" + encodeURIComponent(state.byId[id].name_pl) + "&before=" + S.day).then(function (l) { S.last[id] = l; });
+      })).then(function () { return all; });
+    }).then(function (all) {
       var cards = [], doneItems = 0, vol = 0, nsets = 0;
       all.forEach(function (s) { if (!s.warmup) { vol += s.weight * s.reps; nsets++; } });
       items.forEach(function (it, idx) {
-        var ex = state.byId[it.exercise_id];
+        var eid = effId(it, all, items);
+        var ex = state.byId[eid];
+        var swapped = eid !== it.exercise_id;
         var both = all.filter(function (s) { return s.exercise === ex.name_pl; });
         var mine = both.filter(function (s) { return !s.warmup; });
         var warmSets = both.filter(function (s) { return s.warmup; });
@@ -565,7 +614,7 @@
         var nextItem = items[idx + 1];
         var sg = it.superset_group;
         var isLastInGroup = !sg || !nextItem || nextItem.superset_group !== sg;
-        var sug = suggestion(it, ex, S.last[it.exercise_id]);
+        var sug = suggestion(it, ex, S.last[eid]);
         var wIn = el("input", { type: "number", inputmode: "decimal", step: "0.25", min: "0", placeholder: "kg" });
         var rIn = el("input", { type: "number", inputmode: "numeric", step: "1", min: "1", placeholder: "powt." });
         if (mine.length) { var ls = mine[mine.length - 1]; wIn.value = ls.weight; rIn.value = ls.reps; }
@@ -577,7 +626,7 @@
         var warmCb = el("input", { type: "checkbox" });
         warmCb.checked = isWarm;
         warmCb.addEventListener("change", function () { S.warm[it.exercise_id] = warmCb.checked; btn.textContent = warmCb.checked ? "Zapisz rozgrzewkę" : serText; });
-        var lastS = S.last[it.exercise_id];
+        var lastS = S.last[eid];
         var baseW = sug ? sug.weight : (lastS && lastS.sets.length ? Math.max.apply(null, lastS.sets.map(function (s) { return s.weight; })) : 0);
         var firstMulti = items.findIndex(function (x) { return state.byId[x.exercise_id].type === "wielostawowe"; }) === idx;
         var wu = warmupPlan(ex, firstMulti, baseW);
@@ -610,7 +659,9 @@
               el("img", { class: "th", src: "/" + ex.image, alt: "", loading: "lazy", onclick: function () { openDetail(ex.id); } }),
               el("div", {}, [
                 el("button", { class: "link", text: (done ? "✓ " : "") + ex.name_pl, onclick: function () { openDetail(ex.id); } }),
-                el("div", { class: "mut", text: it.sets + " × " + it.reps + " · przerwa " + mmss(restS) + " · RIR " + ex.default.rir })
+                el("div", { class: "mut", text: it.sets + " × " + it.reps + " · przerwa " + mmss(restS) + " · RIR " + ex.default.rir }),
+                swapped ? el("div", { class: "note", text: "↔ zamiast: " + state.byId[it.exercise_id].name_pl }) : null,
+                el("button", { class: "link", style: "font-size:13px", text: "Zamień ćwiczenie", onclick: function () { openSwap(it, eid, items); } })
               ])
             ]),
             it.note ? el("div", { class: "note", text: it.note }) : null,
