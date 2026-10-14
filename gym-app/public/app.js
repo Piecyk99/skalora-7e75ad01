@@ -242,34 +242,127 @@
   }
 
   // ---------- kolejka treningów ----------
-  function loadQueue() {
-    var rot = state.catalog.rotation;
-    if (!rot || !rot.length) return Promise.resolve(null);
-    return api("/api/queue?rotation=" + rot.join(",")).catch(function () { return null; });
+  // Rotacja niezależna od dni tygodnia. Plan z flagą avoid_before_work: "hard" nie jest proponowany, gdy jutro
+  // jest praca (czeka na górze kolejki), "soft" dostaje tylko ostrzeżenie. W rotacji 3-sesyjnej maks. 1 sesja
+  // z flagą na 7 dni, chyba że jutro wolne.
+  function allRotationIds() {
+    var c = state.catalog, out = [];
+    (c.rotation || []).concat(c.rotation3 || []).forEach(function (id) { if (out.indexOf(id) < 0) out.push(id); });
+    return out;
   }
-  function queueAfter(id) { var rot = state.catalog.rotation, i = rot.indexOf(id); return rot[(i + 1) % rot.length]; }
-  function queueNext(q) {
-    var rot = state.catalog.rotation;
-    if (q && q.override && rot.indexOf(q.override) >= 0) return q.override;
-    if (!q || !q.last || rot.indexOf(q.last.plan_id) < 0) return rot[0];
-    return queueAfter(q.last.plan_id);
+  function loadQueue() {
+    var ids = allRotationIds();
+    if (!ids.length) return Promise.resolve(null);
+    return api("/api/queue?rotation=" + ids.join(",")).catch(function () { return null; });
+  }
+  function dayShift(s, n) { var d = parseDay(s); d.setDate(d.getDate() + n); return dstr(d); }
+  function recentSince(q, fromDay) { return ((q && q.recent) || []).filter(function (r) { return r.day >= fromDay; }); }
+  function rotationFor(q) {
+    var c = state.catalog, r4 = c.rotation || [], r3 = c.rotation3 && c.rotation3.length ? c.rotation3 : r4;
+    var mode = (q && q.mode) || "auto", auto = mode === "auto";
+    // auto: do 6 zakończonych sesji w 14 dniach (czyli najwyżej 3 w tygodniu) = rotacja 3-sesyjna
+    if (auto) mode = recentSince(q, dayShift(today(), -13)).length <= 6 ? "3" : "4";
+    return { mode: mode, auto: auto, ids: mode === "3" ? r3 : r4 };
+  }
+  function rotateAfter(ids, k) { return ids.slice(k + 1).concat(ids.slice(0, k + 1)); }
+  // Kolejność "do zrobienia": pominięty plan zostaje na górze, dopóki go nie zrobisz.
+  function queueList(q, ids) {
+    var done = ((q && q.recent) || []).filter(function (r) { return ids.indexOf(r.plan_id) >= 0; }).slice().reverse();
+    var Q = ids.slice();
+    done.forEach(function (r, i) {
+      var k = ids.indexOf(r.plan_id);
+      if (i === 0) Q = rotateAfter(ids, k);
+      var j = Q.indexOf(r.plan_id); if (j >= 0) Q.splice(j, 1);
+      if (!Q.length) Q = rotateAfter(ids, k);
+    });
+    return Q;
+  }
+  function planQueue(q, assumeWork) {
+    var rot = rotationFor(q), Q = queueList(q, rot.ids), t = today();
+    var asked = !!(q && q.work && q.work.day === t);
+    var workTom = asked ? q.work.value : true;
+    if (assumeWork === false) workTom = false;
+    var lweek = recentSince(q, dayShift(t, -6)).filter(function (r) { var p = planById(r.plan_id); return p && p.avoid_before_work; }).length;
+    function block(id) {
+      var p = planById(id), av = p && p.avoid_before_work;
+      if (!av || !workTom) return null;
+      if (av === "hard") return "hard";
+      if (rot.mode === "3" && lweek >= 1) return "weekly";
+      return null;
+    }
+    var over = q && q.override && rot.ids.indexOf(q.override) >= 0 ? q.override : null;
+    var pick = null, held = [];
+    if (over) pick = over;
+    else {
+      for (var i = 0; i < Q.length; i++) { if (block(Q[i])) held.push(Q[i]); else { pick = Q[i]; break; } }
+    }
+    var p0 = planById(pick), warn = null;
+    if (pick) {
+      var why = block(pick);
+      if (why === "hard") warn = "Jutro pracujesz, a ten trening mocno obciąża dół pleców i nogi. Lepiej zrobić go przed dniem wolnym.";
+      else if (why === "weekly") warn = "W tym tygodniu był już dzień nóg, a jutro pracujesz. Lepiej poczekać do dnia przed wolnym.";
+      else if (workTom && p0 && p0.avoid_before_work === "soft") warn = "Jutro pracujesz: nogi mogą dać zakwasy na zmianie. Zacznij lżej i nie dokładaj dokładki.";
+    }
+    return { rot: rot, Q: Q, pick: pick, held: held, warn: warn, asked: asked, workTom: workTom, lweek: lweek, over: over, block: block };
+  }
+  function nextCandidate(pq, after) {
+    var Q = pq.Q, i = Q.indexOf(after);
+    for (var n = 1; n < Q.length; n++) {
+      var id = Q[(i + n) % Q.length];
+      if (!pq.block(id)) return id;
+    }
+    return null;
   }
   function setQueueOverride(id, then) { api("/api/queue", "POST", { override: id }).then(then).catch(handleErr); }
+  function setWorkTomorrow(v, then) { api("/api/queue", "POST", { work_tomorrow: v, day: today() }).then(then).catch(handleErr); }
+  function setRotationMode(m, then) { api("/api/queue", "POST", { mode: m }).then(then).catch(handleErr); }
   function queueCard(q, cal) {
     if (!q || state.day !== today()) return null;
     var sess = cal.sessions[0];
     if (sess && !sess.finished_at) return null;
-    var next = queueNext(q), p = planById(next);
+    var doneToday = !!(sess && sess.finished_at);
+    var pq = planQueue(q, doneToday ? false : undefined);
+    if (!doneToday && !pq.asked) {
+      return el("div", { class: "card", id: "workq" }, [
+        el("div", { class: "mut", text: "Zanim wybiorę następny trening" }),
+        el("h3", { text: "Jutro pracujesz?" }),
+        el("div", { class: "mut mb", text: "Od tego zależy, czy zaproponuję dzień nóg. Nogi z obciążeniem lędźwi robimy przed dniem wolnym." }),
+        el("div", { class: "row" }, [
+          el("button", { text: "Tak, pracuję", onclick: function () { setWorkTomorrow(true, viewToday); } }),
+          el("button", { class: "sec", text: "Nie, wolne", onclick: function () { setWorkTomorrow(false, viewToday); } })
+        ])
+      ]);
+    }
+    var head = (q.last ? " · poprzedni: " + planName(q.last.plan_id) + " (" + q.last.day.slice(5) + ")" : "");
+    var workLine = doneToday ? null : el("div", { class: "mut mb" }, [
+      "Jutro: " + (pq.workTom ? "praca" : "wolne") + " · ",
+      el("button", { class: "link", style: "font-size:13px", text: "zmień", onclick: function () { setWorkTomorrow(!pq.workTom, viewToday); } })
+    ]);
+    if (!pq.pick) {
+      var first = pq.Q[0], fp = planById(first);
+      return el("div", { class: "card", id: "queuecard" }, [
+        el("div", { class: "mut", text: "Następny w kolejce" + head }),
+        el("h3", { text: "Dziś bez nóg" }),
+        el("div", { class: "mut mb", text: (fp ? fp.name : "Trening nóg") + " czeka na pierwszy dzień przed wolnym (jutro pracujesz)." }),
+        workLine,
+        el("div", { class: "row" }, [el("button", { class: "sec", text: "Zrób mimo to", onclick: function () { setQueueOverride(first, viewToday); } })])
+      ]);
+    }
+    var next = pq.pick, p = planById(next);
     if (!p) return null;
     var st = planStats(p);
-    return el("div", { class: "card" }, [
-      el("div", { class: "mut", text: "Następny w kolejce" + (q.last ? " · poprzedni: " + planName(q.last.plan_id) + " (" + q.last.day.slice(5) + ")" : "") }),
+    var heldNames = pq.held.map(function (id) { return planName(id); });
+    var skipTo = nextCandidate(pq, next);
+    var btns = [el("button", { text: "Start", onclick: function () { startSession(next, today()); } })];
+    if (skipTo && skipTo !== next) btns.push(el("button", { class: "sec", text: "Pomiń", onclick: function () { setQueueOverride(skipTo, viewToday); } }));
+    return el("div", { class: "card", id: "queuecard" }, [
+      el("div", { class: "mut", text: (doneToday ? "Następny w kolejce (na jutro)" : "Następny w kolejce") + head }),
       el("h3", { text: p.name }),
       el("div", { class: "mut mb", text: st.core + " ćwiczeń rdzenia (" + st.cs + " serii)" + (st.opt ? " + dokładka " + st.opt + " (" + st.os + " serii)" : "") + (p.when ? " · " + p.when : "") }),
-      el("div", { class: "row" }, [
-        el("button", { text: "Start", onclick: function () { startSession(next, today()); } }),
-        el("button", { class: "sec", text: "Pomiń", onclick: function () { setQueueOverride(queueAfter(next), viewToday); } })
-      ])
+      heldNames.length ? el("div", { class: "note", text: "Czeka na dzień przed wolnym: " + heldNames.join(", ") + "." }) : null,
+      pq.warn ? el("div", { class: "note warn", text: "⚠ " + pq.warn }) : null,
+      workLine,
+      el("div", { class: "row" }, btns)
     ]);
   }
 
@@ -467,15 +560,23 @@
     var r = state.catalog.rules;
     var queueBox = null;
     if (q) {
-      var rot = state.catalog.rotation, next = queueNext(q);
+      var pq = planQueue(q), rot = pq.rot.ids, next = pq.pick || pq.Q[0];
       var sel = el("select", { onchange: function (e) { setQueueOverride(e.target.value, viewPlans); } }, rot.map(function (id) {
         var o = el("option", { value: id, text: planName(id) }); if (id === next) o.selected = true; return o;
+      }));
+      var modeSel = el("select", { id: "rotmode", onchange: function (e) { setRotationMode(e.target.value, viewPlans); } }, [["auto", "Auto (do 3 treningów w tyg. = 3 sesje)"], ["4", "4 sesje: U1 · L1 · U2 · L2"], ["3", "3 sesje: Góra A · Góra B · Nogi"]].map(function (m) {
+        var o = el("option", { value: m[0], text: m[1] }); if ((q.mode || "auto") === m[0]) o.selected = true; return o;
       }));
       queueBox = el("div", {}, [
         el("h2", { text: "Kolejka treningów" }),
         el("div", { class: "card" }, [
-          el("p", { class: "mut", text: "Rotacja niezależna od dni tygodnia: po zakończonym treningu aplikacja podaje następny z listy, więc opuszczony dzień niczego nie rozwala. Każda sesja ma rdzeń (ciężkie podstawy) i dokładkę (izolacje, gdy masz siłę)." }),
-          el("div", {}, rot.map(function (id, i) { return el("div", { class: "set" }, [el("div", { text: (i + 1) + ". " + planName(id) }), id === next ? el("span", { class: "tag", text: "następny" }) : null]); })),
+          el("p", { class: "mut", text: "Rotacja niezależna od dni tygodnia: po zakończonym treningu aplikacja podaje następny z listy. Dzień nóg z flagą „nie przed pracą” czeka na pierwszy dzień przed wolnym. Rano aplikacja pyta, czy jutro pracujesz." }),
+          el("label", { text: "Rotacja" }), modeSel,
+          el("p", { class: "mut mt", text: "Teraz: " + (pq.rot.mode === "3" ? "3 sesje" : "4 sesje") + (pq.rot.auto ? " (wybrane automatycznie z ostatnich 14 dni)" : "") }),
+          el("div", {}, rot.map(function (id, i) {
+            var av = (planById(id) || {}).avoid_before_work;
+            return el("div", { class: "set" }, [el("div", { text: (i + 1) + ". " + planName(id) + (av ? (av === "hard" ? " · nie przed pracą" : " · ostrożnie przed pracą") : "") }), id === next ? el("span", { class: "tag", text: "następny" }) : (pq.Q.indexOf(id) < 0 ? el("span", { class: "mut", text: "zrobiony" }) : null)]);
+          })),
           el("label", { class: "mt", text: "Ustaw następny trening" }), sel
         ])
       ]);
@@ -855,12 +956,12 @@
               el("img", { class: "th", src: "/" + ex.image, alt: "", loading: "lazy", onclick: function () { openDetail(ex.id); } }),
               el("div", {}, [
                 el("button", { class: "link", text: (done ? "✓ " : "") + ex.name_pl, onclick: function () { openDetail(ex.id); } }),
-                el("div", { class: "mut", text: it.sets + " × " + it.reps + " · przerwa " + mmss(restS) + " · RIR " + ex.default.rir + (it.extra ? " · dodatkowo" : it.optional ? " · dokładka" : "") }),
+                el("div", { class: "mut", text: it.sets + " × " + it.reps + " · przerwa " + mmss(restS) + " · RIR " + (it.rir && ex.id === it.exercise_id ? it.rir : ex.default.rir) + (it.extra ? " · dodatkowo" : it.optional ? " · dokładka" : "") }),
                 swapped ? el("div", { class: "note", text: "↔ zamiast: " + state.byId[it.exercise_id].name_pl }) : null
               ].concat(actions))
             ]),
             it.note ? el("div", { class: "note", text: it.note }) : null,
-            sug ? el("div", { class: "hint", text: sug.text }) : el("div", { class: "note", text: "Pierwszy raz: zacznij lekko i dobierz ciężar tak, by zostało " + ex.default.rir + " powt. w zapasie." }),
+            sug ? el("div", { class: "hint", text: sug.text }) : el("div", { class: "note", text: "Pierwszy raz: zacznij lekko i dobierz ciężar tak, by zostało " + (it.rir && ex.id === it.exercise_id ? it.rir : ex.default.rir) + " powt. w zapasie." }),
             wuBox,
             chips,
             both.length ? el("div", { class: "note", text: "Dotknij serii, aby zmienić ją na rozgrzewkę lub z powrotem." }) : null,

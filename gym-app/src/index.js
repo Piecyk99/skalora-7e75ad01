@@ -322,20 +322,45 @@ async function api(request, env, url) {
     return json({ ok: true });
   }
 
-  // ---------- kolejka treningów (następny po ostatnio zakończonym z listy) ----------
+  // ---------- kolejka treningów ----------
+  // Serwer tylko zwraca historię i ustawienia; kolejność liczy klient (public/app.js, computeQueue).
   if (path === "/api/queue" && method === "GET") {
     const ids = String(url.searchParams.get("rotation") || "").split(",").filter(Boolean);
-    if (!ids.length || ids.length > 12 || !ids.every((x) => /^[a-z0-9_]{1,40}$/.test(x))) return json({ error: "rotation" }, 400);
+    if (!ids.length || ids.length > 16 || !ids.every((x) => /^[a-z0-9_]{1,40}$/.test(x))) return json({ error: "rotation" }, 400);
     const marks = ids.map(() => "?").join(",");
-    const last = await env.DB.prepare(
-      `SELECT day, plan_id FROM sessions WHERE finished_at IS NOT NULL AND plan_id IN (${marks}) ORDER BY finished_at DESC LIMIT 1`,
-    ).bind(...ids).first();
+    const { results } = await env.DB.prepare(
+      `SELECT day, plan_id FROM sessions WHERE finished_at IS NOT NULL AND plan_id IN (${marks}) ORDER BY finished_at DESC LIMIT 40`,
+    ).bind(...ids).all();
     const override = await cfg(env, "queue_override");
-    return json({ last: last || null, override: override && ids.includes(override) ? override : null });
+    const mode = await cfg(env, "rotation_mode");
+    const work = String((await cfg(env, "work_tomorrow")) || "");
+    const wm = work.match(/^(\d{4}-\d{2}-\d{2}):([01])$/);
+    return json({
+      last: results[0] || null,
+      recent: results,
+      override: override && ids.includes(override) ? override : null,
+      mode: mode === "3" || mode === "4" ? mode : "auto",
+      work: wm ? { day: wm[1], value: wm[2] === "1" } : null,
+    });
   }
 
   if (path === "/api/queue" && method === "POST") {
     const b = await readBody(request);
+    if (b.work_tomorrow === null) {
+      await env.DB.prepare("DELETE FROM config WHERE k='work_tomorrow'").run();
+      return json({ ok: true });
+    }
+    if (b.work_tomorrow !== undefined) {
+      if (typeof b.work_tomorrow !== "boolean" || !validDay(b.day)) return json({ error: "work_tomorrow" }, 400);
+      await setCfg(env, "work_tomorrow", b.day + ":" + (b.work_tomorrow ? "1" : "0"));
+      return json({ ok: true });
+    }
+    if (b.mode !== undefined) {
+      if (!["auto", "3", "4"].includes(b.mode)) return json({ error: "mode" }, 400);
+      await setCfg(env, "rotation_mode", b.mode);
+      await env.DB.prepare("DELETE FROM config WHERE k='queue_override'").run();
+      return json({ ok: true });
+    }
     if (b.override == null) {
       await env.DB.prepare("DELETE FROM config WHERE k='queue_override'").run();
     } else {

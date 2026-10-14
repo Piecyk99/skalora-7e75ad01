@@ -2125,7 +2125,8 @@
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 55 min, sam rdzeń ok. 50 min"
+      "when": "mocny trening: ok. 55 min, sam rdzeń ok. 50 min",
+      "avoid_before_work": "soft"
     },
     {
       "id": "u2_plecy_biceps",
@@ -2136,7 +2137,8 @@
           "sets": 4,
           "reps": "8–10",
           "rest_s": 120,
-          "note": "podparcie klatki oszczędza lędźwie; wiosłowanie sztangą tylko wtedy, gdy lędźwie są świeże"
+          "note": "podparcie klatki oszczędza lędźwie; wiosłowanie sztangą tylko wtedy, gdy lędźwie są świeże",
+          "rir": "1–2"
         },
         {
           "exercise_id": "pullup",
@@ -2157,19 +2159,16 @@
           "rest_s": 90
         },
         {
-          "exercise_id": "face_pull",
-          "sets": 3,
-          "reps": "15–20",
-          "superset_group": "A",
-          "optional": true
-        },
-        {
           "exercise_id": "lateral_raise",
           "sets": 3,
           "reps": "12–15",
-          "superset_group": "A",
-          "optional": true,
-          "note": "boczne barki: 2. bodziec w tygodniu"
+          "note": "boczne barki: 2. bodziec w tygodniu, w rdzeniu, żeby nie zależały od dokładki"
+        },
+        {
+          "exercise_id": "face_pull",
+          "sets": 3,
+          "reps": "15–20",
+          "optional": true
         },
         {
           "exercise_id": "ez_curl",
@@ -2186,7 +2185,7 @@
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 55 min"
+      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 60 min"
     },
     {
       "id": "l2_nogi_tyl_posladki",
@@ -2203,7 +2202,8 @@
           "sets": 3,
           "reps": "10–12",
           "rest_s": 90,
-          "note": "lędźwie: zacznij bez dodatkowego ciężaru, RIR 2, nie robić przed ciężkim dniem w pracy"
+          "note": "lędźwie: zacznij bez dodatkowego ciężaru, RIR 2, nie robić przed ciężkim dniem w pracy",
+          "rir": "2"
         },
         {
           "exercise_id": "bulgarian_split",
@@ -2242,7 +2242,8 @@
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 65 min, sam rdzeń ok. 45 min"
+      "when": "mocny trening: ok. 65 min, sam rdzeń ok. 45 min",
+      "avoid_before_work": "hard"
     },
     {
       "id": "gora_a",
@@ -2449,7 +2450,8 @@
           "sets": 3,
           "reps": "12–15"
         }
-      ]
+      ],
+      "avoid_before_work": "hard"
     },
     {
       "id": "nogi_b",
@@ -2486,7 +2488,8 @@
           "sets": 4,
           "reps": "12–15"
         }
-      ]
+      ],
+      "avoid_before_work": "hard"
     }
   ],
   "rotation": [
@@ -2494,5 +2497,10 @@
     "l1_nogi_czworoglowy",
     "u2_plecy_biceps",
     "l2_nogi_tyl_posladki"
+  ],
+  "rotation3": [
+    "gora_a",
+    "gora_b",
+    "nogi"
   ]
 }
