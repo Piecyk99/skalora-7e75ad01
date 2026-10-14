@@ -2139,7 +2139,7 @@
     {
       "id": "gora_b",
       "name": "Góra B",
-      "when": "po pracy, ok. 45–50 min",
+      "when": "po pracy, ok. 55–60 min",
       "items": [
         {
           "exercise_id": "incline_db_press",
@@ -2152,6 +2152,12 @@
           "reps": "8–10"
         },
         {
+          "exercise_id": "db_row",
+          "sets": 3,
+          "reps": "10–12 / ręka",
+          "note": "poziome wiosłowanie, którego brakowało w B (w A jest wiosłowanie na wyciągu); zamiennik: maszyna z płytami"
+        },
+        {
           "exercise_id": "cable_fly",
           "sets": 2,
           "reps": "12–15"
@@ -2159,24 +2165,32 @@
         {
           "exercise_id": "lateral_raise",
           "sets": 3,
-          "reps": "12–20"
+          "reps": "12–20",
+          "superset_group": "A"
         },
         {
           "exercise_id": "face_pull",
           "sets": 2,
-          "reps": "15–20"
+          "reps": "15–20",
+          "superset_group": "A"
         },
         {
           "exercise_id": "cable_curl",
           "sets": 2,
           "reps": "10–12",
-          "superset_group": "A"
+          "superset_group": "B"
         },
         {
           "exercise_id": "overhead_ext",
           "sets": 2,
           "reps": "12–15",
-          "superset_group": "A"
+          "superset_group": "B"
+        },
+        {
+          "exercise_id": "cable_crunch",
+          "sets": 2,
+          "reps": "12–15",
+          "note": "brzuch, którego nie ma w A ani w B (jest tylko w planie nóg)"
         }
       ]
     },
