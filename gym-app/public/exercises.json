@@ -2119,34 +2119,30 @@
           "reps": "10–12"
         },
         {
-          "exercise_id": "calf_stand",
-          "sets": 3,
-          "reps": "8–12",
-          "optional": true
-        },
-        {
           "exercise_id": "cable_crunch",
           "sets": 3,
           "reps": "12–15",
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 60 min, sam rdzeń ok. 50 min"
+      "when": "mocny trening: ok. 55 min, sam rdzeń ok. 50 min"
     },
     {
       "id": "u2_plecy_biceps",
       "name": "U2 · Plecy + biceps (mocny)",
       "items": [
         {
-          "exercise_id": "bb_row",
+          "exercise_id": "plate_row",
           "sets": 4,
           "reps": "8–10",
-          "note": "RIR 2; po pracy fizycznej zamiennik: maszyna z płytami lub wyciąg"
+          "rest_s": 120,
+          "note": "podparcie klatki oszczędza lędźwie; wiosłowanie sztangą tylko wtedy, gdy lędźwie są świeże"
         },
         {
           "exercise_id": "pullup",
           "sets": 4,
-          "reps": "8–10"
+          "reps": "8–10",
+          "rest_s": 150
         },
         {
           "exercise_id": "incline_db_press",
@@ -2157,36 +2153,40 @@
         {
           "exercise_id": "db_row",
           "sets": 3,
-          "reps": "10–12 / ręka"
+          "reps": "10–12 / ręka",
+          "rest_s": 90
         },
         {
           "exercise_id": "face_pull",
           "sets": 3,
           "reps": "15–20",
+          "superset_group": "A",
           "optional": true
+        },
+        {
+          "exercise_id": "lateral_raise",
+          "sets": 3,
+          "reps": "12–15",
+          "superset_group": "A",
+          "optional": true,
+          "note": "boczne barki: 2. bodziec w tygodniu"
         },
         {
           "exercise_id": "ez_curl",
           "sets": 3,
           "reps": "10–12",
-          "superset_group": "A",
+          "superset_group": "B",
           "optional": true
         },
         {
           "exercise_id": "pushdown",
           "sets": 3,
           "reps": "10–12",
-          "superset_group": "A",
-          "optional": true
-        },
-        {
-          "exercise_id": "hammer_curl",
-          "sets": 2,
-          "reps": "10–12",
+          "superset_group": "B",
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 75 min, sam rdzeń ok. 55 min"
+      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 55 min"
     },
     {
       "id": "l2_nogi_tyl_posladki",
@@ -2199,9 +2199,11 @@
           "note": "RIR 2, plecy płasko; po ciężkim dniu w pracy zacznij lżej"
         },
         {
-          "exercise_id": "hip_thrust",
+          "exercise_id": "back_ext",
           "sets": 3,
-          "reps": "8–12"
+          "reps": "10–12",
+          "rest_s": 90,
+          "note": "lędźwie: zacznij bez dodatkowego ciężaru, RIR 2, nie robić przed ciężkim dniem w pracy"
         },
         {
           "exercise_id": "bulgarian_split",
@@ -2240,7 +2242,7 @@
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 45 min"
+      "when": "mocny trening: ok. 65 min, sam rdzeń ok. 45 min"
     },
     {
       "id": "gora_a",
