@@ -62,6 +62,11 @@
     if (id === "rest") return "Odpoczynek";
     var p = planById(id); return p ? p.name : (fallback || "Usunięty plan");
   }
+  function planStats(p) {
+    var r = { core: 0, opt: 0, cs: 0, os: 0 };
+    planItems(p).forEach(function (i) { if (i.optional) { r.opt++; r.os += i.sets; } else { r.core++; r.cs += i.sets; } });
+    return r;
+  }
   function planItems(p) { return p.items.filter(function (it) { return state.byId[it.exercise_id]; }); }
   function plannedFor(day, overrides) {
     if (overrides && overrides[day] !== undefined) return overrides[day];
@@ -236,6 +241,38 @@
     document.body.classList.add("lock");
   }
 
+  // ---------- kolejka treningów ----------
+  function loadQueue() {
+    var rot = state.catalog.rotation;
+    if (!rot || !rot.length) return Promise.resolve(null);
+    return api("/api/queue?rotation=" + rot.join(",")).catch(function () { return null; });
+  }
+  function queueAfter(id) { var rot = state.catalog.rotation, i = rot.indexOf(id); return rot[(i + 1) % rot.length]; }
+  function queueNext(q) {
+    var rot = state.catalog.rotation;
+    if (q && q.override && rot.indexOf(q.override) >= 0) return q.override;
+    if (!q || !q.last || rot.indexOf(q.last.plan_id) < 0) return rot[0];
+    return queueAfter(q.last.plan_id);
+  }
+  function setQueueOverride(id, then) { api("/api/queue", "POST", { override: id }).then(then).catch(handleErr); }
+  function queueCard(q, cal) {
+    if (!q || state.day !== today()) return null;
+    var sess = cal.sessions[0];
+    if (sess && !sess.finished_at) return null;
+    var next = queueNext(q), p = planById(next);
+    if (!p) return null;
+    var st = planStats(p);
+    return el("div", { class: "card" }, [
+      el("div", { class: "mut", text: "Następny w kolejce" + (q.last ? " · poprzedni: " + planName(q.last.plan_id) + " (" + q.last.day.slice(5) + ")" : "") }),
+      el("h3", { text: p.name }),
+      el("div", { class: "mut mb", text: st.core + " ćwiczeń rdzenia (" + st.cs + " serii)" + (st.opt ? " + dokładka " + st.opt + " (" + st.os + " serii)" : "") + (p.when ? " · " + p.when : "") }),
+      el("div", { class: "row" }, [
+        el("button", { text: "Start", onclick: function () { startSession(next, today()); } }),
+        el("button", { class: "sec", text: "Pomiń", onclick: function () { setQueueOverride(queueAfter(next), viewToday); } })
+      ])
+    ]);
+  }
+
   // ---------- today ----------
   function dayCard(day, cal) {
     var sess = cal.sessions[0];
@@ -265,7 +302,8 @@
       .then(function (r) { state.sets = r[0]; state.exercises = r[1]; return r[2]; });
   }
   function viewToday() {
-    loadToday().then(function (cal) {
+    Promise.all([loadToday(), loadQueue()]).then(function (res) {
+      var cal = res[0], queue = res[1];
       var names = {}; state.exercises.forEach(function (e) { names[e.exercise] = 1; });
       var dl = el("datalist", { id: "exlist" });
       var catNames = state.catalog ? state.catalog.exercises.map(function (e) { return e.name_pl; }) : [];
@@ -321,7 +359,7 @@
         });
         list.appendChild(c);
       });
-      shell(el("div", {}, [el("h1", { text: state.day === today() ? "Dziś" : fmtDay(state.day) }), dayCard(state.day, cal), form,
+      shell(el("div", {}, [el("h1", { text: state.day === today() ? "Dziś" : fmtDay(state.day) }), dayCard(state.day, cal), queueCard(queue, cal), form,
         order.length ? el("h2", { text: "Serie · objętość " + Math.round(vol) + " kg" }) : null, list]));
       if (state.prefillEx) { exIn.value = state.prefillEx; state.prefillEx = null; prefill(); }
     }).catch(handleErr);
@@ -408,12 +446,12 @@
 
   // ---------- plans ----------
   function planCard(p) {
-    var sets = planItems(p).reduce(function (a, it) { return a + it.sets; }, 0);
+    var st = planStats(p), sets = st.cs + st.os;
     var btns = [el("button", { class: "sec", text: "Podgląd", onclick: function () { state.planId = p.id; render(); scrollTop(); } }),
       el("button", { text: "Start", onclick: function () { startSession(p.id, today()); } })];
     return el("div", { class: "card" }, [
       el("h3", { text: p.name }),
-      el("div", { class: "mut mb", text: (p.when ? p.when + " · " : "") + planItems(p).length + " ćwiczeń · " + sets + " serii" }),
+      el("div", { class: "mut mb", text: (p.when ? p.when + " · " : "") + (st.opt ? st.core + " rdzeń + " + st.opt + " dokładka" : st.core + " ćwiczeń") + " · " + sets + " serii" }),
       el("div", { class: "row" }, btns)
     ]);
   }
@@ -423,7 +461,25 @@
     }));
   }
   function viewPlans() {
+    loadQueue().then(function (q) { renderPlans(q); }).catch(handleErr);
+  }
+  function renderPlans(q) {
     var r = state.catalog.rules;
+    var queueBox = null;
+    if (q) {
+      var rot = state.catalog.rotation, next = queueNext(q);
+      var sel = el("select", { onchange: function (e) { setQueueOverride(e.target.value, viewPlans); } }, rot.map(function (id) {
+        var o = el("option", { value: id, text: planName(id) }); if (id === next) o.selected = true; return o;
+      }));
+      queueBox = el("div", {}, [
+        el("h2", { text: "Kolejka treningów" }),
+        el("div", { class: "card" }, [
+          el("p", { class: "mut", text: "Rotacja niezależna od dni tygodnia: po zakończonym treningu aplikacja podaje następny z listy, więc opuszczony dzień niczego nie rozwala. Każda sesja ma rdzeń (ciężkie podstawy) i dokładkę (izolacje, gdy masz siłę)." }),
+          el("div", {}, rot.map(function (id, i) { return el("div", { class: "set" }, [el("div", { text: (i + 1) + ". " + planName(id) }), id === next ? el("span", { class: "tag", text: "następny" }) : null]); })),
+          el("label", { class: "mt", text: "Ustaw następny trening" }), sel
+        ])
+      ]);
+    }
     var sched = el("div", { class: "card" }, DOW_ORDER.map(function (dow) {
       return el("div", { class: "row mb", style: "align-items:center" }, [
         el("div", { class: "mut", style: "flex:0 0 110px", text: DOW_NAMES[dow] }),
@@ -437,7 +493,7 @@
     var rules = el("div", {}, Object.keys(labels).filter(function (k) { return r[k]; }).map(function (k) {
       return el("details", {}, [el("summary", { text: labels[k] }), el("p", { text: r[k] })]);
     }));
-    shell(el("div", {}, [el("h1", { text: "Plan" }), planSeg(),
+    shell(el("div", {}, [el("h1", { text: "Plan" }), planSeg(), queueBox,
       el("h2", { text: "Harmonogram tygodnia" }), sched,
       el("h2", { text: "Moje plany" }), mine,
       el("button", { class: "sec", text: "+ Nowy plan", onclick: function () { state.edit = { id: null, name: "", when: "", items: [] }; render(); scrollTop(); } }),
@@ -462,16 +518,17 @@
       el("button", { class: "link mb", text: "← Plany", onclick: function () { state.planId = null; render(); } }),
       el("h1", { text: p.name }), el("div", { class: "mut mb", text: p.when || "" }),
       el("div", { class: "stack" }, acts),
-      el("div", { class: "card mt" }, planItems(p).map(function (it) {
+      el("div", { class: "card mt" }, planItems(p).map(function (it, idx, arr) {
         var ex = state.byId[it.exercise_id];
-        return el("div", { class: "planitem" }, [
+        var firstOpt = it.optional && (idx === 0 || !arr[idx - 1].optional);
+        return el("div", {}, [firstOpt ? el("h2", { text: "Dokładka (jeśli masz siłę i czas)" }) : null, el("div", { class: "planitem" }, [
           el("img", { class: "th", src: "/" + ex.image, alt: "", loading: "lazy" }),
           el("div", {}, [
             el("button", { class: "link", text: ex.name_pl, onclick: function () { openDetail(ex.id); } }),
             el("div", { class: "mut", text: it.sets + " × " + it.reps + (it.superset_group ? " · superseria " + it.superset_group : "") }),
             it.note ? el("div", { class: "note", text: it.note }) : null
           ])
-        ]);
+        ])]);
       }))
     ]));
   }
@@ -500,7 +557,8 @@
         el("div", { class: "row mt" }, [
           el("div", {}, [el("label", { text: "Przerwa (s, opcjonalnie)" }), el("input", { type: "number", inputmode: "numeric", min: "0", max: "900", value: it.rest_s ? String(it.rest_s) : "", oninput: function (e) { if (e.target.value) it.rest_s = Number(e.target.value); else delete it.rest_s; } })]),
           el("div", {}, [el("label", { text: "Superseria (litera)" }), el("input", { type: "text", maxlength: "1", value: it.superset_group || "", oninput: function (e) { var v = e.target.value.toUpperCase().trim(); if (v) it.superset_group = v; else delete it.superset_group; } })])
-        ])
+        ]),
+        el("label", { class: "chk" }, [(function () { var cb = el("input", { type: "checkbox" }); cb.checked = !!it.optional; cb.addEventListener("change", function () { if (cb.checked) it.optional = true; else delete it.optional; }); return cb; })(), "Dokładka (opcjonalna, na dni z siłą)"])
       ]);
     });
     var picker = el("select", {});
@@ -728,7 +786,8 @@
       })).then(function () { return { all: all, extras: extras, entries: entries }; });
     }).then(function (c) {
       var all = c.all, entries = c.entries;
-      var cards = [], doneItems = 0, vol = 0, nsets = 0, presentIds = [];
+      var cards = [], doneItems = 0, doneOpt = 0, vol = 0, nsets = 0, presentIds = [];
+      var coreTotal = items.filter(function (x) { return !x.optional; }).length, optTotal = items.length - coreTotal;
       all.forEach(function (s) { if (!s.warmup) { vol += s.weight * s.reps; nsets++; } });
       entries.forEach(function (it, idx) {
         var eid = it.extra ? it.exercise_id : effId(it);
@@ -739,7 +798,7 @@
         var mine = both.filter(function (s) { return !s.warmup; });
         var warmSets = both.filter(function (s) { return s.warmup; });
         var isWarm = !!S.warm[it.exercise_id];
-        var done = mine.length >= it.sets; if (done && !it.extra) doneItems++;
+        var done = mine.length >= it.sets; if (done && !it.extra) { if (it.optional) doneOpt++; else doneItems++; }
         var prevGroup = idx > 0 && !it.extra ? items[idx - 1].superset_group : null;
         var nextItem = it.extra ? null : items[idx + 1];
         var sg = it.superset_group;
@@ -783,10 +842,12 @@
           return el("span", { class: "setchip" + (s.warmup ? " warm" : "") }, [el("button", { class: "tg", title: s.warmup ? "Zmień na serię roboczą" : "Zmień na rozgrzewkę", text: (s.warmup ? "R " : "") + fmt(s.weight) + " × " + s.reps, onclick: function () { api("/api/sets/" + s.id, "PATCH", { warmup: !s.warmup }).then(viewSession).catch(handleErr); } }), el("button", { text: "×", "aria-label": "Usuń serię", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewSession); } })]);
         }));
         var firstExtra = it.extra && (idx === 0 || !entries[idx - 1].extra);
+        var firstOpt = it.optional && !it.extra && (idx === 0 || !entries[idx - 1].optional);
         var actions = [];
         if (!it.extra) actions.push(el("button", { class: "link", style: "font-size:13px", text: "Zamień ćwiczenie", onclick: function () { openSwap(it, eid, items); } }));
         else if (!both.length) actions.push(el("button", { class: "link", style: "font-size:13px", text: "Usuń z treningu", onclick: function () { S.extra = S.extra.filter(function (x) { return x !== it.exercise_id; }); saveLayout(); viewSession(); } }));
         cards.push(el("div", { id: it.extra ? "extra-" + eid : "slot-" + idx }, [
+          firstOpt ? el("h2", { text: "Dokładka (jeśli masz siłę i czas)" }) : null,
           firstExtra ? el("h2", { text: "Dodatkowo" }) : null,
           sg && sg !== prevGroup ? el("h2", { text: "Superseria " + sg + " (przerwa po ostatnim)" }) : null,
           el("div", { class: "card" + (done ? " done" : "") + (sg ? " grp" : "") }, [
@@ -794,7 +855,7 @@
               el("img", { class: "th", src: "/" + ex.image, alt: "", loading: "lazy", onclick: function () { openDetail(ex.id); } }),
               el("div", {}, [
                 el("button", { class: "link", text: (done ? "✓ " : "") + ex.name_pl, onclick: function () { openDetail(ex.id); } }),
-                el("div", { class: "mut", text: it.sets + " × " + it.reps + " · przerwa " + mmss(restS) + " · RIR " + ex.default.rir + (it.extra ? " · dodatkowo" : "") }),
+                el("div", { class: "mut", text: it.sets + " × " + it.reps + " · przerwa " + mmss(restS) + " · RIR " + ex.default.rir + (it.extra ? " · dodatkowo" : it.optional ? " · dokładka" : "") }),
                 swapped ? el("div", { class: "note", text: "↔ zamiast: " + state.byId[it.exercise_id].name_pl }) : null
               ].concat(actions))
             ]),
@@ -816,7 +877,7 @@
       shell(el("div", {}, [
         el("button", { class: "link mb", text: "← Wyjdź (trening zostaje w toku)", onclick: function () { leave(); render(); scrollTop(); } }),
         el("h1", { text: plan.name }),
-        el("div", { class: "mut mb", text: (S.day === today() ? "" : fmtDay(S.day) + " · ") + "Zrobione: " + doneItems + "/" + items.length + " ćwiczeń" + (c.extras.length ? " (+" + c.extras.length + " dodatkowo)" : "") + " · " + nsets + " serii · objętość " + Math.round(vol) + " kg" }),
+        el("div", { class: "mut mb", text: (S.day === today() ? "" : fmtDay(S.day) + " · ") + "Zrobione: " + doneItems + "/" + coreTotal + " ćwiczeń" + (optTotal ? " rdzenia, dokładka " + doneOpt + "/" + optTotal : "") + (c.extras.length ? " (+" + c.extras.length + " dodatkowo)" : "") + " · " + nsets + " serii · objętość " + Math.round(vol) + " kg" }),
         warm ? el("details", {}, [el("summary", { text: "Rozgrzewka" }), el("p", { text: warm })]) : null,
         el("div", { class: "mt" }, cards),
         el("button", { class: "sec", text: "+ Dodaj ćwiczenie (czuję się na siłach)", onclick: openAdd }),

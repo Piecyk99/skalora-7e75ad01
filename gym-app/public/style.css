@@ -95,3 +95,4 @@ i.m.rest{background:var(--mut);width:5px;height:5px}
 label.chk{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--tx);margin:12px 0 0}
 label.chk input{width:22px;height:22px;flex:none;padding:0}
 .setchip .tg{background:none;color:inherit;padding:0;width:auto;font-size:inherit;font-weight:inherit}
+.card > div + div > .planitem{border-top:1px solid var(--line)}

@@ -312,12 +312,36 @@ async function api(request, env, url) {
     if (!validDay(b.day)) return json({ error: "day" }, 400);
     const note = String(b.note || "").slice(0, 500);
     await env.DB.prepare("UPDATE sessions SET finished_at=?, note=? WHERE day=?").bind(new Date().toISOString(), note, b.day).run();
+    await env.DB.prepare("DELETE FROM config WHERE k='queue_override'").run();
     return json({ ok: true });
   }
 
   m = path.match(/^\/api\/sessions\/(\d{4}-\d{2}-\d{2})$/);
   if (m && method === "DELETE") {
     await env.DB.prepare("DELETE FROM sessions WHERE day=?").bind(m[1]).run();
+    return json({ ok: true });
+  }
+
+  // ---------- kolejka treningów (następny po ostatnio zakończonym z listy) ----------
+  if (path === "/api/queue" && method === "GET") {
+    const ids = String(url.searchParams.get("rotation") || "").split(",").filter(Boolean);
+    if (!ids.length || ids.length > 12 || !ids.every((x) => /^[a-z0-9_]{1,40}$/.test(x))) return json({ error: "rotation" }, 400);
+    const marks = ids.map(() => "?").join(",");
+    const last = await env.DB.prepare(
+      `SELECT day, plan_id FROM sessions WHERE finished_at IS NOT NULL AND plan_id IN (${marks}) ORDER BY finished_at DESC LIMIT 1`,
+    ).bind(...ids).first();
+    const override = await cfg(env, "queue_override");
+    return json({ last: last || null, override: override && ids.includes(override) ? override : null });
+  }
+
+  if (path === "/api/queue" && method === "POST") {
+    const b = await readBody(request);
+    if (b.override == null) {
+      await env.DB.prepare("DELETE FROM config WHERE k='queue_override'").run();
+    } else {
+      if (typeof b.override !== "string" || !/^[a-z0-9_]{1,40}$/.test(b.override)) return json({ error: "override" }, 400);
+      await setCfg(env, "queue_override", b.override);
+    }
     return json({ ok: true });
   }
 
@@ -340,6 +364,7 @@ async function api(request, env, url) {
       if (Number(it.rest_s) > 0 && Number(it.rest_s) <= 900) o.rest_s = Math.round(Number(it.rest_s));
       if (it.note) o.note = String(it.note).slice(0, 120);
       if (it.superset_group) o.superset_group = String(it.superset_group).slice(0, 2);
+      if (it.optional === true) o.optional = true;
       items.push(o);
     }
     let id = b.id;
