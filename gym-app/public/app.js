@@ -248,7 +248,7 @@
   function allRotationIds() {
     var c = state.catalog, out = [];
     (c.rotation || []).concat(c.rotation3 || []).forEach(function (id) { if (out.indexOf(id) < 0) out.push(id); });
-    c.plans.forEach(function (p) { if (p.fallback_for && out.indexOf(p.id) < 0) out.push(p.id); });
+    c.plans.forEach(function (p) { if ((p.fallback_for || p.counts_as) && out.indexOf(p.id) < 0) out.push(p.id); });
     return out;
   }
   function loadQueue() {
@@ -273,6 +273,8 @@
     var out = [], lastLower = null;
     history.forEach(function (r) {
       var id = r.plan_id, p = planById(id);
+      var srcId = id;
+      if (p && p.counts_as) { id = p.counts_as; srcId = id; }
       if (p && p.fallback_for) { // plan awaryjny nóg zalicza dzień nóg
         var tgt = p.fallback_for.filter(function (x) { return ids.indexOf(x) >= 0; })[0];
         if (tgt) id = tgt; else id = null;
@@ -284,8 +286,8 @@
         else {
           var all = (state.catalog.rotation || []).concat(state.catalog.rotation3 || []);
           var uppers = all.filter(function (x) { return partOf(x) === "upper"; });
-          var src = (state.catalog.rotation || []).indexOf(r.plan_id) >= 0 ? (state.catalog.rotation || []) : (state.catalog.rotation3 || []);
-          var idx = src.filter(function (x) { return partOf(x) === "upper"; }).indexOf(r.plan_id);
+          var src = (state.catalog.rotation || []).indexOf(srcId) >= 0 ? (state.catalog.rotation || []) : (state.catalog.rotation3 || []);
+          var idx = src.filter(function (x) { return partOf(x) === "upper"; }).indexOf(srcId);
           id = same[Math.max(0, idx) % same.length];
         }
       }
@@ -1038,7 +1040,13 @@
           api("/api/sessions/finish", "POST", { day: S.day, note: S.note || "" }).then(function () {
             var d = parseDay(S.day); state.cal = { y: d.getFullYear(), m: d.getMonth(), sel: S.day };
             leave(); state.planId = null; goTab("cal");
-          }).catch(handleErr);
+          }).catch(function (e) {
+            if (e && e.data && e.data.error === "no_sets") {
+              if (window.confirm("Nie zapisałeś żadnej serii roboczej, więc nie zaliczę tego treningu. Anulować trening (usunąć wpis)?")) {
+                api("/api/sessions/" + S.day, "DELETE").then(function () { leave(); state.planId = null; goTab("today"); }).catch(handleErr);
+              }
+            } else handleErr(e);
+          });
         } })
       ]));
       window.scrollTo(0, y);

@@ -2502,7 +2502,8 @@
           "superset_group": "A"
         }
       ],
-      "part": "upper"
+      "part": "upper",
+      "counts_as": "gora_a_3s"
     },
     {
       "id": "gora_a_plecy",
@@ -2568,7 +2569,9 @@
           "sets": 3,
           "reps": "15–20"
         }
-      ]
+      ],
+      "counts_as": "gora_a_3s",
+      "part": "upper"
     },
     {
       "id": "gora_b",
@@ -2627,7 +2630,8 @@
           "note": "brzuch, którego nie ma w A ani w B (jest tylko w planie nóg)"
         }
       ],
-      "part": "upper"
+      "part": "upper",
+      "counts_as": "gora_b_3s"
     },
     {
       "id": "nogi",
@@ -2672,7 +2676,8 @@
         }
       ],
       "avoid_before_work": "hard",
-      "part": "lower"
+      "part": "lower",
+      "counts_as": "nogi_3s"
     },
     {
       "id": "nogi_b",
@@ -2710,7 +2715,8 @@
           "reps": "12–15"
         }
       ],
-      "avoid_before_work": "hard"
+      "avoid_before_work": "hard",
+      "counts_as": "nogi_3s"
     }
   ],
   "rotation": [

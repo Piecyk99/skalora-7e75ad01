@@ -311,6 +311,9 @@ async function api(request, env, url) {
     const b = await readBody(request);
     if (!validDay(b.day)) return json({ error: "day" }, 400);
     const note = String(b.note || "").slice(0, 500);
+    // Trening bez żadnej serii roboczej nie jest zaliczany (chroni kolejkę przed przypadkowym kliknięciem).
+    const cnt = await env.DB.prepare("SELECT COUNT(*) AS n FROM sets WHERE day=? AND warmup=0").bind(b.day).first();
+    if (!cnt || !cnt.n) return json({ error: "no_sets" }, 409);
     await env.DB.prepare("UPDATE sessions SET finished_at=?, note=? WHERE day=?").bind(new Date().toISOString(), note, b.day).run();
     await env.DB.prepare("DELETE FROM config WHERE k='queue_override'").run();
     return json({ ok: true });
