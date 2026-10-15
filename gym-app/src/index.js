@@ -66,18 +66,10 @@ async function readBody(request) {
   }
 }
 
-let layoutReady;
-function ensureSchema(env) {
-  if (!layoutReady) {
-    layoutReady = env.DB.prepare("ALTER TABLE sessions ADD COLUMN layout TEXT").run().catch(() => {})
-      .then(() => env.DB.prepare("CREATE TABLE IF NOT EXISTS mobility (day TEXT NOT NULL, plan_id TEXT NOT NULL, done_at TEXT NOT NULL, PRIMARY KEY (day, plan_id))").run())
-      .catch(() => {});
-  }
-  return layoutReady;
-}
+// Schemat zmieniamy wyłącznie migracjami (migrations/*.sql, schema.sql). Żadnego DDL w ścieżce żądania:
+// w produkcji DDL potrafi zwracać błąd D1 i blokować zapisy.
 
 async function api(request, env, url) {
-  await ensureSchema(env);
   const path = url.pathname;
   const method = request.method;
 
@@ -379,14 +371,22 @@ async function api(request, env, url) {
 
   // ---------- mobilność (rutyny w domu, bez sesji i bez serii siłowych) ----------
   if (path === "/api/mobility" && method === "GET") {
-    const { results } = await env.DB.prepare("SELECT day, plan_id, done_at FROM mobility ORDER BY day DESC, done_at DESC LIMIT 60").all();
-    return json(results);
+    try {
+      const { results } = await env.DB.prepare("SELECT day, plan_id, done_at FROM mobility ORDER BY day DESC, done_at DESC LIMIT 60").all();
+      return json(results);
+    } catch {
+      return json([]); // tabela jeszcze nie utworzona (migracja 003)
+    }
   }
   if (path === "/api/mobility" && method === "POST") {
     const b = await readBody(request);
     if (!validDay(b.day) || typeof b.plan_id !== "string" || !/^mob_[a-z0-9_]{1,30}$/.test(b.plan_id)) return json({ error: "invalid" }, 400);
-    await env.DB.prepare("INSERT INTO mobility(day,plan_id,done_at) VALUES(?,?,?) ON CONFLICT(day,plan_id) DO UPDATE SET done_at=excluded.done_at")
-      .bind(b.day, b.plan_id, new Date().toISOString()).run();
+    try {
+      await env.DB.prepare("INSERT INTO mobility(day,plan_id,done_at) VALUES(?,?,?) ON CONFLICT(day,plan_id) DO UPDATE SET done_at=excluded.done_at")
+        .bind(b.day, b.plan_id, new Date().toISOString()).run();
+    } catch {
+      return json({ error: "mobility_unavailable" }, 503);
+    }
     return json({ ok: true });
   }
   m = path.match(/^\/api\/mobility\/(\d{4}-\d{2}-\d{2})\/(mob_[a-z0-9_]{1,30})$/);
@@ -449,7 +449,7 @@ async function api(request, env, url) {
       sessions: await q("SELECT day,plan_id,plan_name,started_at,finished_at,note,layout FROM sessions ORDER BY day"),
       schedule: await q("SELECT dow,plan_id FROM schedule"),
       planned: await q("SELECT day,plan_id FROM planned ORDER BY day"),
-      mobility: await q("SELECT day,plan_id,done_at FROM mobility ORDER BY day"),
+      mobility: await q("SELECT day,plan_id,done_at FROM mobility ORDER BY day").catch(() => []),
       plans: (await q("SELECT id,name,when_text,items FROM user_plans")).map((r) => ({ id: r.id, name: r.name, when: r.when_text || "", items: JSON.parse(r.items) })),
     };
     return new Response(JSON.stringify(out, null, 2), {

@@ -432,7 +432,19 @@
     state.mob = { id: id, day: day || today(), done: mobLoad(day || today(), id) };
     render(); scrollTop();
   }
+  function mobLocalHist() { try { return JSON.parse(localStorage.getItem("gym_mob_local") || "[]"); } catch (e) { return []; } }
+  function mobLocalAdd(day, id) {
+    var h = mobLocalHist().filter(function (x) { return !(x.day === day && x.plan_id === id); });
+    h.unshift({ day: day, plan_id: id, done_at: new Date().toISOString() });
+    try { localStorage.setItem("gym_mob_local", JSON.stringify(h.slice(0, 60))); } catch (e) { /* ok */ }
+  }
+  function mobMerge(hist) {
+    var seen = {}, out = [];
+    (hist || []).concat(mobLocalHist()).forEach(function (h) { var k = h.day + h.plan_id; if (!seen[k]) { seen[k] = 1; out.push(h); } });
+    return out.sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : 0; });
+  }
   function mobCard(hist) {
+    hist = mobMerge(hist);
     if (state.day !== today() || !mobRoutines().length) return null;
     var last = (hist || [])[0], t = today();
     var weekAgo = dayShift(t, -6);
@@ -478,7 +490,10 @@
       el("div", { class: "mut mb", text: "Zrobione: " + doneN + "/" + items.length + (r.when ? " · " + r.when : "") + ". Rozciągaj do napięcia, nie do bólu." }),
       el("div", {}, cards),
       el("button", { class: "mt", text: "Zakończ mobilność", onclick: function () {
-        api("/api/mobility", "POST", { day: M.day, plan_id: M.id }).then(function () { try { localStorage.removeItem(mobKey(M.day, M.id)); } catch (e) { /* ok */ } state.mob = null; stopRest(); goTab("today"); }).catch(handleErr);
+        api("/api/mobility", "POST", { day: M.day, plan_id: M.id }).catch(function (e) {
+          if (e && e.status === 401) throw e;
+          mobLocalAdd(M.day, M.id); // serwer niedostępny: zapis lokalny na tym telefonie
+        }).then(function () { try { localStorage.removeItem(mobKey(M.day, M.id)); } catch (e) { /* ok */ } state.mob = null; stopRest(); goTab("today"); }).catch(handleErr);
       } })
     ]));
   }
