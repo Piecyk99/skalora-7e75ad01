@@ -1027,11 +1027,13 @@
         var sg = it.superset_group;
         var isLastInGroup = !sg || !nextItem || nextItem.superset_group !== sg;
         var sug = suggestion(it, ex, S.last[eid]);
-        var wIn = el("input", { type: "number", inputmode: "decimal", step: "0.25", min: "0", placeholder: "kg" });
+        var bw = !!ex.bodyweight;
+        var wIn = el("input", { type: "number", inputmode: "decimal", step: "0.25", min: "0", placeholder: bw ? "0 = masa ciała" : "kg" });
         var rIn = el("input", { type: "number", inputmode: "numeric", step: "1", min: "1", placeholder: "powt." });
         if (mine.length) { var ls = mine[mine.length - 1]; wIn.value = ls.weight; rIn.value = ls.reps; }
         else if (sug) { wIn.value = sug.weight; rIn.value = sug.reps; }
         else if (warmSets.length) { var lw = warmSets[warmSets.length - 1]; wIn.value = lw.weight; rIn.value = lw.reps; }
+        if (bw && wIn.value === "") wIn.value = "0";
         var restS = it.rest_s || ex.default.rest_s;
         var serText = "Zapisz serię " + (mine.length + 1) + "/" + it.sets;
         var btn = el("button", { text: isWarm ? "Zapisz rozgrzewkę" : serText });
@@ -1056,10 +1058,15 @@
         } else if (ex.type === "izolacja") wuBox = el("div", { class: "note", text: "Izolacja: bez osobnej rozgrzewki." });
         btn.addEventListener("click", function () {
           btn.disabled = true;
-          api("/api/sets", "POST", { day: S.day, exercise: ex.name_pl, weight: wIn.value, reps: rIn.value, warmup: warmCb.checked }).then(function () {
+          var wv = wIn.value === "" && bw ? "0" : wIn.value;
+          api("/api/sets", "POST", { day: S.day, exercise: ex.name_pl, weight: wv, reps: rIn.value, warmup: warmCb.checked }).then(function () {
             if (isLastInGroup) startRest(warmCb.checked ? 60 : restS, ex.name_pl); else stopRest();
             viewSession();
-          }).catch(function () { btn.disabled = false; btn.textContent = "Uzupełnij kg i powtórzenia"; });
+          }).catch(function (e) {
+            if (e && e.status === 401) { boot(); return; }
+            btn.disabled = false;
+            btn.textContent = e && e.status === 400 ? (bw ? "Uzupełnij powtórzenia" : "Uzupełnij kg i powtórzenia") : "Nie zapisało się (brak połączenia?). Spróbuj jeszcze raz";
+          });
         });
         var chips = el("div", { class: "mb" }, both.map(function (s) {
           return el("span", { class: "setchip" + (s.warmup ? " warm" : "") }, [el("button", { class: "tg", title: s.warmup ? "Zmień na serię roboczą" : "Zmień na rozgrzewkę", text: (s.warmup ? "R " : "") + fmt(s.weight) + " × " + s.reps, onclick: function () { api("/api/sets/" + s.id, "PATCH", { warmup: !s.warmup }).then(viewSession).catch(handleErr); } }), el("button", { text: "×", "aria-label": "Usuń serię", onclick: function () { api("/api/sets/" + s.id, "DELETE").then(viewSession); } })]);

@@ -147,7 +147,8 @@
       ],
       "image": "img/dips.png",
       "pattern": "dip",
-      "suggest": false
+      "suggest": false,
+      "bodyweight": true
     },
     {
       "id": "cable_fly",
@@ -422,7 +423,8 @@
         "straight_arm_pulldown"
       ],
       "image": "img/pullup.png",
-      "pattern": "vertical_pull"
+      "pattern": "vertical_pull",
+      "bodyweight": true
     },
     {
       "id": "face_pull",
@@ -561,7 +563,8 @@
       ],
       "image": "img/back_ext.png",
       "pattern": "hinge",
-      "suggest": false
+      "suggest": false,
+      "bodyweight": true
     },
     {
       "id": "db_ohp",
@@ -1482,7 +1485,8 @@
         "cable_crunch"
       ],
       "image": "img/hang_raise.png",
-      "pattern": "core"
+      "pattern": "core",
+      "bodyweight": true
     },
     {
       "id": "cable_crunch",
@@ -1710,7 +1714,8 @@
         "dips"
       ],
       "pattern": "horizontal_press",
-      "image": "img/push_up.png"
+      "image": "img/push_up.png",
+      "bodyweight": true
     },
     {
       "id": "machine_shoulder_press",
