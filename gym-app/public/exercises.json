@@ -2091,7 +2091,8 @@
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 75 min, sam rdzeń ok. 50 min"
+      "when": "mocny trening: ok. 75 min, sam rdzeń ok. 50 min",
+      "part": "upper"
     },
     {
       "id": "l1_nogi_czworoglowy",
@@ -2126,7 +2127,8 @@
         }
       ],
       "when": "mocny trening: ok. 55 min, sam rdzeń ok. 50 min",
-      "avoid_before_work": "soft"
+      "avoid_before_work": "soft",
+      "part": "lower"
     },
     {
       "id": "u2_plecy_biceps",
@@ -2185,7 +2187,8 @@
           "optional": true
         }
       ],
-      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 60 min"
+      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 60 min",
+      "part": "upper"
     },
     {
       "id": "l2_nogi_tyl_posladki",
@@ -2231,19 +2234,234 @@
           "exercise_id": "lateral_raise",
           "sets": 2,
           "reps": "12–15",
+          "optional": true
+        }
+      ],
+      "when": "mocny trening: ok. 65 min, sam rdzeń ok. 45 min",
+      "avoid_before_work": "hard",
+      "part": "lower",
+      "fallback_plan": "nogi_przed_praca",
+      "fallback_after_days": 10
+    },
+    {
+      "id": "gora_a_3s",
+      "name": "Góra A · klatka + plecy (mocny)",
+      "part": "upper",
+      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 55 min",
+      "items": [
+        {
+          "exercise_id": "db_bench",
+          "sets": 4,
+          "reps": "8–10",
+          "rir": "1–2"
+        },
+        {
+          "exercise_id": "plate_row",
+          "sets": 4,
+          "reps": "8–10",
+          "rir": "1–2",
+          "rest_s": 120,
+          "note": "podparcie klatki oszczędza lędźwie"
+        },
+        {
+          "exercise_id": "db_ohp",
+          "sets": 3,
+          "reps": "8–10",
+          "rir": "1–2"
+        },
+        {
+          "exercise_id": "pulldown",
+          "sets": 3,
+          "reps": "10–12",
+          "rir": "1"
+        },
+        {
+          "exercise_id": "lateral_raise",
+          "sets": 3,
+          "reps": "12–15",
+          "rir": "0–1"
+        },
+        {
+          "exercise_id": "ez_curl",
+          "sets": 3,
+          "reps": "10–12",
           "superset_group": "A",
           "optional": true
         },
         {
           "exercise_id": "pushdown",
-          "sets": 2,
+          "sets": 3,
           "reps": "10–12",
           "superset_group": "A",
           "optional": true
+        },
+        {
+          "exercise_id": "face_pull",
+          "sets": 2,
+          "reps": "15–20",
+          "optional": true
         }
+      ]
+    },
+    {
+      "id": "gora_b_3s",
+      "name": "Góra B · skos + podciąganie (mocny)",
+      "part": "upper",
+      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 55 min",
+      "items": [
+        {
+          "exercise_id": "incline_db_press",
+          "sets": 4,
+          "reps": "8–10",
+          "rir": "1–2"
+        },
+        {
+          "exercise_id": "pullup",
+          "sets": 4,
+          "reps": "8–10",
+          "rir": "1–2",
+          "rest_s": 150,
+          "note": "guma lub maszyna wspomagana, jeśli nie dajesz rady w zakresie"
+        },
+        {
+          "exercise_id": "db_row",
+          "sets": 3,
+          "reps": "10–12 / ręka",
+          "rir": "1"
+        },
+        {
+          "exercise_id": "cable_fly",
+          "sets": 3,
+          "reps": "12–15",
+          "rir": "0–1"
+        },
+        {
+          "exercise_id": "lateral_raise",
+          "sets": 4,
+          "reps": "12–15",
+          "rir": "0–1"
+        },
+        {
+          "exercise_id": "cable_curl",
+          "sets": 3,
+          "reps": "10–12",
+          "superset_group": "A",
+          "optional": true
+        },
+        {
+          "exercise_id": "overhead_ext",
+          "sets": 3,
+          "reps": "12–15",
+          "superset_group": "A",
+          "optional": true
+        },
+        {
+          "exercise_id": "face_pull",
+          "sets": 2,
+          "reps": "15–20",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "nogi_3s",
+      "name": "Nogi · przysiad + RDL (mocny)",
+      "part": "lower",
+      "avoid_before_work": "hard",
+      "fallback_plan": "nogi_przed_praca",
+      "fallback_after_days": 10,
+      "when": "dzień przed wolnym: ok. 70 min, sam rdzeń ok. 50 min",
+      "items": [
+        {
+          "exercise_id": "squat",
+          "sets": 4,
+          "reps": "8–10",
+          "rir": "2",
+          "note": "sztanga: ustaw bezpieczniki w klatce"
+        },
+        {
+          "exercise_id": "rdl",
+          "sets": 3,
+          "reps": "8–10",
+          "rir": "2",
+          "note": "plecy płasko; obciąża lędźwie, dlatego dzień przed wolnym"
+        },
+        {
+          "exercise_id": "legpress",
+          "sets": 3,
+          "reps": "10–12",
+          "rir": "1–2"
+        },
+        {
+          "exercise_id": "lying_curl",
+          "sets": 3,
+          "reps": "10–12",
+          "rir": "0–1",
+          "note": "lub uginanie siedząc"
+        },
+        {
+          "exercise_id": "leg_ext",
+          "sets": 2,
+          "reps": "12–15",
+          "optional": true
+        },
+        {
+          "exercise_id": "cable_crunch",
+          "sets": 3,
+          "reps": "12–15",
+          "optional": true,
+          "note": "brzuch tylko w dniu nóg"
+        },
+        {
+          "exercise_id": "hang_raise",
+          "sets": 2,
+          "reps": "12–15",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "nogi_przed_praca",
+      "name": "Nogi · wersja przed pracą",
+      "part": "lower",
+      "leg_day": true,
+      "fallback_for": [
+        "nogi_3s",
+        "l2_nogi_tyl_posladki",
+        "nogi"
       ],
-      "when": "mocny trening: ok. 65 min, sam rdzeń ok. 45 min",
-      "avoid_before_work": "hard"
+      "when": "same maszyny, RIR 3, ok. 35 min; gdy nogi nie wypadły przed dniem wolnym",
+      "items": [
+        {
+          "exercise_id": "legpress",
+          "sets": 3,
+          "reps": "10–12",
+          "rir": "3",
+          "rest_s": 90,
+          "note": "zamiast przysiadu, bez RDL"
+        },
+        {
+          "exercise_id": "seated_curl",
+          "sets": 3,
+          "reps": "10–12",
+          "rir": "3",
+          "rest_s": 75
+        },
+        {
+          "exercise_id": "leg_ext",
+          "sets": 3,
+          "reps": "12–15",
+          "rir": "3",
+          "rest_s": 75
+        },
+        {
+          "exercise_id": "calf_seated",
+          "sets": 3,
+          "reps": "12–15",
+          "rir": "3",
+          "rest_s": 60
+        }
+      ]
     },
     {
       "id": "gora_a",
@@ -2283,7 +2501,8 @@
           "reps": "10–12",
           "superset_group": "A"
         }
-      ]
+      ],
+      "part": "upper"
     },
     {
       "id": "gora_a_plecy",
@@ -2407,7 +2626,8 @@
           "reps": "12–15",
           "note": "brzuch, którego nie ma w A ani w B (jest tylko w planie nóg)"
         }
-      ]
+      ],
+      "part": "upper"
     },
     {
       "id": "nogi",
@@ -2451,7 +2671,8 @@
           "reps": "12–15"
         }
       ],
-      "avoid_before_work": "hard"
+      "avoid_before_work": "hard",
+      "part": "lower"
     },
     {
       "id": "nogi_b",
@@ -2499,8 +2720,8 @@
     "l2_nogi_tyl_posladki"
   ],
   "rotation3": [
-    "gora_a",
-    "gora_b",
-    "nogi"
+    "gora_a_3s",
+    "gora_b_3s",
+    "nogi_3s"
   ]
 }

@@ -248,6 +248,7 @@
   function allRotationIds() {
     var c = state.catalog, out = [];
     (c.rotation || []).concat(c.rotation3 || []).forEach(function (id) { if (out.indexOf(id) < 0) out.push(id); });
+    c.plans.forEach(function (p) { if (p.fallback_for && out.indexOf(p.id) < 0) out.push(p.id); });
     return out;
   }
   function loadQueue() {
@@ -265,9 +266,37 @@
     return { mode: mode, auto: auto, ids: mode === "3" ? r3 : r4 };
   }
   function rotateAfter(ids, k) { return ids.slice(k + 1).concat(ids.slice(0, k + 1)); }
+  // Sesję z innej rotacji (albo plan awaryjny) przenosimy na równoważny plan w aktualnej rotacji:
+  // ta sama partia (góra/dół) i ten sam numer, więc przełączenie 3↔4 nie cofa kolejki na początek.
+  function partOf(id) { var p = planById(id); return p ? (p.part || (p.avoid_before_work ? "lower" : "upper")) : null; }
+  function mapToRotation(history, ids) {
+    var out = [], lastLower = null;
+    history.forEach(function (r) {
+      var id = r.plan_id, p = planById(id);
+      if (p && p.fallback_for) { // plan awaryjny nóg zalicza dzień nóg
+        var tgt = p.fallback_for.filter(function (x) { return ids.indexOf(x) >= 0; })[0];
+        if (tgt) id = tgt; else id = null;
+      }
+      if (id && ids.indexOf(id) < 0) {
+        var part = partOf(id), same = ids.filter(function (x) { return partOf(x) === part; });
+        if (!same.length) id = null;
+        else if (part === "lower") { id = same[(lastLower === null ? 0 : (same.indexOf(lastLower) + 1)) % same.length]; }
+        else {
+          var all = (state.catalog.rotation || []).concat(state.catalog.rotation3 || []);
+          var uppers = all.filter(function (x) { return partOf(x) === "upper"; });
+          var src = (state.catalog.rotation || []).indexOf(r.plan_id) >= 0 ? (state.catalog.rotation || []) : (state.catalog.rotation3 || []);
+          var idx = src.filter(function (x) { return partOf(x) === "upper"; }).indexOf(r.plan_id);
+          id = same[Math.max(0, idx) % same.length];
+        }
+      }
+      if (id && partOf(id) === "lower") lastLower = id;
+      if (id) out.push({ day: r.day, plan_id: id });
+    });
+    return out;
+  }
   // Kolejność "do zrobienia": pominięty plan zostaje na górze, dopóki go nie zrobisz.
   function queueList(q, ids) {
-    var done = ((q && q.recent) || []).filter(function (r) { return ids.indexOf(r.plan_id) >= 0; }).slice().reverse();
+    var done = mapToRotation(((q && q.recent) || []).slice().reverse(), ids);
     var Q = ids.slice();
     done.forEach(function (r, i) {
       var k = ids.indexOf(r.plan_id);
@@ -277,12 +306,24 @@
     });
     return Q;
   }
+  function daysBetween(a, b) { return Math.round((parseDay(b) - parseDay(a)) / 86400000); }
+  // Dni od ostatniej sesji nóg (albo od pierwszej sesji w historii, gdy nóg jeszcze nie było); null = brak historii.
+  function daysSinceLegs(q, t) {
+    var rec = (q && q.recent) || [], last = null, first = null;
+    rec.forEach(function (r) {
+      var p = planById(r.plan_id);
+      if ((p && (p.avoid_before_work || p.leg_day)) && (!last || r.day > last)) last = r.day;
+      if (!first || r.day < first) first = r.day;
+    });
+    var from = last || first;
+    return from ? daysBetween(from, t) : null;
+  }
   function planQueue(q, assumeWork) {
     var rot = rotationFor(q), Q = queueList(q, rot.ids), t = today();
     var asked = !!(q && q.work && q.work.day === t);
     var workTom = asked ? q.work.value : true;
     if (assumeWork === false) workTom = false;
-    var lweek = recentSince(q, dayShift(t, -6)).filter(function (r) { var p = planById(r.plan_id); return p && p.avoid_before_work; }).length;
+    var lweek = recentSince(q, dayShift(t, -6)).filter(function (r) { var p = planById(r.plan_id); return p && (p.avoid_before_work || p.leg_day); }).length;
     function block(id) {
       var p = planById(id), av = p && p.avoid_before_work;
       if (!av || !workTom) return null;
@@ -296,14 +337,22 @@
     else {
       for (var i = 0; i < Q.length; i++) { if (block(Q[i])) held.push(Q[i]); else { pick = Q[i]; break; } }
     }
+    var fallback = null;
+    if (!over && workTom) {
+      var hardHeld = Q.filter(function (id) { var hp = planById(id); return hp && hp.avoid_before_work === "hard" && hp.fallback_plan && planById(hp.fallback_plan); })[0];
+      if (hardHeld) {
+        var hp = planById(hardHeld), since = daysSinceLegs(q, t);
+        if (since !== null && since >= (hp.fallback_after_days || 10)) { fallback = { id: hp.fallback_plan, held: hardHeld, days: since }; pick = hp.fallback_plan; }
+      }
+    }
     var p0 = planById(pick), warn = null;
-    if (pick) {
+    if (pick && !fallback) {
       var why = block(pick);
       if (why === "hard") warn = "Jutro pracujesz, a ten trening mocno obciąża dół pleców i nogi. Lepiej zrobić go przed dniem wolnym.";
       else if (why === "weekly") warn = "W tym tygodniu był już dzień nóg, a jutro pracujesz. Lepiej poczekać do dnia przed wolnym.";
       else if (workTom && p0 && p0.avoid_before_work === "soft") warn = "Jutro pracujesz: nogi mogą dać zakwasy na zmianie. Zacznij lżej i nie dokładaj dokładki.";
     }
-    return { rot: rot, Q: Q, pick: pick, held: held, warn: warn, asked: asked, workTom: workTom, lweek: lweek, over: over, block: block };
+    return { rot: rot, Q: Q, pick: pick, held: held, fallback: fallback, warn: warn, asked: asked, workTom: workTom, lweek: lweek, over: over, block: block };
   }
   function nextCandidate(pq, after) {
     var Q = pq.Q, i = Q.indexOf(after);
@@ -351,15 +400,17 @@
     var next = pq.pick, p = planById(next);
     if (!p) return null;
     var st = planStats(p);
-    var heldNames = pq.held.map(function (id) { return planName(id); });
+    var heldNames = pq.held.filter(function (id) { return !pq.fallback || id !== pq.fallback.held; }).map(function (id) { return planName(id); });
     var skipTo = nextCandidate(pq, next);
     var btns = [el("button", { text: "Start", onclick: function () { startSession(next, today()); } })];
+    if (pq.fallback) btns.push(el("button", { class: "sec", text: "Zrób mimo to: " + planName(pq.fallback.held), onclick: function () { setQueueOverride(pq.fallback.held, viewToday); } }));
     if (skipTo && skipTo !== next) btns.push(el("button", { class: "sec", text: "Pomiń", onclick: function () { setQueueOverride(skipTo, viewToday); } }));
     return el("div", { class: "card", id: "queuecard" }, [
-      el("div", { class: "mut", text: (doneToday ? "Następny w kolejce (na jutro)" : "Następny w kolejce") + head }),
+      el("div", { class: "mut", text: (doneToday ? "Następny w kolejce (na jutro)" : pq.fallback ? "Nogi · wersja przed pracą" : "Następny w kolejce") + head }),
       el("h3", { text: p.name }),
       el("div", { class: "mut mb", text: st.core + " ćwiczeń rdzenia (" + st.cs + " serii)" + (st.opt ? " + dokładka " + st.opt + " (" + st.os + " serii)" : "") + (p.when ? " · " + p.when : "") }),
       heldNames.length ? el("div", { class: "note", text: "Czeka na dzień przed wolnym: " + heldNames.join(", ") + "." }) : null,
+      pq.fallback ? el("div", { class: "note warn", text: "⚠ Od " + pq.fallback.days + " dni nie było nóg, a jutro pracujesz. Proponuję lżejszą wersję: same maszyny, RIR 3, ok. 35 min. Pełne nogi (" + planName(pq.fallback.held) + ") czekają na dzień przed wolnym." }) : null,
       pq.warn ? el("div", { class: "note warn", text: "⚠ " + pq.warn }) : null,
       workLine,
       el("div", { class: "row" }, btns)
@@ -570,7 +621,7 @@
       queueBox = el("div", {}, [
         el("h2", { text: "Kolejka treningów" }),
         el("div", { class: "card" }, [
-          el("p", { class: "mut", text: "Rotacja niezależna od dni tygodnia: po zakończonym treningu aplikacja podaje następny z listy. Dzień nóg z flagą „nie przed pracą” czeka na pierwszy dzień przed wolnym. Rano aplikacja pyta, czy jutro pracujesz." }),
+          el("p", { class: "mut", text: "Rotacja niezależna od dni tygodnia: po zakończonym treningu aplikacja podaje następny z listy. Dzień nóg z flagą „nie przed pracą” czeka na pierwszy dzień przed wolnym. Przy pierwszym otwarciu apki danego dnia aplikacja pyta, czy jutro pracujesz." }),
           el("label", { text: "Rotacja" }), modeSel,
           el("p", { class: "mut mt", text: "Teraz: " + (pq.rot.mode === "3" ? "3 sesje" : "4 sesje") + (pq.rot.auto ? " (wybrane automatycznie z ostatnich 14 dni)" : "") }),
           el("div", {}, rot.map(function (id, i) {
