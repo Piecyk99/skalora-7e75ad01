@@ -68,7 +68,11 @@ async function readBody(request) {
 
 let layoutReady;
 function ensureSchema(env) {
-  if (!layoutReady) layoutReady = env.DB.prepare("ALTER TABLE sessions ADD COLUMN layout TEXT").run().catch(() => {});
+  if (!layoutReady) {
+    layoutReady = env.DB.prepare("ALTER TABLE sessions ADD COLUMN layout TEXT").run().catch(() => {})
+      .then(() => env.DB.prepare("CREATE TABLE IF NOT EXISTS mobility (day TEXT NOT NULL, plan_id TEXT NOT NULL, done_at TEXT NOT NULL, PRIMARY KEY (day, plan_id))").run())
+      .catch(() => {});
+  }
   return layoutReady;
 }
 
@@ -373,6 +377,24 @@ async function api(request, env, url) {
     return json({ ok: true });
   }
 
+  // ---------- mobilność (rutyny w domu, bez sesji i bez serii siłowych) ----------
+  if (path === "/api/mobility" && method === "GET") {
+    const { results } = await env.DB.prepare("SELECT day, plan_id, done_at FROM mobility ORDER BY day DESC, done_at DESC LIMIT 60").all();
+    return json(results);
+  }
+  if (path === "/api/mobility" && method === "POST") {
+    const b = await readBody(request);
+    if (!validDay(b.day) || typeof b.plan_id !== "string" || !/^mob_[a-z0-9_]{1,30}$/.test(b.plan_id)) return json({ error: "invalid" }, 400);
+    await env.DB.prepare("INSERT INTO mobility(day,plan_id,done_at) VALUES(?,?,?) ON CONFLICT(day,plan_id) DO UPDATE SET done_at=excluded.done_at")
+      .bind(b.day, b.plan_id, new Date().toISOString()).run();
+    return json({ ok: true });
+  }
+  m = path.match(/^\/api\/mobility\/(\d{4}-\d{2}-\d{2})\/(mob_[a-z0-9_]{1,30})$/);
+  if (m && method === "DELETE") {
+    await env.DB.prepare("DELETE FROM mobility WHERE day=? AND plan_id=?").bind(m[1], m[2]).run();
+    return json({ ok: true });
+  }
+
   // ---------- własne plany ----------
   if (path === "/api/plans" && method === "GET") {
     const { results } = await env.DB.prepare("SELECT id,name,when_text,items FROM user_plans ORDER BY updated_at DESC").all();
@@ -427,6 +449,7 @@ async function api(request, env, url) {
       sessions: await q("SELECT day,plan_id,plan_name,started_at,finished_at,note,layout FROM sessions ORDER BY day"),
       schedule: await q("SELECT dow,plan_id FROM schedule"),
       planned: await q("SELECT day,plan_id FROM planned ORDER BY day"),
+      mobility: await q("SELECT day,plan_id,done_at FROM mobility ORDER BY day"),
       plans: (await q("SELECT id,name,when_text,items FROM user_plans")).map((r) => ({ id: r.id, name: r.name, when: r.when_text || "", items: JSON.parse(r.items) })),
     };
     return new Response(JSON.stringify(out, null, 2), {
@@ -478,6 +501,10 @@ async function api(request, env, url) {
     for (const x of arr(b.planned)) {
       if (validDay(x.day) && validPlanId(x.plan_id))
         stmts.push(env.DB.prepare("INSERT INTO planned(day,plan_id) VALUES(?,?) ON CONFLICT(day) DO UPDATE SET plan_id=excluded.plan_id").bind(x.day, x.plan_id));
+    }
+    for (const x of arr(b.mobility)) {
+      if (validDay(x.day) && /^mob_[a-z0-9_]{1,30}$/.test(String(x.plan_id)))
+        stmts.push(env.DB.prepare("INSERT INTO mobility(day,plan_id,done_at) VALUES(?,?,?) ON CONFLICT(day,plan_id) DO UPDATE SET done_at=excluded.done_at").bind(x.day, x.plan_id, String(x.done_at || new Date().toISOString())));
     }
     for (const x of arr(b.plans)) {
       if (/^u_[a-f0-9]{8,32}$/.test(String(x.id)) && x.name && Array.isArray(x.items) && x.items.length <= 40)

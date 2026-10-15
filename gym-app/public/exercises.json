@@ -2126,6 +2126,503 @@
       ],
       "pattern": "lat_isolation",
       "image": "img/straight_arm_pulldown.png"
+    },
+    {
+      "id": "cat_cow",
+      "name_pl": "Kot-krowa",
+      "name_en": "Cat-cow",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "kręgosłup"
+      ],
+      "muscles_secondary": [
+        "lędźwie",
+        "górny odcinek pleców"
+      ],
+      "equipment": [
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "10",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Stań na czworakach: dłonie pod barkami, kolana pod biodrami.",
+        "Wydech: zaokrąglij plecy i opuść głowę (kot).",
+        "Wdech: wygnij plecy w dół i unieś głowę (krowa).",
+        "Poruszaj się wolno, całym kręgosłupem."
+      ],
+      "tips": [
+        "Ruch zaczynaj od miednicy.",
+        "Oddech steruje tempem."
+      ],
+      "mistakes": [
+        "Szybkie bujanie.",
+        "Zginanie samych łokci."
+      ],
+      "alternatives": [],
+      "image": "img/cat_cow.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "childs_pose_reach",
+      "name_pl": "Pozycja dziecka z wyciągnięciem rąk",
+      "name_en": "Child's pose reach",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "najszerszy grzbietu",
+        "lędźwie"
+      ],
+      "muscles_secondary": [
+        "barki"
+      ],
+      "equipment": [
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 2,
+        "reps": "30 s",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Z klęku usiądź pośladkami na piętach.",
+        "Złóż tułów do przodu i wyciągnij ręce jak najdalej.",
+        "Oddychaj w boki pleców, trzymaj 30 s.",
+        "Powtórz, przesuwając obie dłonie w lewo, potem w prawo."
+      ],
+      "tips": [
+        "Pośladki starają się nie odrywać od pięt.",
+        "Rozluźnij kark."
+      ],
+      "mistakes": [
+        "Napinanie barków do uszu.",
+        "Odrywanie bioder."
+      ],
+      "alternatives": [],
+      "image": "img/childs_pose_reach.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "hip_flexor_stretch",
+      "name_pl": "Rozciąganie zginaczy bioder w wykroku klęcznym",
+      "name_en": "Kneeling hip flexor stretch",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "zginacze bioder"
+      ],
+      "muscles_secondary": [
+        "czworogłowe"
+      ],
+      "equipment": [
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 2,
+        "reps": "40 s / noga",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Uklęknij na jednym kolanie (pod kolano podłóż zwiniętą matę), druga stopa z przodu.",
+        "Napnij pośladek nogi z tyłu i przesuń biodra lekko do przodu.",
+        "Tułów pionowo, brzuch lekko napięty.",
+        "Trzymaj 40 s, zmień nogę."
+      ],
+      "tips": [
+        "Pośladek z tyłu napięty = mocniejsze rozciągnięcie.",
+        "Nie wyginaj lędźwi."
+      ],
+      "mistakes": [
+        "Wyginanie pleców zamiast przesuwania bioder.",
+        "Zbyt duży krok."
+      ],
+      "alternatives": [],
+      "image": "img/hip_flexor_stretch.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "hip_90_90",
+      "name_pl": "Pozycja 90/90 (rotacje bioder)",
+      "name_en": "90/90 hip switch",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "rotatory bioder"
+      ],
+      "muscles_secondary": [
+        "pośladki"
+      ],
+      "equipment": [
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "8 przejść",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Usiądź na podłodze, obie nogi ugięte pod kątem 90° (jedna z przodu, druga z boku).",
+        "Plecy proste, ręce przed sobą.",
+        "Przerzuć kolana na drugą stronę, obracając biodra.",
+        "Zrób 8 przejść w każdą stronę, wolno."
+      ],
+      "tips": [
+        "Jeśli nie siadasz prosto, podłóż poduszkę pod pośladki.",
+        "Pracuj biodrami, nie plecami."
+      ],
+      "mistakes": [
+        "Garbienie się.",
+        "Odrywanie pośladków od podłogi."
+      ],
+      "alternatives": [],
+      "image": "img/hip_90_90.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "thoracic_rotation",
+      "name_pl": "Rotacja piersiowa z podporu klęcznego",
+      "name_en": "Quadruped thoracic rotation",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "odcinek piersiowy kręgosłupa"
+      ],
+      "muscles_secondary": [
+        "barki"
+      ],
+      "equipment": [
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "8 / strona",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Podpór klęczny, jedna dłoń za głową lub rozsunięta w górę.",
+        "Skręć tułów, kierując łokieć w stronę sufitu.",
+        "Wróć, przeciągając ramię pod ciałem.",
+        "Zrób 8 powtórzeń na stronę."
+      ],
+      "tips": [
+        "Wzrok idzie za łokciem.",
+        "Biodra stabilnie nad kolanami."
+      ],
+      "mistakes": [
+        "Przekręcanie z lędźwi.",
+        "Zbyt szybki ruch."
+      ],
+      "alternatives": [],
+      "image": "img/thoracic_rotation.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "wall_slide",
+      "name_pl": "Zsuwanie rąk po ścianie",
+      "name_en": "Wall slide",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "górny odcinek pleców"
+      ],
+      "muscles_secondary": [
+        "barki"
+      ],
+      "equipment": [
+        "ściana"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "10",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Stań plecami do ściany, łokcie ugięte 90°, przedramiona przy ścianie.",
+        "Wypchnij ręce w górę, nie odrywając przedramion i pleców.",
+        "Wróć powoli do pozycji wyjściowej."
+      ],
+      "tips": [
+        "Żebra na dole.",
+        "Zakres tylko tyle, ile masz bez uciekania pleców."
+      ],
+      "mistakes": [
+        "Wyginanie lędźwi.",
+        "Unoszenie barków do uszu."
+      ],
+      "alternatives": [],
+      "image": "img/wall_slide.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "calf_wall_stretch",
+      "name_pl": "Rozciąganie łydek o ścianę",
+      "name_en": "Wall calf stretch",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "łydki"
+      ],
+      "muscles_secondary": [
+        "ścięgno Achillesa"
+      ],
+      "equipment": [
+        "ściana"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 2,
+        "reps": "30 s / noga",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Oprzyj dłonie o ścianę, jedna noga z tyłu wyprostowana, druga ugięta z przodu.",
+        "Pięta z tyłu stale przy podłodze.",
+        "Przesuwaj biodra do ściany do napięcia w łydce.",
+        "Trzymaj 30 s, zmień nogę."
+      ],
+      "tips": [
+        "Stopy równolegle.",
+        "Dla głębszej łydki lekko ugnij tylne kolano."
+      ],
+      "mistakes": [
+        "Odrywanie pięty.",
+        "Skręcanie stopy na zewnątrz."
+      ],
+      "alternatives": [],
+      "image": "img/calf_wall_stretch.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "hamstring_stretch_lying",
+      "name_pl": "Rozciąganie tyłu uda leżąc (ręcznik)",
+      "name_en": "Lying hamstring stretch",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "tył uda"
+      ],
+      "muscles_secondary": [
+        "lędźwie"
+      ],
+      "equipment": [
+        "ręcznik",
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 2,
+        "reps": "30 s / noga",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Połóż się na plecach, ręcznik lub pasek na stopie jednej nogi.",
+        "Wyprostuj nogę w górę i delikatnie przyciągaj ręcznik.",
+        "Druga noga ugięta na podłodze, lędźwie przy podłodze.",
+        "Trzymaj 30 s, zmień nogę."
+      ],
+      "tips": [
+        "Lekko ugnij kolano, jeśli ciągnie w kolanie.",
+        "Spokojny oddech."
+      ],
+      "mistakes": [
+        "Szarpanie ręcznika.",
+        "Odrywanie bioder od podłogi."
+      ],
+      "alternatives": [],
+      "image": "img/hamstring_stretch_lying.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "deep_squat_hold",
+      "name_pl": "Głęboki przysiad z pauzą (z podparciem)",
+      "name_en": "Supported deep squat hold",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "biodra",
+        "kostki"
+      ],
+      "muscles_secondary": [
+        "czworogłowe"
+      ],
+      "equipment": [
+        "framuga lub stabilny uchwyt"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "5 × 10 s",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Chwyć się framugi lub stabilnego uchwytu.",
+        "Stopy na szerokość barków, palce lekko na zewnątrz.",
+        "Zejdź w głęboki przysiad, kolana w linii stóp, plecy proste.",
+        "Trzymaj 10 s i wstań. Powtórz 5 razy."
+      ],
+      "tips": [
+        "Pięty na podłodze, w razie potrzeby podłóż płytki ręcznik pod pięty.",
+        "Odpychaj kolana na zewnątrz łokciami."
+      ],
+      "mistakes": [
+        "Zapadanie kolan do środka.",
+        "Zaokrąglanie dolnego odcinka pleców."
+      ],
+      "alternatives": [],
+      "image": "img/deep_squat_hold.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "shoulder_towel_rotation",
+      "name_pl": "Rotacje barków z ręcznikiem",
+      "name_en": "Towel shoulder pass-through",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "barki"
+      ],
+      "muscles_secondary": [
+        "górny odcinek pleców"
+      ],
+      "equipment": [
+        "ręcznik"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "10",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Chwyć ręcznik szeroko oburącz przed udami.",
+        "Przenieś ręce nad głową, a następnie za plecy, z prostymi rękami.",
+        "Wróć tą samą drogą.",
+        "Im węższy chwyt, tym trudniej. Zacznij szeroko."
+      ],
+      "tips": [
+        "Żebra nie wyjeżdżają do przodu.",
+        "Bez bólu w barku."
+      ],
+      "mistakes": [
+        "Zginanie łokci.",
+        "Przeginanie lędźwi."
+      ],
+      "alternatives": [],
+      "image": "img/shoulder_towel_rotation.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "neck_stretch",
+      "name_pl": "Rozciąganie karku i górnych czworobocznych",
+      "name_en": "Upper trapezius stretch",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "górne czworoboczne"
+      ],
+      "muscles_secondary": [
+        "kark"
+      ],
+      "equipment": [
+        "krzesło"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 2,
+        "reps": "30 s / strona",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Usiądź lub stań prosto, jedna ręka trzyma krawędź krzesła.",
+        "Pochyl ucho do drugiego barku, ręka na głowie delikatnie dociąga.",
+        "Trzymaj 30 s, oddychaj.",
+        "Zmień stronę."
+      ],
+      "tips": [
+        "Barki opuszczone, nie unoszone.",
+        "Nacisk lekki, tylko ciężar ręki."
+      ],
+      "mistakes": [
+        "Szarpanie głowy.",
+        "Unoszenie barku."
+      ],
+      "alternatives": [],
+      "image": "img/neck_stretch.png",
+      "pattern": "mobility",
+      "suggest": false
+    },
+    {
+      "id": "lunge_rotation",
+      "name_pl": "Wykrok z rotacją tułowia (najlepsze rozciąganie świata)",
+      "name_en": "World's greatest stretch",
+      "category": "mobilnosc",
+      "muscles_primary": [
+        "biodra",
+        "odcinek piersiowy kręgosłupa"
+      ],
+      "muscles_secondary": [
+        "pośladki",
+        "czworogłowe"
+      ],
+      "equipment": [
+        "mata"
+      ],
+      "type": "mobilność",
+      "solo_safety": "Bezpieczne w domu. Rozciągaj do napięcia, nie do bólu.",
+      "default": {
+        "sets": 1,
+        "reps": "6 / strona",
+        "rest_s": 0,
+        "rir": "-"
+      },
+      "steps": [
+        "Zrób głęboki wykrok, dłoń po stronie nogi z tyłu na podłodze.",
+        "Druga ręka idzie w górę, skręcając tułów w stronę nogi z przodu.",
+        "Wróć i powtórz po drugiej stronie.",
+        "Zrób 6 powtórzeń na stronę."
+      ],
+      "tips": [
+        "Tylna noga mocno wyprostowana.",
+        "Wzrok idzie za ręką."
+      ],
+      "mistakes": [
+        "Zapadanie lędźwi.",
+        "Zbyt krótki krok."
+      ],
+      "alternatives": [],
+      "image": "img/lunge_rotation.png",
+      "pattern": "mobility",
+      "suggest": false
     }
   ],
   "plans": [
@@ -2834,5 +3331,108 @@
     "gora_a_3s",
     "gora_b_3s",
     "nogi_3s"
+  ],
+  "mobility": [
+    {
+      "id": "mob_wieczor",
+      "name": "Mobilność wieczorna (w domu)",
+      "when": "ok. 12 min, po pracy lub przed snem",
+      "items": [
+        {
+          "exercise_id": "cat_cow",
+          "sets": 1,
+          "reps": "10"
+        },
+        {
+          "exercise_id": "childs_pose_reach",
+          "sets": 2,
+          "reps": "30 s"
+        },
+        {
+          "exercise_id": "hip_flexor_stretch",
+          "sets": 2,
+          "reps": "40 s / noga"
+        },
+        {
+          "exercise_id": "hip_90_90",
+          "sets": 1,
+          "reps": "8 przejść"
+        },
+        {
+          "exercise_id": "thoracic_rotation",
+          "sets": 1,
+          "reps": "8 / strona"
+        },
+        {
+          "exercise_id": "hamstring_stretch_lying",
+          "sets": 2,
+          "reps": "30 s / noga"
+        },
+        {
+          "exercise_id": "calf_wall_stretch",
+          "sets": 2,
+          "reps": "30 s / noga"
+        },
+        {
+          "exercise_id": "neck_stretch",
+          "sets": 2,
+          "reps": "30 s / strona"
+        }
+      ]
+    },
+    {
+      "id": "mob_gora",
+      "name": "Rozgrzewka mobilizacyjna: góra (5 min)",
+      "when": "przed Górą A lub Górą B",
+      "items": [
+        {
+          "exercise_id": "cat_cow",
+          "sets": 1,
+          "reps": "8"
+        },
+        {
+          "exercise_id": "shoulder_towel_rotation",
+          "sets": 1,
+          "reps": "10"
+        },
+        {
+          "exercise_id": "wall_slide",
+          "sets": 1,
+          "reps": "10"
+        },
+        {
+          "exercise_id": "thoracic_rotation",
+          "sets": 1,
+          "reps": "6 / strona"
+        }
+      ]
+    },
+    {
+      "id": "mob_nogi",
+      "name": "Rozgrzewka mobilizacyjna: nogi (5 min)",
+      "when": "przed dniem Nogi",
+      "items": [
+        {
+          "exercise_id": "lunge_rotation",
+          "sets": 1,
+          "reps": "6 / strona"
+        },
+        {
+          "exercise_id": "hip_90_90",
+          "sets": 1,
+          "reps": "6 przejść"
+        },
+        {
+          "exercise_id": "deep_squat_hold",
+          "sets": 1,
+          "reps": "5 × 10 s"
+        },
+        {
+          "exercise_id": "calf_wall_stretch",
+          "sets": 1,
+          "reps": "30 s / noga"
+        }
+      ]
+    }
   ]
 }

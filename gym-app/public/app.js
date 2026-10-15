@@ -127,9 +127,9 @@
       o.start(); o.stop(audioCtx.currentTime + 0.35);
     } catch (e) { /* brak dźwięku */ }
   }
-  function startRest(sec, label) {
+  function startRest(sec, label, kind) {
     try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === "suspended") audioCtx.resume(); } catch (e) { /* ok */ }
-    state.rest = { end: Date.now() + sec * 1000, label: label || "" };
+    state.rest = { end: Date.now() + sec * 1000, label: label || "", kind: kind || "Przerwa" };
     document.body.classList.add("resting");
     drawRest();
     if (!restTick) restTick = setInterval(drawRest, 250);
@@ -147,7 +147,7 @@
     while (restBar.firstChild) restBar.removeChild(restBar.firstChild);
     restBar.className = "";
     restBar.appendChild(el("div", { class: "t", text: mmss(left) }));
-    restBar.appendChild(el("div", { class: "l", text: "Przerwa" + (state.rest.label ? " · " + state.rest.label : "") }));
+    restBar.appendChild(el("div", { class: "l", text: state.rest.kind + (state.rest.label ? " · " + state.rest.label : "") }));
     restBar.appendChild(el("button", { class: "sec", text: "+30 s", onclick: function () { state.rest.end += 30000; drawRest(); } }));
     restBar.appendChild(el("button", { class: "sec", text: "Pomiń", onclick: stopRest }));
   }
@@ -177,7 +177,7 @@
   }
 
   // ---------- shell ----------
-  function goTab(t) { state.tab = t; state.planId = null; state.session = null; state.edit = null; render(); scrollTop(); }
+  function goTab(t) { state.tab = t; state.planId = null; state.session = null; state.edit = null; state.mob = null; render(); scrollTop(); }
   function shell(content) {
     clear();
     app.appendChild(content);
@@ -192,7 +192,8 @@
     if (state.tab === "today") viewToday();
     else if (state.tab === "cal") viewCalendar();
     else if (state.tab === "plan") {
-      if (state.session) viewSession();
+      if (state.mob) viewMobility();
+      else if (state.session) viewSession();
       else if (state.edit) viewEdit();
       else if (state.planId) viewPlan();
       else if (state.planMode === "catalog") viewCatalog();
@@ -225,9 +226,9 @@
       el("img", { class: "ex", src: "/" + ex.image, alt: ex.name_pl }),
       el("h1", { class: "mt", text: ex.name_pl }),
       el("div", { class: "mut mb", text: ex.name_en }),
-      el("div", {}, [cap(ex.category), cap(ex.type)].concat(ex.equipment).map(function (t) { return el("span", { class: "tag", text: t }); })),
+      el("div", {}, [ex.category === "mobilnosc" ? "Mobilność" : cap(ex.category), cap(ex.type)].concat(ex.equipment).map(function (t) { return el("span", { class: "tag", text: t }); })),
       el("p", { class: "mut", text: "Główne: " + ex.muscles_primary.join(", ") + (ex.muscles_secondary.length ? ". Pomocnicze: " + ex.muscles_secondary.join(", ") : "") + "." }),
-      el("p", { text: "Domyślnie: " + d.sets + " × " + d.reps + ", przerwa " + mmss(d.rest_s) + ", RIR " + d.rir }),
+      el("p", { text: ex.category === "mobilnosc" ? "Zalecenie: " + (d.sets > 1 ? d.sets + " × " : "") + d.reps : "Domyślnie: " + d.sets + " × " + d.reps + ", przerwa " + mmss(d.rest_s) + ", RIR " + d.rir }),
       ex.solo_safety ? el("div", { class: "callout", text: ex.solo_safety }) : null,
       listBlock("Wykonanie", ex.steps, true),
       listBlock("Wskazówki", ex.tips),
@@ -419,6 +420,69 @@
     ]);
   }
 
+  // ---------- mobilność (rutyny w domu; bez sesji i bez serii siłowych) ----------
+  function mobRoutines() { return (state.catalog && state.catalog.mobility) || []; }
+  function mobById(id) { return mobRoutines().filter(function (r) { return r.id === id; })[0]; }
+  function mobKey(day, id) { return "gym_mob_" + day + "_" + id; }
+  function mobLoad(day, id) { try { return JSON.parse(localStorage.getItem(mobKey(day, id)) || "{}"); } catch (e) { return {}; } }
+  function mobSave(day, id, done) { try { localStorage.setItem(mobKey(day, id), JSON.stringify(done)); } catch (e) { /* brak pamięci */ } }
+  function startMobility(id, day) {
+    var r = mobById(id); if (!r) return;
+    state.tab = "plan"; state.planId = null; state.session = null; state.edit = null;
+    state.mob = { id: id, day: day || today(), done: mobLoad(day || today(), id) };
+    render(); scrollTop();
+  }
+  function mobCard(hist) {
+    if (state.day !== today() || !mobRoutines().length) return null;
+    var last = (hist || [])[0], t = today();
+    var weekAgo = dayShift(t, -6);
+    var n = (hist || []).filter(function (h) { return h.day >= weekAgo; }).length;
+    var doneToday = (hist || []).filter(function (h) { return h.day === t; }).map(function (h) { return h.plan_id; });
+    var sub = last ? "Ostatnio: " + (last.day === t ? "dziś" : last.day.slice(5)) + " · " + n + " " + (n === 1 ? "raz" : "razy") + " w 7 dni" : "Jeszcze nie robiłeś. 10–12 minut w domu.";
+    return el("div", { class: "card", id: "mobcard" }, [
+      el("div", { class: "mut", text: "Mobilność w domu" }),
+      el("h3", { text: "Rozciąganie i mobilizacja" }),
+      el("div", { class: "mut mb", text: sub }),
+      el("div", { class: "row" }, mobRoutines().map(function (r, i) {
+        var short = r.id === "mob_wieczor" ? "Wieczorna" : r.id === "mob_gora" ? "Przed górą" : "Przed nogami";
+        return el("button", { class: i === 0 ? "" : "sec", text: (doneToday.indexOf(r.id) >= 0 ? "✓ " : "") + short, onclick: function () { startMobility(r.id, t); } });
+      }))
+    ]);
+  }
+  function mobSeconds(reps) { var m = String(reps).match(/(\d+)\s*s\b/); return m ? Number(m[1]) : 0; }
+  function viewMobility() {
+    var M = state.mob, r = mobById(M.id);
+    if (!r) { state.mob = null; render(); return; }
+    var items = r.items, doneN = items.filter(function (x, i) { return M.done[i]; }).length;
+    var cards = items.map(function (it, i) {
+      var ex = state.byId[it.exercise_id], done = !!M.done[i], secs = mobSeconds(it.reps);
+      var presc = (it.sets > 1 ? it.sets + " × " : "") + (/^\d+$/.test(String(it.reps)) ? it.reps + " powt." : it.reps);
+      var btns = [];
+      if (secs) btns.push(el("button", { class: "sec", text: "Timer " + secs + " s", onclick: function () { startRest(secs, ex.name_pl, "Ćwiczenie"); } }));
+      btns.push(el("button", { class: done ? "sec" : "", text: done ? "✓ Zrobione (cofnij)" : "Zrobione", onclick: function () { M.done[i] = !done; mobSave(M.day, M.id, M.done); stopRest(); viewMobility(); } }));
+      return el("div", { class: "card" + (done ? " done" : "") }, [
+        el("div", { class: "head" }, [
+          el("img", { class: "th", src: "/" + ex.image, alt: "", loading: "lazy", onclick: function () { openDetail(ex.id); } }),
+          el("div", {}, [
+            el("button", { class: "link", text: (done ? "✓ " : "") + ex.name_pl, onclick: function () { openDetail(ex.id); } }),
+            el("div", { class: "mut", text: presc })
+          ])
+        ]),
+        el("details", {}, [el("summary", { text: "Jak wykonać" }), el("ol", {}, ex.steps.map(function (st) { return el("li", { text: st }); })), ex.tips && ex.tips.length ? el("p", { class: "mut", text: "Wskazówka: " + ex.tips[0] }) : null]),
+        el("div", { class: "row mt" }, btns)
+      ]);
+    });
+    shell(el("div", {}, [
+      el("button", { class: "link mb", text: "← Wyjdź (zaznaczone zostaje)", onclick: function () { state.mob = null; stopRest(); goTab("today"); } }),
+      el("h1", { text: r.name }),
+      el("div", { class: "mut mb", text: "Zrobione: " + doneN + "/" + items.length + (r.when ? " · " + r.when : "") + ". Rozciągaj do napięcia, nie do bólu." }),
+      el("div", {}, cards),
+      el("button", { class: "mt", text: "Zakończ mobilność", onclick: function () {
+        api("/api/mobility", "POST", { day: M.day, plan_id: M.id }).then(function () { try { localStorage.removeItem(mobKey(M.day, M.id)); } catch (e) { /* ok */ } state.mob = null; stopRest(); goTab("today"); }).catch(handleErr);
+      } })
+    ]));
+  }
+
   // ---------- today ----------
   function dayCard(day, cal) {
     var sess = cal.sessions[0];
@@ -448,11 +512,11 @@
       .then(function (r) { state.sets = r[0]; state.exercises = r[1]; return r[2]; });
   }
   function viewToday() {
-    Promise.all([loadToday(), loadQueue()]).then(function (res) {
-      var cal = res[0], queue = res[1];
+    Promise.all([loadToday(), loadQueue(), api("/api/mobility").catch(function () { return []; })]).then(function (res) {
+      var cal = res[0], queue = res[1], mobHist = res[2];
       var names = {}; state.exercises.forEach(function (e) { names[e.exercise] = 1; });
       var dl = el("datalist", { id: "exlist" });
-      var catNames = state.catalog ? state.catalog.exercises.map(function (e) { return e.name_pl; }) : [];
+      var catNames = state.catalog ? state.catalog.exercises.filter(function (e) { return e.category !== "mobilnosc"; }).map(function (e) { return e.name_pl; }) : [];
       state.exercises.map(function (e) { return e.exercise; }).concat(catNames.filter(function (n) { return !names[n]; })).forEach(function (n) { dl.appendChild(el("option", { value: n })); });
       var dayIn = el("input", { type: "date", value: state.day, onchange: function (e) { if (e.target.value) { state.day = e.target.value; viewToday(); } } });
       var exIn = el("input", { id: "exin", list: "exlist", placeholder: "Ćwiczenie", autocomplete: "off", autocapitalize: "sentences" });
@@ -505,7 +569,7 @@
         });
         list.appendChild(c);
       });
-      shell(el("div", {}, [el("h1", { text: state.day === today() ? "Dziś" : fmtDay(state.day) }), dayCard(state.day, cal), queueCard(queue, cal), form,
+      shell(el("div", {}, [el("h1", { text: state.day === today() ? "Dziś" : fmtDay(state.day) }), dayCard(state.day, cal), queueCard(queue, cal), mobCard(mobHist), form,
         order.length ? el("h2", { text: "Serie · objętość " + Math.round(vol) + " kg" }) : null, list]));
       if (state.prefillEx) { exIn.value = state.prefillEx; state.prefillEx = null; prefill(); }
     }).catch(handleErr);
@@ -648,6 +712,11 @@
       return el("details", {}, [el("summary", { text: labels[k] }), el("p", { text: r[k] })]);
     }));
     shell(el("div", {}, [el("h1", { text: "Plan" }), planSeg(), queueBox,
+      el("h2", { text: "Mobilność (w domu)" }),
+      el("div", {}, mobRoutines().map(function (r) {
+        return el("div", { class: "card" }, [el("div", { class: "ex", text: r.name }), el("div", { class: "mut mb", text: r.items.length + " ćwiczeń · " + r.when }),
+          el("button", { text: "Start", onclick: function () { startMobility(r.id, today()); } })]);
+      })),
       el("h2", { text: "Harmonogram tygodnia" }), sched,
       el("h2", { text: "Moje plany" }), mine,
       el("button", { class: "sec", text: "+ Nowy plan", onclick: function () { state.edit = { id: null, name: "", when: "", items: [] }; render(); scrollTop(); } }),
@@ -823,7 +892,7 @@
   function openSwap(it, currentId, items) {
     var S = state.session, orig = state.byId[it.exercise_id], cur = state.byId[currentId];
     var ctx = S.ctx, taken = items.map(function (x) { return x.exercise_id; }).filter(function (id) { return id !== orig.id; }).concat(ctx.extraIds);
-    var pool = state.catalog.exercises.filter(function (e) { return e.id !== currentId && e.id !== orig.id && taken.indexOf(e.id) < 0; });
+    var pool = state.catalog.exercises.filter(function (e) { return e.category !== "mobilnosc" && e.id !== currentId && e.id !== orig.id && taken.indexOf(e.id) < 0; });
     var explicit = orig.alternatives.concat(cur.alternatives);
     var seen = {};
     function grab(fn) { return pool.filter(function (e) { if (seen[e.id] || !fn(e)) return false; seen[e.id] = 1; return true; }); }
@@ -910,7 +979,7 @@
         chips.appendChild(el("button", { class: "chip" + (catSel === c ? " on" : ""), text: c === "all" ? "Wszystkie" : CAT_LABEL[c], onclick: function () { catSel = c; fill(); } }));
       });
       while (list.firstChild) list.removeChild(list.firstChild);
-      var rows = state.catalog.exercises.filter(function (e) { return ctx.presentIds.indexOf(e.id) < 0 && (catSel === "all" || e.category === catSel) && matches(e, q.value); });
+      var rows = state.catalog.exercises.filter(function (e) { return e.category !== "mobilnosc" && ctx.presentIds.indexOf(e.id) < 0 && (catSel === "all" || e.category === catSel) && matches(e, q.value); });
       if (!rows.length) list.appendChild(el("p", { class: "mut", text: "Brak wyników." }));
       rows.forEach(function (e) { list.appendChild(pickRow(e, CAT_LABEL[e.category] + " · " + e.equipment.join(", "), "Dodaj", function () { add(e.id); })); });
     }
@@ -1073,7 +1142,7 @@
     }
     q.addEventListener("input", function () { state.catQuery = q.value; fill(); });
     var chips = el("div", { class: "chips" }, cats.map(function (c) {
-      return el("button", { class: "chip" + (state.catFilter === c ? " on" : ""), text: c === "all" ? "Wszystkie" : cap(c), onclick: function () { state.catFilter = c; viewCatalog(); } });
+      return el("button", { class: "chip" + (state.catFilter === c ? " on" : ""), text: c === "all" ? "Wszystkie" : (c === "mobilnosc" ? "Mobilność" : cap(c)), onclick: function () { state.catFilter = c; viewCatalog(); } });
     }));
     fill();
     shell(el("div", {}, [el("h1", { text: "Plan" }), planSeg(), q, chips, grid]));
