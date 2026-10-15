@@ -463,10 +463,59 @@
         "Opuszczanie łokci."
       ],
       "alternatives": [
+        "cable_rear_fly",
         "lateral_raise",
         "rear_delt_machine"
       ],
       "image": "img/face_pull.png",
+      "pattern": "rear_delt"
+    },
+    {
+      "id": "cable_rear_fly",
+      "name_pl": "Odwodzenie ramienia w tył na wyciągu jednorącz (lina)",
+      "name_en": "Single-arm cable reverse fly",
+      "category": "plecy",
+      "muscles_primary": [
+        "tył barków"
+      ],
+      "muscles_secondary": [
+        "górna część pleców",
+        "rotatory barku"
+      ],
+      "equipment": [
+        "wyciąg",
+        "lina lub uchwyt jednorącz"
+      ],
+      "type": "izolacja",
+      "solo_safety": "Bezpieczne solo, mały ciężar.",
+      "default": {
+        "sets": 2,
+        "reps": "12–15 / ręka",
+        "rest_s": 60,
+        "rir": "0–1"
+      },
+      "steps": [
+        "Ustaw krążek na wysokości barku. Stań bokiem do wyciągu i chwyć linę (lub uchwyt) ręką od strony przeciwnej do maszyny.",
+        "Ramię lekko ugięte w łokciu, dłoń przed klatką, kciuk skierowany w dół.",
+        "Odwiedź ramię w bok i do tyłu, aż będzie w linii barków, łokieć prowadzi ruch.",
+        "Przytrzymaj 1 s, wracaj powoli. Wszystkie serie jedną ręką, potem druga."
+      ],
+      "tips": [
+        "Najpierw jedna ręka (wszystkie serie), potem druga, albo na przemian z krótką przerwą.",
+        "Tułów stabilny, bez bujania i odchylania.",
+        "Lekki ciężar, czucie w tylnej części barku, nie w karku."
+      ],
+      "mistakes": [
+        "Ciągnięcie łokciem za ciało jak w wiosłowaniu (ruch idzie z pleców, nie z tyłu barku).",
+        "Zbyt duży ciężar i rozkręcanie tułowia.",
+        "Podciąganie barku do ucha."
+      ],
+      "alternatives": [
+        "rear_delt_machine",
+        "face_pull",
+        "lateral_raise"
+      ],
+      "image": "img/cable_rear_fly.png",
       "pattern": "rear_delt"
     },
     {
@@ -1745,6 +1794,7 @@
         "Zbyt duży ciężar i ciągnięcie plecami zamiast tyłem barków."
       ],
       "alternatives": [
+        "cable_rear_fly",
         "face_pull",
         "lateral_raise"
       ],
@@ -2126,11 +2176,12 @@
           "optional": true
         },
         {
-          "exercise_id": "face_pull",
+          "exercise_id": "cable_rear_fly",
           "sets": 2,
-          "reps": "15–20",
+          "reps": "12–15 / ręka",
           "superset_group": "B",
-          "optional": true
+          "optional": true,
+          "note": "najpierw jedna ręka (wszystkie serie), potem druga"
         },
         {
           "exercise_id": "cable_curl",
@@ -2216,10 +2267,11 @@
           "note": "boczne barki: 2. bodziec w tygodniu, w rdzeniu, żeby nie zależały od dokładki"
         },
         {
-          "exercise_id": "face_pull",
+          "exercise_id": "cable_rear_fly",
           "sets": 3,
-          "reps": "15–20",
-          "optional": true
+          "reps": "12–15 / ręka",
+          "optional": true,
+          "note": "najpierw jedna ręka (wszystkie serie), potem druga"
         },
         {
           "exercise_id": "ez_curl",
@@ -2345,10 +2397,11 @@
           "optional": true
         },
         {
-          "exercise_id": "face_pull",
+          "exercise_id": "cable_rear_fly",
           "sets": 2,
-          "reps": "15–20",
-          "optional": true
+          "reps": "12–15 / ręka",
+          "optional": true,
+          "note": "najpierw jedna ręka (wszystkie serie), potem druga"
         }
       ]
     },
@@ -2405,10 +2458,11 @@
           "optional": true
         },
         {
-          "exercise_id": "face_pull",
+          "exercise_id": "cable_rear_fly",
           "sets": 2,
-          "reps": "15–20",
-          "optional": true
+          "reps": "12–15 / ręka",
+          "optional": true,
+          "note": "najpierw jedna ręka (wszystkie serie), potem druga"
         }
       ]
     },
@@ -2614,9 +2668,10 @@
           "note": "rozciągnięcie klatki na koniec, pełny zakres"
         },
         {
-          "exercise_id": "face_pull",
+          "exercise_id": "cable_rear_fly",
           "sets": 3,
-          "reps": "15–20"
+          "reps": "12–15 / ręka",
+          "note": "najpierw jedna ręka (wszystkie serie), potem druga"
         }
       ],
       "counts_as": "gora_a_3s",
@@ -2655,10 +2710,11 @@
           "superset_group": "A"
         },
         {
-          "exercise_id": "face_pull",
+          "exercise_id": "cable_rear_fly",
           "sets": 2,
-          "reps": "15–20",
-          "superset_group": "A"
+          "reps": "12–15 / ręka",
+          "superset_group": "A",
+          "note": "najpierw jedna ręka (wszystkie serie), potem druga"
         },
         {
           "exercise_id": "cable_curl",
