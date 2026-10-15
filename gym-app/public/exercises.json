@@ -1040,12 +1040,61 @@
         "Zamykanie kolan w pełnym wyproście."
       ],
       "alternatives": [
+        "legpress_stack",
         "squat",
         "bulgarian_split",
         "goblet_squat",
         "lunge"
       ],
       "image": "img/legpress.png",
+      "pattern": "squat"
+    },
+    {
+      "id": "legpress_stack",
+      "name_pl": "Prasa nóg na maszynie ze stosem ciężarów",
+      "name_en": "Selectorized leg press",
+      "category": "nogi",
+      "muscles_primary": [
+        "czworogłowe",
+        "pośladki"
+      ],
+      "muscles_secondary": [
+        "tył uda"
+      ],
+      "equipment": [
+        "maszyna ze stosem ciężarów (np. Technogym)"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo: ciężar jest na stosie, nie ma sztangi do przytrzymania.",
+      "default": {
+        "sets": 3,
+        "reps": "10–12",
+        "rest_s": 120,
+        "rir": "1–2"
+      },
+      "steps": [
+        "Usiądź, ustaw oparcie tak, by lędźwie były przyklejone, stopy na platformie na szerokość bioder.",
+        "Wybierz ciężar kołkiem na stosie, zacznij od lekkiego.",
+        "Opuszczaj platformę kontrolowanie do ok. 90° w kolanie.",
+        "Wypchnij platformę piętami i środkiem stopy, bez pełnego zablokowania kolan."
+      ],
+      "tips": [
+        "Stos daje płynniejszy opór niż prasa na płytach, więc łatwiej zrobić pełną kontrolę w dół.",
+        "Stopy wyżej = więcej pośladków i tyłu uda, niżej = więcej czworogłowego.",
+        "Ustaw kołek tak, by ostatnie powtórzenie było trudne, ale technicznie czyste."
+      ],
+      "mistakes": [
+        "Odrywanie lędźwi od oparcia na dole ruchu.",
+        "Pełne zamykanie kolan w górze.",
+        "Odbijanie ciężaru na dole zamiast pauzy."
+      ],
+      "alternatives": [
+        "legpress",
+        "squat",
+        "goblet_squat",
+        "lunge"
+      ],
+      "image": "img/legpress_stack.jpg",
       "pattern": "squat"
     },
     {
