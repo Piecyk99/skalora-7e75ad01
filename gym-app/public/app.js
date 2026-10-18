@@ -661,7 +661,9 @@
     }));
     kids.push(el("div", { class: "mut mt", text: custom ? "Ustawione ręcznie dla tej daty." : (pid ? "Z harmonogramu tygodnia: " + planName(pid) : "Nic nie zaplanowano.") }));
     var actions = [];
-    if (pid && pid !== "rest" && planById(pid) && !(sess && sess.finished_at))
+    if (sess && !sess.finished_at && planById(sess.plan_id)) // trening w toku: da się wrócić i zakończyć nawet bez planu w harmonogramie
+      actions.push(el("button", { text: "Wróć do treningu i zakończ", onclick: function () { startSession(sess.plan_id, day); } }));
+    else if (pid && pid !== "rest" && planById(pid) && !(sess && sess.finished_at))
       actions.push(el("button", { text: sess ? "Wróć do treningu" : "Start: " + planName(pid), onclick: function () { startSession(pid, day); } }));
     actions.push(el("button", { class: "sec", text: t ? "Edytuj serie tego dnia" : "Dodaj serie ręcznie", onclick: function () { state.day = day; goTab("today"); } }));
     if (sess) actions.push(el("button", { class: "mini", text: "Usuń zapis sesji (serie zostają)", onclick: function () { api("/api/sessions/" + day, "DELETE").then(viewCalendar); } }));
