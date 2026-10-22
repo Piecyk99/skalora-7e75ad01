@@ -236,7 +236,8 @@
       "alternatives": [
         "cable_row",
         "db_row",
-        "plate_row"
+        "plate_row",
+        "pulley_row"
       ],
       "image": "img/bb_row.png",
       "pattern": "horizontal_row"
@@ -282,7 +283,8 @@
       "alternatives": [
         "bb_row",
         "cable_row",
-        "plate_row"
+        "plate_row",
+        "pulley_row"
       ],
       "image": "img/db_row.png",
       "pattern": "horizontal_row"
@@ -329,7 +331,8 @@
       "alternatives": [
         "bb_row",
         "db_row",
-        "plate_row"
+        "plate_row",
+        "pulley_row"
       ],
       "image": "img/cable_row.png",
       "pattern": "horizontal_row"
@@ -1573,11 +1576,62 @@
         "Unoszenie barków do uszu zamiast ściągania łopatek."
       ],
       "alternatives": [
+        "pulley_row",
         "db_row",
         "cable_row",
         "bb_row"
       ],
       "image": "img/plate_row.png",
+      "pattern": "horizontal_row"
+    },
+    {
+      "id": "pulley_row",
+      "name_pl": "Wiosłowanie na maszynie Pulley (siedząc, z podparciem klatki)",
+      "name_en": "Selectorized seated row (chest supported)",
+      "category": "plecy",
+      "muscles_primary": [
+        "najszerszy grzbietu",
+        "środek pleców"
+      ],
+      "muscles_secondary": [
+        "biceps",
+        "tył barków"
+      ],
+      "equipment": [
+        "maszyna Pulley ze stosem ciężarów (np. Technogym)",
+        "podparcie klatki",
+        "uchwyt V"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Bezpieczne solo: ciężar jest na stosie, klatka podparta, lędźwie odciążone.",
+      "default": {
+        "sets": 3,
+        "reps": "10–12",
+        "rest_s": 90,
+        "rir": "1–2"
+      },
+      "steps": [
+        "Usiądź, oprzyj klatkę o podpórkę, stopy na platformach, plecy proste.",
+        "Chwyć uchwyt V obiema rękami, ramiona wyprostowane (lekkie rozciągnięcie pleców).",
+        "Przyciągnij uchwyt do dolnej części klatki, łokcie blisko tułowia, ściągnij łopatki.",
+        "Przytrzymaj 1 s i wracaj powoli, pozwalając łopatkom się rozsunąć."
+      ],
+      "tips": [
+        "Podparcie klatki oszczędza lędźwie, więc dobre po dniu z RDL i przed ciężką pracą.",
+        "Prowadź ruch łokciami, nie ciągnij samymi rękami.",
+        "Ustaw ciężar tak, by nie bujać tułowiem."
+      ],
+      "mistakes": [
+        "Odrywanie klatki od podpórki i bujanie.",
+        "Unoszenie barków do uszu.",
+        "Skracanie zakresu: pełne rozciągnięcie na początku, pełne ściągnięcie na końcu."
+      ],
+      "alternatives": [
+        "plate_row",
+        "cable_row",
+        "db_row"
+      ],
+      "image": "img/pulley_row.jpg",
       "pattern": "horizontal_row"
     },
     {
