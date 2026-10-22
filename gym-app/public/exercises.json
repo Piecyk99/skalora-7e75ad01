@@ -570,6 +570,55 @@
       "bodyweight": true
     },
     {
+      "id": "bb_ohp",
+      "name_pl": "Wyciskanie sztangi nad głowę stojąc",
+      "name_en": "Standing barbell overhead press",
+      "category": "barki",
+      "muscles_primary": [
+        "przednie i boczne barki"
+      ],
+      "muscles_secondary": [
+        "triceps",
+        "górna część pleców",
+        "mięśnie brzucha"
+      ],
+      "equipment": [
+        "sztanga",
+        "klatka (power rack) z bezpiecznikami"
+      ],
+      "type": "wielostawowe",
+      "solo_safety": "Solo tylko w klatce: sztanga na wysokości obojczyków, bezpieczniki tuż poniżej jej najniższego położenia. RIR 2, nigdy do upadku.",
+      "default": {
+        "sets": 3,
+        "reps": "6–8",
+        "rest_s": 150,
+        "rir": "2"
+      },
+      "steps": [
+        "Ustaw sztangę w klatce na wysokości obojczyków, chwyt tuż szerzej niż barki, nadgarstki nad łokciami.",
+        "Zdejmij sztangę, stopy na szerokość bioder, pośladki i brzuch napięte, łokcie lekko przed sztangą.",
+        "Wypchnij sztangę pionowo nad głowę, cofając głowę na chwilę z drogi i wkładając ją \"pod\" sztangę na górze.",
+        "Opuszczaj kontrolowanie do obojczyków i powtarzaj bez odbicia."
+      ],
+      "tips": [
+        "Pośladki i brzuch napięte przez cały ruch, żeby nie wyginać lędźwi.",
+        "Sztanga porusza się po prostej linii nad środkiem stopy.",
+        "Jeśli nie możesz utrzymać pionowego tułowia, zmniejsz ciężar albo zrób wersję na hantlach siedząc."
+      ],
+      "mistakes": [
+        "Odchylanie tułowia i przeprost lędźwi.",
+        "Wypychanie sztangi do przodu zamiast pionowo.",
+        "Ciężar tak duży, że ruch zamienia się w wyciskanie z nóg."
+      ],
+      "alternatives": [
+        "db_ohp",
+        "machine_shoulder_press",
+        "lateral_raise"
+      ],
+      "image": "img/bb_ohp.png",
+      "pattern": "overhead_press"
+    },
+    {
       "id": "db_ohp",
       "name_pl": "Wyciskanie hantli nad głowę siedząc",
       "name_en": "Seated dumbbell shoulder press",
@@ -607,6 +656,7 @@
         "Opuszczanie za nisko (barki)."
       ],
       "alternatives": [
+        "bb_ohp",
         "lateral_raise",
         "machine_shoulder_press"
       ],
@@ -1810,6 +1860,7 @@
         "Zbyt szybki powrót w dół."
       ],
       "alternatives": [
+        "bb_ohp",
         "db_ohp",
         "lateral_raise"
       ],
