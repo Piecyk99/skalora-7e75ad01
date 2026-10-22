@@ -1586,8 +1586,8 @@
     },
     {
       "id": "pulley_row",
-      "name_pl": "Wiosłowanie na maszynie Pulley (siedząc, z podparciem klatki)",
-      "name_en": "Selectorized seated row (chest supported)",
+      "name_pl": "Wiosłowanie siedząc na maszynie Pulley (uchwyt V)",
+      "name_en": "Seated cable row, Pulley machine",
       "category": "plecy",
       "muscles_primary": [
         "najszerszy grzbietu",
@@ -1595,15 +1595,16 @@
       ],
       "muscles_secondary": [
         "biceps",
-        "tył barków"
+        "tył barków",
+        "prostowniki grzbietu"
       ],
       "equipment": [
         "maszyna Pulley ze stosem ciężarów (np. Technogym)",
-        "podparcie klatki",
+        "platformy na stopy",
         "uchwyt V"
       ],
       "type": "wielostawowe",
-      "solo_safety": "Bezpieczne solo: ciężar jest na stosie, klatka podparta, lędźwie odciążone.",
+      "solo_safety": "Bezpieczne solo: ciężar jest na stosie. Bez podparcia klatki lędźwie pracują, więc trzymaj plecy proste.",
       "default": {
         "sets": 3,
         "reps": "10–12",
@@ -1611,20 +1612,20 @@
         "rir": "1–2"
       },
       "steps": [
-        "Usiądź, oprzyj klatkę o podpórkę, stopy na platformach, plecy proste.",
-        "Chwyć uchwyt V obiema rękami, ramiona wyprostowane (lekkie rozciągnięcie pleców).",
-        "Przyciągnij uchwyt do dolnej części klatki, łokcie blisko tułowia, ściągnij łopatki.",
+        "Usiądź, stopy na platformach, kolana lekko ugięte, plecy proste.",
+        "Chwyć uchwyt V, ramiona wyprostowane (lekkie rozciągnięcie pleców).",
+        "Przyciągnij uchwyt do dolnej części brzucha, łokcie blisko tułowia, ściągnij łopatki.",
         "Przytrzymaj 1 s i wracaj powoli, pozwalając łopatkom się rozsunąć."
       ],
       "tips": [
-        "Podparcie klatki oszczędza lędźwie, więc dobre po dniu z RDL i przed ciężką pracą.",
-        "Prowadź ruch łokciami, nie ciągnij samymi rękami.",
-        "Ustaw ciężar tak, by nie bujać tułowiem."
+        "Tułów prawie nieruchomy: ruch idzie z pleców, nie z bujania.",
+        "Bez podparcia klatki to ćwiczenie obciąża lędźwie bardziej niż wiosło z podparciem. Po dniu z RDL albo przed ciężką pracą wybierz raczej wiosło na maszynie z podparciem klatki.",
+        "Prowadź ruch łokciami."
       ],
       "mistakes": [
-        "Odrywanie klatki od podpórki i bujanie.",
-        "Unoszenie barków do uszu.",
-        "Skracanie zakresu: pełne rozciągnięcie na początku, pełne ściągnięcie na końcu."
+        "Bujanie tułowiem tam i z powrotem.",
+        "Zaokrąglanie dolnego odcinka pleców na początku ruchu.",
+        "Unoszenie barków do uszu."
       ],
       "alternatives": [
         "plate_row",
