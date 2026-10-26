@@ -322,13 +322,13 @@ async function api(request, env, url) {
   }
 
   // ---------- kolejka treningów ----------
-  // Serwer tylko zwraca historię i ustawienia; kolejność liczy klient (public/app.js, computeQueue).
+  // Sesja liczy się jako wykonana, gdy jest zakończona albo ma choć jedną serię roboczą. Serwer tylko zwraca historię i ustawienia; kolejność liczy klient (public/app.js, computeQueue).
   if (path === "/api/queue" && method === "GET") {
     const ids = String(url.searchParams.get("rotation") || "").split(",").filter(Boolean);
     if (!ids.length || ids.length > 16 || !ids.every((x) => /^[a-z0-9_]{1,40}$/.test(x))) return json({ error: "rotation" }, 400);
     const marks = ids.map(() => "?").join(",");
     const { results } = await env.DB.prepare(
-      `SELECT day, plan_id FROM sessions WHERE finished_at IS NOT NULL AND plan_id IN (${marks}) ORDER BY finished_at DESC LIMIT 40`,
+      `SELECT day, plan_id FROM sessions WHERE (finished_at IS NOT NULL OR EXISTS (SELECT 1 FROM sets WHERE sets.day = sessions.day AND sets.warmup = 0)) AND plan_id IN (${marks}) ORDER BY day DESC LIMIT 40`,
     ).bind(...ids).all();
     const override = await cfg(env, "queue_override");
     const mode = await cfg(env, "rotation_mode");

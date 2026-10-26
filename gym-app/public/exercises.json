@@ -2886,7 +2886,8 @@
           "sets": 3,
           "reps": "10–12",
           "superset_group": "B",
-          "optional": true
+          "optional": true,
+          "rir": "1–2"
         },
         {
           "exercise_id": "pushdown",
@@ -2986,7 +2987,7 @@
         },
         {
           "exercise_id": "lateral_raise",
-          "sets": 3,
+          "sets": 4,
           "reps": "12–15",
           "rir": "0–1"
         },
@@ -2995,7 +2996,8 @@
           "sets": 3,
           "reps": "10–12",
           "superset_group": "A",
-          "optional": true
+          "optional": true,
+          "rir": "1–2"
         },
         {
           "exercise_id": "pushdown",
@@ -3017,7 +3019,7 @@
       "id": "gora_b_3s",
       "name": "Góra B · skos + podciąganie (mocny)",
       "part": "upper",
-      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 55 min",
+      "when": "mocny trening: ok. 70 min, sam rdzeń ok. 55–60 min",
       "items": [
         {
           "exercise_id": "incline_db_press",
@@ -3081,7 +3083,7 @@
       "avoid_before_work": "hard",
       "fallback_plan": "nogi_przed_praca",
       "fallback_after_days": 10,
-      "when": "dzień przed wolnym: ok. 70 min, sam rdzeń ok. 50 min",
+      "when": "dzień przed wolnym: ok. 75 min, sam rdzeń ok. 50 min",
       "items": [
         {
           "exercise_id": "squat",
@@ -3128,6 +3130,14 @@
           "sets": 2,
           "reps": "12–15",
           "optional": true
+        },
+        {
+          "exercise_id": "calf_seated",
+          "sets": 3,
+          "reps": "12–15",
+          "rest_s": 60,
+          "optional": true,
+          "note": "łydki dostają też bodziec w pracy"
         }
       ]
     },
