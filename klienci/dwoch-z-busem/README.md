@@ -25,9 +25,14 @@ python -m http.server 8123 --directory klienci/dwoch-z-busem/strona
 ```
 Potem http://localhost:8123
 
+## Wygląd
+
+Strona ma wyglądać jak rzeczy z busa, nie jak szablon: wąskie wersaliki jak napisy na drzwiach auta (Big Shoulders), pomarańczowa taśma pakowa, karton, kartka z wyceną i paragon w kalkulatorze (IBM Plex Mono), czarny nadruk na papierze. Bez zaokrąglonych kart z cieniem, bez małych etykiet nad nagłówkami, bez animacji przy przewijaniu. Nowe sekcje rób z tych samych elementów.
+
 ## Zasady treści
 
 - Tylko prawdziwe opinie, zdjęcia realizacji i liczby. Czego nie ma w `CONFIG`, strona nie pokazuje.
 - Ceny i numery wyłącznie w `CONFIG`, nigdy w HTML.
+- Teksty bez myślników wtrąconych, bez wyliczanek po trzy („szybko, tanio, solidnie”) i bez ogólników. Konkret: piętro, godzina, kwota, dzielnica.
 - Hero to na razie klip stockowy z Pexels (6169121), do podmiany na własny film.
 - `flagi.wywoz` ustaw na `false`, dopóki firma nie ma wpisu do BDO.

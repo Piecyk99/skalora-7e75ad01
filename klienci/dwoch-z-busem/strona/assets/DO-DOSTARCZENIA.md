@@ -7,7 +7,7 @@
 > og.jpg usuńcie ręcznie przed uruchomieniem, żeby powstał nowy.
 
 Tylko prawdziwe materiały: wasz bus, wasza praca, wy. Bez zdjęć ze stocka.
-Czego nie ma, strona nie pokazuje (hero ma wtedy granatowe tło, sekcje znikają).
+Czego nie ma, strona nie pokazuje (hero ma wtedy czarne tło, sekcje znikają).
 
 ## Najprościej: wrzuć surowe pliki do assets/source/ i uruchom skrypty
 
