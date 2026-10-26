@@ -11,7 +11,7 @@ Firma przeprowadzkowa z Zabrza: przeprowadzki, opróżnianie lokali, transport r
 | Kompresja wideo i zdjęć (ffmpeg) | `strona/scripts/compress-video.sh`, `strona/scripts/optimize-images.sh` |
 | Strategia pozyskiwania zleceń, teksty, plan 30 dni | `system-pozyskiwania-zlecen.md` |
 
-Folder nie jest częścią aplikacji SKALORA: żaden workflow w `.github/` go nie wdraża, a build Vite go nie dotyka.
+Strona działa pod **https://dwochzbusem.skalora.pl**. Każdy push na `main`, który zmienia coś w tym folderze, wdraża ją automatycznie (`.github/workflows/deploy-dwoch-z-busem.yml`, Cloudflare Worker ze statycznymi plikami, konfiguracja w `wrangler.toml`). Folder `strona/scripts/` i `strona/assets/DO-DOSTARCZENIA.md` nie trafiają na stronę (`strona/.assetsignore`). Build aplikacji SKALORA tego folderu nie dotyka.
 
 ## Praca z telefonu
 

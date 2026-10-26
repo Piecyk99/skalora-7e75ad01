@@ -1,0 +1,12 @@
+name = "dwoch-z-busem"
+compatibility_date = "2024-12-01"
+account_id = "75bcda4af452221f9e0b085605e562ef"
+
+# Własna domena (strefa skalora.pl jest na tym koncie Cloudflare, tak jak gym.skalora.pl).
+[[routes]]
+pattern = "dwochzbusem.skalora.pl"
+custom_domain = true
+
+# Sama strona statyczna, bez kodu Workera. Co pomijamy: strona/.assetsignore
+[assets]
+directory = "./strona"

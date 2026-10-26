@@ -1,0 +1,26 @@
+name: Deploy Dwóch z Busem (dwochzbusem.skalora.pl)
+
+# Statyczny landing klienta z klienci/dwoch-z-busem/strona jako Worker ze static assets.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'klienci/dwoch-z-busem/**'
+      - '.github/workflows/deploy-dwoch-z-busem.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy landing Worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Deploy with wrangler
+        working-directory: klienci/dwoch-z-busem
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: "75bcda4af452221f9e0b085605e562ef"
+        run: npx --yes wrangler@4 deploy
