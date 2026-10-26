@@ -6,6 +6,8 @@
 <title>Przeprowadzki Zabrze i opróżnianie mieszkań | Dwóch z Busem</title>
 <meta name="description" content="Przeprowadzki Zabrze, Gliwice, Bytom, Ruda Śląska, Katowice. Opróżnianie mieszkań Zabrze i okolice. Wyślij wideo na WhatsApp, cenę stałą dostaniesz w 30 minut. Płacisz po robocie.">
 <meta name="theme-color" content="#13203F">
+<!-- Bez tego Samsung Internet i Chrome z trybem ciemnym same przyciemniają stronę (zielony przycisk robi się prawie czarny, wideo w hero znika) -->
+<meta name="color-scheme" content="only light">
 <link rel="canonical" href="https://dwochzbusem.skalora.pl/">
 <!-- Open Graph. Przy zmianie domeny popraw adresy tutaj i w CONFIG.domena. -->
 <meta property="og:type" content="website">
@@ -39,7 +41,7 @@
   --body:"Inter","Inter Fallback",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --gut:clamp(16px,4vw,32px);
   --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  color-scheme:light;
+  color-scheme:only light;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:76px}
@@ -113,7 +115,8 @@ p{margin:0}
 .hero-media video{opacity:0;transition:opacity .8s ease}
 .hero-media video.is-playing{opacity:1}
 .hero-media.no-img{background:radial-gradient(110% 80% at 90% 0%,#24396B 0%,rgba(19,32,63,0) 60%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 14px,transparent 14px 28px),var(--navy)}
-.hero-media::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(19,32,63,.8) 0%,rgba(19,32,63,.9) 100%)}
+/* Telefon: tekst leży na całym wideo, więc nakładka jest lżejsza pod nagłówkiem (widać busa), a gęstnieje pod opisem i przyciskami. Czytelność trzyma cień tekstu niżej. */
+.hero-media::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(19,32,63,.6) 0%,rgba(19,32,63,.32) 22%,rgba(19,32,63,.58) 40%,rgba(19,32,63,.66) 58%,rgba(19,32,63,.8) 76%,rgba(19,32,63,.92) 100%)}
 .hero-media::after{content:"";position:absolute;inset:0;z-index:2;background-image:var(--noise);opacity:.07;pointer-events:none}
 @media (min-width:768px){.hero-media::before{background:linear-gradient(90deg,rgba(19,32,63,.86) 0%,rgba(19,32,63,.68) 48%,rgba(19,32,63,.35) 100%)}}
 .hero-grid{display:grid;gap:40px;align-items:center;width:100%}
@@ -123,6 +126,7 @@ p{margin:0}
 .hero h1 em{font-style:normal;color:var(--orange-num)}
 .hero .lead{margin-top:22px;font-size:clamp(18px,1.6vw,20px);line-height:1.55;color:rgba(255,255,255,.92);max-width:34em}
 .hero .cta-row{margin-top:30px}
+@media (max-width:767px){.hero .kicker,.hero h1,.hero .lead{text-shadow:0 1px 2px rgba(0,0,0,.5),0 2px 20px rgba(19,32,63,.7)}.hero h1 em{color:#FB923C}}
 .chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:22px 0 0;padding:0}
 .chips li{display:inline-flex;align-items:center;gap:7px;padding:7px 13px 7px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);font:500 14px/1.2 var(--body)}
 .chips .i{width:16px;height:16px;color:#86EFAC}
